@@ -37,6 +37,7 @@
 			</camera>
 			<camera name="MainCamera" >
 				<viewport name="MainViewport" />
+				<POSITION x=0.0 y=1.0 z=5.0 />
                 <NEAR value=0.01 />
 			</camera>
 		</cameras>
@@ -60,7 +61,7 @@
 					<scene name="Sphere" />
 				</scenes>
 				<camera name="HeightCamera" />
-                <renderTarget name="HeightMap" fromLibrary="snowLib" />
+                <renderTarget name="HeightMap" fromLibrary="particleLib" />
 			</pass>
 			<pass class="default" name="pass1">
 				<scenes>
