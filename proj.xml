@@ -1,0 +1,86 @@
+<?xml version="1.0" ?>
+<project name="Particle Deposition" width = "1280" height = "720">
+	<assets>
+        <attributes>
+            <attribute name="offset" data="FLOAT" type="RENDERER" value=0.1 />
+        </attributes>
+		<scenes>
+			<scene name="Plane">
+				<geometry name = "square" type = "SQUARE" />
+				<SCALE x=10 y=1 z=10 />
+			</scene>
+			<scene name="Sphere">
+				<geometry name = "sphere" type = "SPHERE" />
+				<SCALE x=2 y=2 z=2 />
+			</scene>
+		</scenes>
+		
+		<viewports>
+			<viewport name="MainViewport">
+				<CLEAR_COLOR r="0.8" g="1.0" b="0.7" />
+			</viewport>
+		</viewports>
+		
+		<cameras>
+			<camera name="HeightCamera" >
+				<TYPE 	value="ORTHO" />
+				<RIGHT 	value=10 />
+				<LEFT 	value=-10 />
+				<TOP 	value=10 />
+				<BOTTOM value=-10 />
+				<NEAR	value=0.0001/>
+				<FAR	value=10 />
+				<viewport name="MainViewport" />
+				<POSITION x=0.0 y=10.0 z=0.0 />
+				<VIEW 	x=0.0 y=-1.0 z=0.0 />
+				<UP 	x=0.0 y=0.0 z=1.0 />
+			</camera>
+			<camera name="MainCamera" >
+				<viewport name="MainViewport" />
+                <NEAR value=0.01 />
+			</camera>
+		</cameras>
+		
+		<lights>
+			<light name="Sun">
+				<DIRECTION x="1" y="-1" z="-1" />
+			</light>
+		</lights>
+
+        <materialLibs>
+			<materialLib filename="proj.mlib" />
+		</materialLibs>
+	</assets>
+	
+	<pipelines>
+		<pipeline name="pip" >
+		    <pass class="default" name="heightMapSetup">
+				<scenes>
+					<scene name="Plane" />
+					<scene name="Sphere" />
+				</scenes>
+				<camera name="HeightCamera" />
+                <renderTarget name="HeightMap" fromLibrary="snowLib" />
+			</pass>
+			<pass class="default" name="pass1">
+				<scenes>
+					<scene name="Plane" />
+					<scene name="Sphere" />
+				</scenes>
+				<camera name="MainCamera" />
+				<lights>
+					<light name="Sun" />
+				</lights>
+                <materialMaps>
+					<!--map fromMaterial="*" toMaterial="expandMat" toLibrary="expandLib" /-->
+				</materialMaps>
+			</pass>
+		</pipeline>
+	</pipelines>
+
+    <interface> 
+        <window label="Variables">
+            <!--var label="Offset" type="RENDERER" context="CURRENT" component="offset" def="step=0.001"/-->
+        </window>
+    </interface> 
+</project>
