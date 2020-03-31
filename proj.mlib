@@ -41,7 +41,7 @@
 
 	<buffers>
 		<buffer name="Positions">
-			<DIM x=100 y=1 z=1 />
+			<DIM x=500 y=1 z=1 />
 			<structure>
 				<field value="VEC4" />
 			</structure>

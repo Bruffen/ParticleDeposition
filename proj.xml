@@ -64,7 +64,7 @@
                 <renderTarget name="HeightMap" fromLibrary="particleLib" />
 			</pass>
 			<pass class="compute" name="particles">
-				<material name="matParticles" fromLibrary="particleLib" dimX=100 dimY=1 dimZ=1 />
+				<material name="matParticles" fromLibrary="particleLib" dimX=500 dimY=1 dimZ=1 />
 			</pass>
 			<pass class="default" name="sceneRender">
 				<scenes>

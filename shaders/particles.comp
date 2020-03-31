@@ -1,17 +1,5 @@
 #version 430
 
-layout (local_size_x = 1, local_size_y = 1, local_size_z = 1) in; // optimize
-
-uniform writeonly image2D texVolume;
-uniform sampler2D heightMap;
-
-uniform float time;
-
-layout( std140, binding=1 ) buffer Positions
-{
-	vec4 particlePos[];
-};
-
 // A single iteration of Bob Jenkins' One-At-A-Time hashing algorithm.
 uint hash( uint x ) {
     x += ( x << 10u );
@@ -50,22 +38,35 @@ float rand(vec2 co){
     return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
 }
 
+layout (local_size_x = 1, local_size_y = 1, local_size_z = 1) in; // optimize
+
+uniform writeonly image2D texVolume;
+uniform sampler2D heightMap;
+
+uniform float time;
+
+layout( std140, binding=1 ) buffer Positions
+{
+	vec4 particlePos[];
+};
+/*
+ * Another buffer for velocities or anything else can be added if needed
+*/
+
 void main()
 {
 	uint i = gl_GlobalInvocationID.x;
-	vec4 color;
 	vec4 particles = particlePos[i];
 	if (particles.w == 0) // if particle is unused, generate new position
 	{
 		particles.w = 1;
-		particles.x = random(i * time + 0) * 20 - 10;
-		particles.z = random(i * time + 1) * 20 - 10;
-		color = vec4(0, 1, 0, 1);
+		particles.x = random((i + 0) * time) * 20 - 10;
+		particles.z = random((i + 1) * time) * 20 - 10;
 	}
 	else
 	{
-		vec3 velocity = vec3(random(i * time + 0), 0.0, random(i * time + 1));
-		velocity = normalize(velocity) * 0.1;
+		vec3 velocity = vec3(random(i * time + 0) * 2 - 1, 0.0, random(i * time + 1) * 2 - 1);
+		velocity = normalize(velocity) * 0.04;
 
 		particles.x += velocity.x;
 		particles.z += velocity.z;
@@ -75,11 +76,11 @@ void main()
 
 		if (particles.z < -10 || particles.z > 10)
 			particles.z = clamp(particles.z, -10, 10);
-		color = vec4(1, 0, 0, 1);
 	}
 
 	imageStore(texVolume,
 		ivec2((particles.x * 0.05 + 0.5) * 1024, (particles.z * 0.05 + 0.5) * 1024), 
-		//vec4(random(float(i)), random(float(i) + 0.53425), random(float(i) + 0.91823), 1.0));
-		color);
+		vec4(random(float(i)), random(float(i) + 0.53425), random(float(i) + 0.91823), 1.0));
+
+	particlePos[i] = particles;
 }
