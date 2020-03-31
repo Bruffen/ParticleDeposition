@@ -63,25 +63,36 @@
 				<camera name="HeightCamera" />
                 <renderTarget name="HeightMap" fromLibrary="particleLib" />
 			</pass>
-			<pass class="default" name="pass1">
+			<pass class="compute" name="particles">
+				<material name="matParticles" fromLibrary="particleLib" dimX=100 dimY=1 dimZ=1 />
+			</pass>
+			<pass class="default" name="sceneRender">
 				<scenes>
 					<scene name="Plane" />
-					<scene name="Sphere" />
+					<!--scene name="Sphere" /-->
 				</scenes>
 				<camera name="MainCamera" />
 				<lights>
 					<light name="Sun" />
 				</lights>
                 <materialMaps>
-					<!--map fromMaterial="*" toMaterial="expandMat" toLibrary="expandLib" /-->
+					<map fromMaterial="*" toMaterial="Tex" toLibrary="particleLib" />
 				</materialMaps>
 			</pass>
+			<!--pass class="quad" name="volumeRender">
+                <renderTarget name="Render" fromLibrary="particleLib" />
+                <camera name="MainCamera" />
+				<viewport name="MainViewport" />
+				<materialMaps>
+					<map fromMaterial="__Quad" toMaterial="matRenderVolume" toLibrary="particleLib"/>
+				</materialMaps>
+			</pass-->
 		</pipeline>
 	</pipelines>
 
     <interface> 
-        <window label="Variables">
-            <!--var label="Offset" type="RENDERER" context="CURRENT" component="offset" def="step=0.001"/-->
-        </window>
+        <!--window label="Variables">
+            <var label="Offset" type="RENDERER" context="CURRENT" component="offset" def="step=0.001"/>
+        </window-->
     </interface> 
 </project>
