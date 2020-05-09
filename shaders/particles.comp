@@ -40,8 +40,18 @@ float rand(vec2 co){
 
 layout (local_size_x = 1, local_size_y = 1, local_size_z = 1) in; // optimize
 
-uniform writeonly image2D texVolume;
 uniform sampler2D heightMap;
+
+uniform writeonly image2D texVolume;
+uniform int texWidth;
+uniform int texHeight;
+
+// Params from the camera that renders the scene from above
+uniform float sceneHt; // max y bound
+uniform float sceneRt; // max x bound
+uniform float sceneLf; // min x bound
+uniform float sceneUp; // max z bound
+uniform float sceneDw; // min z bound
 
 uniform float time;
 
@@ -56,31 +66,42 @@ layout( std140, binding=1 ) buffer Positions
 void main()
 {
 	uint i = gl_GlobalInvocationID.x;
+	uint j = gl_GlobalInvocationID.y;
 	vec4 particles = particlePos[i];
+
+	const float width  = sceneLf - sceneRt;
+	const float height = sceneDw - sceneUp;
+
 	if (particles.w == 0) // if particle is unused, generate new position
 	{
 		particles.w = 1;
-		particles.x = random((i + 0) * time) * 20 - 10;
-		particles.z = random((i + 1) * time) * 20 - 10;
+		particles.x = random((i + 0) * time) * width  - width  * 0.5;
+		particles.z = random((i + 1) * time) * height - height * 0.5;
 	}
 	else
 	{
-		vec3 velocity = vec3(random(i * time + 0) * 2 - 1, 0.0, random(i * time + 1) * 2 - 1);
+		// Random walk
+		vec3 velocity = vec3(
+			random((i * width + j + random(i)) * time) * 2 - 1, 
+			0.0, 
+			random((i * width + j + random(j)) * time) * 2 - 1);
 		velocity = normalize(velocity) * 0.04;
 
 		particles.x += velocity.x;
 		particles.z += velocity.z;
 
-		if (particles.x < -10 || particles.x > 10)
-			particles.x = clamp(particles.x, -10, 10);
+		if (particles.x < sceneLf || particles.x > sceneRt)
+			particles.x = clamp(particles.x, sceneLf, sceneRt);
 
-		if (particles.z < -10 || particles.z > 10)
-			particles.z = clamp(particles.z, -10, 10);
+		if (particles.z < sceneDw || particles.z > sceneUp)
+			particles.z = clamp(particles.z, sceneDw, sceneUp);
 	}
 
+	float particleHeight = random(i * width + j);
+
 	imageStore(texVolume,
-		ivec2((particles.x * 0.05 + 0.5) * 1024, (particles.z * 0.05 + 0.5) * 1024), 
-		vec4(random(float(i)), random(float(i) + 0.53425), random(float(i) + 0.91823), 1.0));
+		ivec2((particles.x / width + 0.5) * texWidth, (particles.z / height + 0.5) * texHeight), 
+		vec4(particleHeight));
 
 	particlePos[i] = particles;
 }

@@ -13,20 +13,22 @@
 				<color name="heightMap" internalFormat="R32F" />
 			</colors>
 		</renderTarget>
-		<!--renderTarget name ="VolumeHeight">
+		<renderTarget name ="VolumeHeight">
 			<SIZE width=1024 height=1024 />
 			<colors>
 				<color name="texVolume" internalFormat="R32F" />
 			</colors>
-		</renderTarget-->
+		</renderTarget>
     </renderTargets>
-	<textures>
+	<!--textures>
 		<texture name="texVolume">
 			<WIDTH value=1024 />
 			<HEIGHT value=1024 />
 			<INTERNAL_FORMAT value="RGBA" />
 		</texture>
-	</textures>	
+		<texture name="test" filename="texture.png">
+		</texture>
+	</textures-->	
 
 	<shaders>
             <shader name = "particles"
@@ -60,7 +62,10 @@
 					<valueof uniform="up"			type="CAMERA"			context="MainCamera"	component="UP" />
 					<valueof uniform="position"		type="CAMERA"			context="MainCamera"	component="POSITION" />
 					<valueof uniform="fov"			type="CAMERA"			context="MainCamera"	component="FOV" />
-					<valueof uniform="screenSize"	type="VIEWPORT"			context="MainViewport"	component="SIZE" />
+					<valueof uniform="sceneUp"		type="CAMERA"			context="HeightCamera"	component="TOP" />
+					<valueof uniform="sceneLf"		type="CAMERA"			context="HeightCamera"	component="LEFT" />
+					<valueof uniform="sceneRt"		type="CAMERA"			context="HeightCamera"	component="RIGHT" />
+					<valueof uniform="sceneDw"		type="CAMERA"			context="HeightCamera"	component="BOTTOM" />
 				</values>
 			</shader>
 			<textures>
@@ -75,6 +80,13 @@
 				<values>
                     <valueof uniform="texVolume" 	type="IMAGE_TEXTURE" 	context="CURRENT" 		component="UNIT" id=0 />
                     <valueof uniform="heightMap" 	type="TEXTURE_BINDING" 	context="CURRENT" 		component="UNIT" id=1 />
+					<valueof uniform="sceneHt"		type="CAMERA"			context="HeightCamera"	component="FAR" />
+					<valueof uniform="sceneUp"		type="CAMERA"			context="HeightCamera"	component="TOP" />
+					<valueof uniform="sceneLf"		type="CAMERA"			context="HeightCamera"	component="LEFT" />
+					<valueof uniform="sceneRt"		type="CAMERA"			context="HeightCamera"	component="RIGHT" />
+					<valueof uniform="sceneDw"		type="CAMERA"			context="HeightCamera"	component="BOTTOM" />
+					<valueof uniform="texWidth"		type="TEXTURE"			context="texVolume"		component="WIDTH" />
+					<valueof uniform="texHeight"	type="TEXTURE"			context="texVolume"		component="HEIGHT" />
 					<valueof uniform="time" 		type="RENDERER" 		context="CURRENT" 		component="TIMER" />
 				</values>
 			</shader>

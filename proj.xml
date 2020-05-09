@@ -19,6 +19,9 @@
 			<viewport name="MainViewport">
 				<CLEAR_COLOR r="0.8" g="1.0" b="0.7" />
 			</viewport>
+			<viewport name="HeightViewport">
+				<CLEAR_COLOR r="0.8" g="1.0" b="0.7" />
+			</viewport>
 		</viewports>
 		
 		<cameras>
