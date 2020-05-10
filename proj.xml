@@ -58,17 +58,20 @@
 	
 	<pipelines>
 		<pipeline name="pip" >
+			<!-- Render the scene from above for height info -->
 		    <pass class="default" name="heightMapSetup">
 				<scenes>
 					<scene name="Plane" />
-					<scene name="Sphere" />
+					<!--scene name="Sphere" /-->
 				</scenes>
 				<camera name="HeightCamera" />
                 <renderTarget name="HeightMap" fromLibrary="particleLib" />
 			</pass>
+			<!-- Compute all the particles in a compute shader -->
 			<pass class="compute" name="particles">
 				<material name="matParticles" fromLibrary="particleLib" dimX=500 dimY=1 dimZ=1 />
 			</pass>
+			<!-- Render the scene from normal camera -->
 			<pass class="default" name="sceneRender">
 				<scenes>
 					<scene name="Plane" />
@@ -82,8 +85,9 @@
 					<map fromMaterial="*" toMaterial="Tex" toLibrary="particleLib" />
 				</materialMaps>
 			</pass>
-			<!--pass class="quad" name="volumeRender">
-                <renderTarget name="Render" fromLibrary="particleLib" />
+			<!-- Render the volume from particles on top of the rendered scene -->
+                <!--renderTarget name="Render" fromLibrary="particleLib" />
+			<pass class="quad" name="volumeRender">
                 <camera name="MainCamera" />
 				<viewport name="MainViewport" />
 				<materialMaps>

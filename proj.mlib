@@ -13,14 +13,14 @@
 				<color name="heightMap" internalFormat="R32F" />
 			</colors>
 		</renderTarget>
-		<renderTarget name ="VolumeHeight">
+		<!--renderTarget name ="VolumeHeight">
 			<SIZE width=1024 height=1024 />
 			<colors>
 				<color name="texVolume" internalFormat="R32F" />
 			</colors>
-		</renderTarget>
+		</renderTarget-->
     </renderTargets>
-	<!--textures>
+	<textures>
 		<texture name="texVolume">
 			<WIDTH value=1024 />
 			<HEIGHT value=1024 />
@@ -28,7 +28,7 @@
 		</texture>
 		<texture name="test" filename="texture.png">
 		</texture>
-	</textures-->	
+	</textures>	
 
 	<shaders>
             <shader name = "particles"
@@ -58,10 +58,12 @@
                     <valueof uniform="texRender" 	type="TEXTURE_BINDING" 	context="CURRENT" 		component="UNIT" id=0 />
                     <valueof uniform="texVolume" 	type="TEXTURE_BINDING" 	context="CURRENT" 		component="UNIT" id=1 />
                     <valueof uniform="heightMap" 	type="TEXTURE_BINDING" 	context="CURRENT" 		component="UNIT" id=2 />
+					<valueof uniform="lightDir"		type="LIGHT" 			context="Sun" 			component="DIRECTION" />
 					<valueof uniform="view"			type="CAMERA"			context="MainCamera"	component="VIEW" />
 					<valueof uniform="up"			type="CAMERA"			context="MainCamera"	component="UP" />
 					<valueof uniform="position"		type="CAMERA"			context="MainCamera"	component="POSITION" />
 					<valueof uniform="fov"			type="CAMERA"			context="MainCamera"	component="FOV" />
+					<valueof uniform="sceneHt"		type="CAMERA"			context="HeightCamera"	component="FAR" />
 					<valueof uniform="sceneUp"		type="CAMERA"			context="HeightCamera"	component="TOP" />
 					<valueof uniform="sceneLf"		type="CAMERA"			context="HeightCamera"	component="LEFT" />
 					<valueof uniform="sceneRt"		type="CAMERA"			context="HeightCamera"	component="RIGHT" />
@@ -70,7 +72,7 @@
 			</shader>
 			<textures>
                 <texture name="texRender" 	UNIT=0 />
-                <texture name="texVolume" 	UNIT=1 />
+                <texture name="test" 	UNIT=1 />
                 <texture name="heightMap" 	UNIT=2 />
             </textures>
 		</material>
