@@ -39,11 +39,24 @@
             <shader name = "tex"
                 vs = "shaders/tex.vert"
                 ps = "shaders/tex.frag" />
+			<shader name = "billboards"
+                vs = "shaders/billboards.vert"
+				gs = "shaders/billboards.geom"
+                ps = "shaders/billboards.frag" />
 	</shaders>
+<!-- 
+	gs = "shaders/billboards.geom" -->
 
 	<buffers>
 		<buffer name="Positions">
-			<DIM x=500 y=1 z=1 />
+			<DIM x=1000 y=1 z=1 />
+			<structure>
+				<field value="VEC4" />
+			</structure>
+			<CLEAR value="NEVER" />
+		</buffer>
+		<buffer name="Directions">
+			<DIM x=1000 y=1 z=1 />
 			<structure>
 				<field value="VEC4" />
 			</structure>
@@ -90,6 +103,10 @@
 					<valueof uniform="texWidth"		type="TEXTURE"			context="texVolume"		component="WIDTH" />
 					<valueof uniform="texHeight"	type="TEXTURE"			context="texVolume"		component="HEIGHT" />
 					<valueof uniform="time" 		type="RENDERER" 		context="CURRENT" 		component="TIMER" />
+					<valueof uniform="radius" 		type="RENDERER" 		context="CURRENT" 		component="radius" />
+					<valueof uniform="speed" 		type="RENDERER" 		context="CURRENT" 		component="speed" />
+					<valueof uniform="gravity" 		type="RENDERER" 		context="CURRENT" 		component="gravity" />
+					<valueof uniform="windDir" 		type="RENDERER" 		context="CURRENT" 		component="windDir" />
 				</values>
 			</shader>
 			<textures>
@@ -106,6 +123,10 @@
 					<TYPE value="SHADER_STORAGE" />
 					<BINDING_POINT value="1" />
 				</buffer>
+				<buffer name="Directions" >
+					<TYPE value="SHADER_STORAGE" />
+					<BINDING_POINT value="2" />
+				</buffer>
 			</buffers>
 		</material>
 
@@ -119,6 +140,24 @@
             <textures>
                 <texture name="texVolume" UNIT = 0 />
             </textures>
+		</material>
+		
+		<material name="ParticlesBB">
+			<shader name="billboards">
+				<values>
+					<valueof uniform="m_pvm" type="RENDERER" context="CURRENT" component="PROJECTION_VIEW_MODEL" />
+					<valueof uniform="texVolume" type="TEXTURE_BINDING" context="CURRENT" component="UNIT" id=0 />
+					<valueof uniform="width" type="RENDERER" context="CURRENT" component="width" />
+					<valueof uniform="height" type="RENDERER" context="CURRENT" component="height" />
+				</values>
+			</shader>
+			<buffers>
+				<buffer name="Directions" >
+					<TYPE value="SHADER_STORAGE" />
+					<BINDING_POINT value="1" />
+				</buffer>
+				
+			</buffers>
 		</material>
 	</materials>
 </materialLib>

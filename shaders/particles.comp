@@ -53,11 +53,24 @@ uniform float sceneLf; // min x bound
 uniform float sceneUp; // max z bound
 uniform float sceneDw; // min z bound
 
+//Particle "stats"
+uniform float radius;
+uniform float gravity;
+uniform float speed;
+uniform vec3 windDir;
+
 uniform float time;
 
 layout( std140, binding=1 ) buffer Positions
 {
 	vec4 particlePos[];
+	//vec4 particleDir[];
+};
+
+layout( std140, binding=2 ) buffer Directions
+{
+	vec4 particleDir[];
+	//vec4 particleDir[];
 };
 /*
  * Another buffer for velocities or anything else can be added if needed
@@ -67,41 +80,79 @@ void main()
 {
 	uint i = gl_GlobalInvocationID.x;
 	uint j = gl_GlobalInvocationID.y;
+	uint k = gl_GlobalInvocationID.x + gl_WorkGroupSize.x * gl_GlobalInvocationID.y;
 	vec4 particles = particlePos[i];
+	vec4 direction = particleDir[i];
 
 	const float width  = sceneLf - sceneRt;
 	const float height = sceneDw - sceneUp;
+	const float center_x = width/2;
+	const float center_z = height/2;
 
 	if (particles.w == 0) // if particle is unused, generate new position
 	{
+		float r = sqrt(random(k + time) * radius);
+		float theta = random(k) * (2 * 3.1415);
+
+		float x = clamp(r * cos(theta), sceneLf, sceneRt);
+		float z = clamp(r * sin(theta), sceneDw, sceneUp);
+
+		vec3 velocity = vec3(
+			(random((i * width + j + random(i)) * time) *2 -1), 
+			-1, 
+			(random((i * width + j + random(j)) * time) *2 -1));
+		direction = vec4(normalize(velocity),1);// * 0.04;
+
 		particles.w = 1;
-		particles.x = random((i + 0) * time) * width  - width  * 0.5;
-		particles.z = random((i + 1) * time) * height - height * 0.5;
+		particles.x = x;
+		particles.y = random((i + 1)) * 30 + 20;
+		particles.z = z;
 	}
 	else
 	{
-		// Random walk
-		vec3 velocity = vec3(
-			random((i * width + j + random(i)) * time) * 2 - 1, 
-			0.0, 
-			random((i * width + j + random(j)) * time) * 2 - 1);
-		velocity = normalize(velocity) * 0.04;
+		vec3 velocity = direction.xyz;
+
+		velocity.x *= speed * 0.01;
+		velocity.y *= gravity * 0.01;
+		velocity.z *= speed * 0.01;
+
+		velocity += windDir * 0.001;
 
 		particles.x += velocity.x;
+		particles.y += velocity.y;
 		particles.z += velocity.z;
 
-		if (particles.x < sceneLf || particles.x > sceneRt)
-			particles.x = clamp(particles.x, sceneLf, sceneRt);
+		// if (particles.x < sceneLf || particles.x > sceneRt)
+		// 	particles.x = clamp(particles.x, sceneLf, sceneRt);
 
-		if (particles.z < sceneDw || particles.z > sceneUp)
-			particles.z = clamp(particles.z, sceneDw, sceneUp);
+		// if (particles.z < sceneDw || particles.z > sceneUp)
+		// 	particles.z = clamp(particles.z, sceneDw, sceneUp);
+		if (particles.x < sceneLf)
+			particles.x = sceneRt;
+
+		if (particles.x > sceneRt)
+			particles.x = sceneLf;
+
+		if (particles.x < sceneDw)
+			particles.x = sceneUp;
+
+		if (particles.x > sceneUp)
+			particles.x = sceneDw;
+
+		if (particles.y <= 0)
+		{
+			imageStore(texVolume,
+		ivec2((particles.x / width + 0.5) * texWidth, (particles.z / height + 0.5) * texHeight), 
+		vec4(random(i * width + j)));
+
+			particles.w = 0;
+
+		}
 	}
 
-	float particleHeight = random(i * width + j);
+	//float particleHeight = random(i * width + j);
 
-	imageStore(texVolume,
-		ivec2((particles.x / width + 0.5) * texWidth, (particles.z / height + 0.5) * texHeight), 
-		vec4(particleHeight));
 
 	particlePos[i] = particles;
+	particleDir[i] = direction;
 }
