@@ -83,6 +83,14 @@
 			<pass class="compute" name="particles">
 				<material name="matParticles" fromLibrary="particleLib" dimX=1000 dimY=1 dimZ=1 />
 			</pass>
+			<!-- Compute the deposition of particles -->
+			<pass class="compute" name="aux">
+				<material name="depositionAux" fromLibrary="particleLib" dimX=1024 dimY=1024 dimZ=1 />
+			</pass>
+			<pass class="compute" name="deposition">
+				<material name="depositionHeight" fromLibrary="particleLib" dimX=1024 dimY=1024 dimZ=1 />
+			</pass>
+			
 			<!-- Render the scene from normal camera -->
 			<pass class="default" name="sceneRender">
 				<scenes>
@@ -97,7 +105,7 @@
 				</materialMaps>
 			</pass>
 			
-			<pass class="default" name="sceneRender">
+			<!---pass class="default" name="sceneRender">
 				<scenes>
 					<scene name ="Particles" />  
 				</scenes>
@@ -108,7 +116,7 @@
                 <materialMaps>
 					<map fromMaterial="ParticlesBB" toMaterial="ParticlesBB" toLibrary="particleLib" />
 				</materialMaps>
-			</pass>
+			</pass-->
 
 
 			<!-- <pass class="default" name="ParticlesBB">

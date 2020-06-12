@@ -26,6 +26,11 @@
 			<HEIGHT value=1024 />
 			<INTERNAL_FORMAT value="RGBA" />
 		</texture>
+		<texture name="texVolumeAux">
+			<WIDTH value=1024 />
+			<HEIGHT value=1024 />
+			<INTERNAL_FORMAT value="RGBA" />
+		</texture>
 		<texture name="test" filename="texture.png">
 		</texture>
 	</textures>	
@@ -43,6 +48,12 @@
                 vs = "shaders/billboards.vert"
 				gs = "shaders/billboards.geom"
                 ps = "shaders/billboards.frag" />
+			<shader name="deposition"
+				cs = "shaders/deposition.comp" 
+				/>
+			<shader name="copyAuxdeposition"
+				cs = "shaders/copyAuxdeposition.comp" 
+				/>
 	</shaders>
 <!-- 
 	gs = "shaders/billboards.geom" -->
@@ -128,6 +139,73 @@
 					<BINDING_POINT value="2" />
 				</buffer>
 			</buffers>
+		</material>
+
+		<material name="depositionHeight">
+			<shader name="deposition">
+				<values>
+                    <valueof uniform="texVolume" 	type="IMAGE_TEXTURE" 	context="CURRENT" 		component="UNIT" id=0 />
+                    <valueof uniform="heightMap" 	type="TEXTURE_BINDING" 	context="CURRENT" 		component="UNIT" id=1 />
+					<valueof uniform="sceneHt"		type="CAMERA"			context="HeightCamera"	component="FAR" />
+					<valueof uniform="sceneUp"		type="CAMERA"			context="HeightCamera"	component="TOP" />
+					<valueof uniform="sceneLf"		type="CAMERA"			context="HeightCamera"	component="LEFT" />
+					<valueof uniform="sceneRt"		type="CAMERA"			context="HeightCamera"	component="RIGHT" />
+					<valueof uniform="sceneDw"		type="CAMERA"			context="HeightCamera"	component="BOTTOM" />
+					<valueof uniform="texWidth"		type="TEXTURE"			context="texVolume"		component="WIDTH" />
+					<valueof uniform="texHeight"	type="TEXTURE"			context="texVolume"		component="HEIGHT" />
+					<valueof uniform="time" 		type="RENDERER" 		context="CURRENT" 		component="TIMER" />
+					<valueof uniform="radius" 		type="RENDERER" 		context="CURRENT" 		component="radius" />
+					<valueof uniform="speed" 		type="RENDERER" 		context="CURRENT" 		component="speed" />
+					<valueof uniform="gravity" 		type="RENDERER" 		context="CURRENT" 		component="gravity" />
+					<valueof uniform="windDir" 		type="RENDERER" 		context="CURRENT" 		component="windDir" />
+				</values>
+			</shader>
+			<textures>
+                <texture name="heightMap" 	UNIT=1 />
+            </textures>
+			<imageTextures>
+				<imageTexture UNIT=0 texture="texVolume" >
+					<ACCESS value="READ_WRITE" />
+					<LEVEL value=0 />
+				</imageTexture>
+				<imageTexture UNIT=2 texture="texVolumeAux" >
+					<ACCESS value="READ_WRITE" />
+					<LEVEL value=0 />
+				</imageTexture>
+			</imageTextures>
+		</material>
+		<material name="depositionAux">
+			<shader name="copyAuxdeposition">
+				<values>
+                    <valueof uniform="texVolume" 	type="IMAGE_TEXTURE" 	context="CURRENT" 		component="UNIT" id=0 />
+                    <valueof uniform="heightMap" 	type="TEXTURE_BINDING" 	context="CURRENT" 		component="UNIT" id=1 />
+					<valueof uniform="sceneHt"		type="CAMERA"			context="HeightCamera"	component="FAR" />
+					<valueof uniform="sceneUp"		type="CAMERA"			context="HeightCamera"	component="TOP" />
+					<valueof uniform="sceneLf"		type="CAMERA"			context="HeightCamera"	component="LEFT" />
+					<valueof uniform="sceneRt"		type="CAMERA"			context="HeightCamera"	component="RIGHT" />
+					<valueof uniform="sceneDw"		type="CAMERA"			context="HeightCamera"	component="BOTTOM" />
+					<valueof uniform="texWidth"		type="TEXTURE"			context="texVolume"		component="WIDTH" />
+					<valueof uniform="texHeight"	type="TEXTURE"			context="texVolume"		component="HEIGHT" />
+					<valueof uniform="time" 		type="RENDERER" 		context="CURRENT" 		component="TIMER" />
+					<valueof uniform="radius" 		type="RENDERER" 		context="CURRENT" 		component="radius" />
+					<valueof uniform="speed" 		type="RENDERER" 		context="CURRENT" 		component="speed" />
+					<valueof uniform="gravity" 		type="RENDERER" 		context="CURRENT" 		component="gravity" />
+					<valueof uniform="windDir" 		type="RENDERER" 		context="CURRENT" 		component="windDir" />
+				</values>
+			</shader>
+			<textures>
+                <texture name="heightMap" 	UNIT=1 />
+            </textures>
+			<imageTextures>
+				<imageTexture UNIT=0 texture="texVolume" >
+					<ACCESS value="READ_WRITE" />
+					<LEVEL value=0 />
+				</imageTexture>
+				<imageTexture UNIT=2 texture="texVolumeAux" >
+					<ACCESS value="READ_WRITE" />
+					<LEVEL value=0 />
+				</imageTexture>
+			</imageTextures>
 		</material>
 
 		<material name="Tex">
