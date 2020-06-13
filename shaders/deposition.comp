@@ -98,17 +98,17 @@ float checkSend(uint i,uint j,int ipp,int jpp,float curr){
     vec4 neighboor = imageLoad(texVolumeAux, ivec2(i +ipp, j+jpp ));
     float height = curr;
     float minHeight = 0.02;
-    float transferRate = 0.5;
+    float transferRate = 0.35;
     if(neighboor.x > curr && (neighboor.x-curr) > minHeight ){
             
             height = curr+(neighboor.x-curr)*(transferRate);
             
     }else
-        if(neighboor.x < curr && (curr-neighboor.x) > minHeight){
+    if(neighboor.x < curr && (curr-neighboor.x) > minHeight){
 
-                height = curr-(curr-neighboor.x)*(transferRate);
+            height = curr-(curr-neighboor.x)*(transferRate);
 
-        }
+    }
     return height;
 }
 
@@ -126,7 +126,7 @@ void main()
     barrier();
     if (auxtime<1000){
 
-        if((i==j)|| (1024-i) == j || i==512 || j==512 || i==0 || j==0 || i==1023 || j==1023)
+        if((i==j) || ((i-j)%10 == 0) || (((1024-i)-j)%10 == 0) )
             imageStore(texVolume, ivec2(i, j ), vec4(1.0));
             else 
             imageStore(texVolume, ivec2(i, j ), vec4(0));
