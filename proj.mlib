@@ -3,9 +3,11 @@
     <renderTargets>
 	    <renderTarget name ="Render">
 			<SIZE width=1280 height=720 />
+			<CLEAR_VALUES r="0.8" g="1.0" b="0.7" />
 			<colors>
 				<color name="texRender" internalFormat="RGBA32F" />
 			</colors>
+			<depth name="texRenderZ" internalFormat="DEPTH_COMPONENT32F" />
 		</renderTarget>
 		<renderTarget name ="HeightMap">
 			<SIZE width=1024 height=1024 />
@@ -55,25 +57,34 @@
 		<material name="matRenderVolume">
 			<shader name="screenSpaceVolume">
 				<values>
-                    <valueof uniform="texRender" 	type="TEXTURE_BINDING" 	context="CURRENT" 		component="UNIT" id=0 />
-                    <valueof uniform="texVolume" 	type="TEXTURE_BINDING" 	context="CURRENT" 		component="UNIT" id=1 />
-                    <valueof uniform="heightMap" 	type="TEXTURE_BINDING" 	context="CURRENT" 		component="UNIT" id=2 />
+                    <valueof uniform="texRender"	type="TEXTURE_BINDING" 	context="CURRENT" 		component="UNIT" id=0 />
+                    <valueof uniform="texRenderZ"	type="TEXTURE_BINDING" 	context="CURRENT" 		component="UNIT" id=1 />
+                    <valueof uniform="texVolume"	type="TEXTURE_BINDING" 	context="CURRENT" 		component="UNIT" id=2 />
+                    <valueof uniform="heightMap"	type="TEXTURE_BINDING" 	context="CURRENT" 		component="UNIT" id=3 />
 					<valueof uniform="lightDir"		type="LIGHT" 			context="Sun" 			component="DIRECTION" />
 					<valueof uniform="view"			type="CAMERA"			context="MainCamera"	component="VIEW" />
-					<valueof uniform="up"			type="CAMERA"			context="MainCamera"	component="UP" />
+					<valueof uniform="right"		type="CAMERA"			context="MainCamera"	component="NORMALIZED_RIGHT" />
+					<valueof uniform="up"			type="CAMERA"			context="MainCamera"	component="NORMALIZED_UP" />
 					<valueof uniform="position"		type="CAMERA"			context="MainCamera"	component="POSITION" />
+					<valueof uniform="zNear"		type="CAMERA"			context="MainCamera"	component="NEAR" />
+					<valueof uniform="zFar"			type="CAMERA"			context="MainCamera"	component="FAR" />
 					<valueof uniform="fov"			type="CAMERA"			context="MainCamera"	component="FOV" />
 					<valueof uniform="sceneHt"		type="CAMERA"			context="HeightCamera"	component="FAR" />
 					<valueof uniform="sceneUp"		type="CAMERA"			context="HeightCamera"	component="TOP" />
 					<valueof uniform="sceneLf"		type="CAMERA"			context="HeightCamera"	component="LEFT" />
 					<valueof uniform="sceneRt"		type="CAMERA"			context="HeightCamera"	component="RIGHT" />
 					<valueof uniform="sceneDw"		type="CAMERA"			context="HeightCamera"	component="BOTTOM" />
+					<valueof uniform="windowSize"	type="VIEWPORT"			context="MainViewport"	component="SIZE" />
 				</values>
 			</shader>
 			<textures>
-                <texture name="texRender" 	UNIT=0 />
-                <texture name="test" 	UNIT=1 />
-                <texture name="heightMap" 	UNIT=2 />
+                <texture name="texRender" 			UNIT=0 />
+                <texture name="texRenderZ"			UNIT=1 />
+				<texture name="test" 				UNIT=2 />
+                <!-->
+                <texture name="texVolume" 			UNIT=2 />
+				<-->
+                <texture name="HeightMap_depth" 	UNIT=3 />
             </textures>
 		</material>
 
@@ -93,7 +104,7 @@
 				</values>
 			</shader>
 			<textures>
-                <texture name="heightMap" 	UNIT=1 />
+                <texture name="HeightMap_depth" 	UNIT=1 />
             </textures>
 			<imageTextures>
 				<imageTexture UNIT=0 texture="texVolume" >
