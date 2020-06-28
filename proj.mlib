@@ -104,9 +104,9 @@
 			<textures>
                 <texture name="texRender" 			UNIT=0 />
                 <texture name="texRenderZ"			UNIT=1 />
-				<texture name="test" 				UNIT=2 />
-                <!-->
                 <texture name="texVolume" 			UNIT=2 />
+                <!-->
+				<texture name="test" 				UNIT=2 />
 				<-->
                 <texture name="HeightMap_depth" 	UNIT=3 />
             </textures>
@@ -245,7 +245,6 @@
 					<TYPE value="SHADER_STORAGE" />
 					<BINDING_POINT value="1" />
 				</buffer>
-				
 			</buffers>
 		</material>
 	</materials>

@@ -127,8 +127,8 @@ vec4 rayMarch(vec3 rayPos, vec3 rayDir)
         //TODO calculate step of ray based on texel size and ray direction
         vec3  currentStep = rayDir * i * 0.05;
         float currentLength = length(currentStep);
-        if (currentLength >= maxDepth)
-            return vec4(0.0);
+        //if (currentLength >= maxDepth)
+        //    return vec4(0.0);
 
         vec3 current = rayPos + currentStep;
         if (!isInsideBoundingBoxTol(current)) 

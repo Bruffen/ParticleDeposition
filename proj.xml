@@ -11,6 +11,9 @@
 			<attribute name="windDir" data="VEC3" type="RENDERER" x=1 y=0 z=0/>
         </attributes>
 		<scenes>
+			<scene name="scene1">
+				<file name="models/scene1.obj"/>
+			</scene>
 			<scene name="Plane">
 				<geometry name = "square" type = "SQUARE" />
 				<SCALE x=10 y=1 z=10 />
@@ -53,7 +56,8 @@
 			<camera name="MainCamera" >
 				<viewport name="MainViewport" />
 				<POSITION x=0.0 y=1.0 z=5.0 />
-                <NEAR value=0.01 />
+				<NEAR 	value=0.1 />
+				<FAR 	value=100 /> 
 			</camera>
 		</cameras>
 		
@@ -73,7 +77,8 @@
 			<!-- Render the scene from above for height info -->
 		    <pass class="default" name="heightMapSetup">
 				<scenes>
-					<scene name="Plane" />
+					<scene name="scene1" />
+					<!--scene name="Plane" /-->
 					<!--scene name="Sphere" /-->
 				</scenes>
 				<camera name="HeightCamera" />
@@ -94,52 +99,29 @@
 			<!-- Render the scene from normal camera -->
 			<pass class="default" name="sceneRender">
 				<scenes>
-					<scene name="Plane" />
-				</scenes>
-				<camera name="MainCamera" />
-				<lights>
-					<light name="Sun" />
-				</lights>
-                <materialMaps>
-					<map fromMaterial="*" toMaterial="Tex" toLibrary="particleLib" />
-				</materialMaps>
-			</pass>
-			
-			<!---pass class="default" name="sceneRender">
-				<scenes>
+					<scene name="scene1" />
 					<scene name ="Particles" />  
+					<!--scene name="Plane" /-->
+					<!--scene name="Sphere" /-->
 				</scenes>
 				<camera name="MainCamera" />
 				<lights>
 					<light name="Sun" />
 				</lights>
-                <materialMaps>
+				<materialMaps>
 					<map fromMaterial="ParticlesBB" toMaterial="ParticlesBB" toLibrary="particleLib" />
 				</materialMaps>
-			</pass-->
+				<renderTarget name="Render" fromLibrary="particleLib" />
+			</pass>
 
-
-			<!-- <pass class="default" name="ParticlesBB">
-				<scenes>
-					<scene name="Plane" />
-				</scenes>
-				<camera name="MainCamera" />
-				<lights>
-					<light name="Sun" />
-				</lights>
-                <materialMaps>
-					<material name="ParticlesBB" fromLibrary="particleLib" dimX=500 dimY=1 dimZ=1 />
-				</materialMaps> 
-			</pass> -->
 			<!-- Render the volume from particles on top of the rendered scene -->
-                <!--renderTarget name="Render" fromLibrary="particleLib" />
-			<pass class="quad" name="volumeRender">
+ 			<pass class="quad" name="volumeRender">
                 <camera name="MainCamera" />
 				<viewport name="MainViewport" />
 				<materialMaps>
 					<map fromMaterial="__Quad" toMaterial="matRenderVolume" toLibrary="particleLib"/>
 				</materialMaps>
-			</pass-->
+			</pass>
 		</pipeline>
 	</pipelines>
 
