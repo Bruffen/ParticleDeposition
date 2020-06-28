@@ -3,6 +3,12 @@
 	<assets>
         <attributes>
             <attribute name="offset" data="FLOAT" type="RENDERER" value=0.1 />
+			<attribute name="radius" data="FLOAT" type="RENDERER" value=100 />
+			<attribute name="gravity" data="FLOAT" type="RENDERER" value=0.1 />
+			<attribute name="speed" data="FLOAT" type="RENDERER" value=0.1 />
+			<attribute name="width" data="FLOAT" type="RENDERER" value=0.1 />
+			<attribute name="height" data="FLOAT" type="RENDERER" value=0.1 />
+			<attribute name="windDir" data="VEC3" type="RENDERER" x=1 y=0 z=0/>
         </attributes>
 		<scenes>
 			<scene name="Plane">
@@ -12,6 +18,12 @@
 			<scene name="Sphere">
 				<geometry name = "sphere" type = "SPHERE" />
 				<SCALE x=2 y=2 z=2 />
+			</scene>
+			<scene name="Particles" >
+				<buffers name="Positions" primitive="POINTS" material=ParticlesBB>
+					<position name="Positions" fromLibrary="particleLib" />	
+					<!-- <position name="Positions" fromLibrary="particleLib" />			 -->
+				</buffers>	
 			</scene>
 		</scenes>
 		
@@ -69,13 +81,20 @@
 			</pass>
 			<!-- Compute all the particles in a compute shader -->
 			<pass class="compute" name="particles">
-				<material name="matParticles" fromLibrary="particleLib" dimX=500 dimY=1 dimZ=1 />
+				<material name="matParticles" fromLibrary="particleLib" dimX=1000 dimY=1 dimZ=1 />
 			</pass>
+			<!-- Compute the deposition of particles -->
+			<pass class="compute" name="aux">
+				<material name="depositionAux" fromLibrary="particleLib" dimX=1024 dimY=1024 dimZ=1 />
+			</pass>
+			<pass class="compute" name="deposition">
+				<material name="depositionHeight" fromLibrary="particleLib" dimX=1024 dimY=1024 dimZ=1 />
+			</pass>
+			
 			<!-- Render the scene from normal camera -->
 			<pass class="default" name="sceneRender">
 				<scenes>
 					<scene name="Plane" />
-					<!--scene name="Sphere" /-->
 				</scenes>
 				<camera name="MainCamera" />
 				<lights>
@@ -85,6 +104,33 @@
 					<map fromMaterial="*" toMaterial="Tex" toLibrary="particleLib" />
 				</materialMaps>
 			</pass>
+			
+			<!---pass class="default" name="sceneRender">
+				<scenes>
+					<scene name ="Particles" />  
+				</scenes>
+				<camera name="MainCamera" />
+				<lights>
+					<light name="Sun" />
+				</lights>
+                <materialMaps>
+					<map fromMaterial="ParticlesBB" toMaterial="ParticlesBB" toLibrary="particleLib" />
+				</materialMaps>
+			</pass-->
+
+
+			<!-- <pass class="default" name="ParticlesBB">
+				<scenes>
+					<scene name="Plane" />
+				</scenes>
+				<camera name="MainCamera" />
+				<lights>
+					<light name="Sun" />
+				</lights>
+                <materialMaps>
+					<material name="ParticlesBB" fromLibrary="particleLib" dimX=500 dimY=1 dimZ=1 />
+				</materialMaps> 
+			</pass> -->
 			<!-- Render the volume from particles on top of the rendered scene -->
                 <!--renderTarget name="Render" fromLibrary="particleLib" />
 			<pass class="quad" name="volumeRender">
@@ -101,5 +147,19 @@
         <!--window label="Variables">
             <var label="Offset" type="RENDERER" context="CURRENT" component="offset" def="step=0.001"/>
         </window-->
+		<window label="Particles">
+			<var label="Radius" type="RENDERER" context="CURRENT" component="radius" 
+				def="min=1 max=150 step=0.01"/>
+			<var label="Gravity" type="RENDERER" context="CURRENT" component="gravity" 
+				def="min=0.01 max=10 step=0.01"/>
+			<var label="Speed" type="RENDERER" context="CURRENT" component="speed" 
+				def="min=0.01 max=5 step=0.01"/>
+			<var label="Width" type="RENDERER" context="CURRENT" component="width" 
+				def="min=0.01 max=10 step=0.01"/>
+			<var label="Height" type="RENDERER" context="CURRENT" component="height" 
+				def="min=0.01 max=10 step=0.01"/>
+			<var label="Wind Direction" type="RENDERER" context="CURRENT" component="windDir" />
+		</window>
+
     </interface> 
 </project>
