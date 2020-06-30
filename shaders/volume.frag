@@ -35,6 +35,10 @@ uniform float zNear;
 uniform float zFar;
 uniform vec2  windowSize;
 
+uniform float normalOffset;
+uniform float marchingStep;
+uniform int   marchingMax;
+
 const vec3 inf = vec3(1e20, 1e20, 1e20);
 
 in vec2 uv;
@@ -122,10 +126,10 @@ vec4 rayMarch(vec3 rayPos, vec3 rayDir)
     maxDepth = (2.0 * zNear * zFar) / (zFar + zNear - maxDepth * (zFar - zNear));
     maxDepth = length(rayDir * maxDepth);
 
-    for (int i = 0; i < 500; i++)
+    for (int i = 0; i < marchingMax; i++)
     {
         //TODO calculate step of ray based on texel size and ray direction
-        vec3  currentStep = rayDir * i * 0.05;
+        vec3  currentStep = rayDir * i * marchingStep;
         float currentLength = length(currentStep);
         //if (currentLength >= maxDepth)
         //    return vec4(0.0);
@@ -143,7 +147,7 @@ vec4 rayMarch(vec3 rayPos, vec3 rayDir)
         if (current.y < h && current.y > z) // TODO will have to use new depth buffer
         {
             // Calculate shading based on crossing directions to adjacent points to get the normal
-            float texel_step = 0.01;
+            float texel_step = normalOffset;
             float world_step = texel_step * (sceneLf - sceneRt);
             // Convert [0, 1] height to [0, scene height]
             float h_up = texture(texVolume, clamp(texUVs + vec2(0, texel_step), vec2(0), vec2(1))).r * sceneHt;
@@ -181,7 +185,7 @@ void main()
     if (rayPos != inf)
     {
         particleColor = rayMarch(rayPos, rayDir);
-        //particleColor = vec4(0, 0.7, 0, 0.5);
+        particleColor = vec4(0, 0.7, 0, 0.5);
     }
 
     color = mix(color, particleColor, particleColor.a);

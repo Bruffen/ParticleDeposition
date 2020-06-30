@@ -9,6 +9,9 @@
 			<attribute name="width" data="FLOAT" type="RENDERER" value=0.1 />
 			<attribute name="height" data="FLOAT" type="RENDERER" value=0.1 />
 			<attribute name="windDir" data="VEC3" type="RENDERER" x=1 y=0 z=0/>
+			<attribute name="normalOffset" data="FLOAT" type="RENDERER" value=0.1 />
+			<attribute name="marchingStep" data="FLOAT" type="RENDERER" value=0.01 />
+			<attribute name="marchingMax" data="INT" type="RENDERER" value=500 />
         </attributes>
 		<scenes>
 			<scene name="scene1">
@@ -86,7 +89,7 @@
 			</pass>
 			<!-- Compute all the particles in a compute shader -->
 			<pass class="compute" name="particles">
-				<material name="matParticles" fromLibrary="particleLib" dimX=1000 dimY=1 dimZ=1 />
+				<material name="matParticles" fromLibrary="particleLib" dimX=100000 dimY=1 dimZ=1 />
 			</pass>
 			<!-- Compute the deposition of particles -->
 			<pass class="compute" name="aux">
@@ -142,6 +145,12 @@
 				def="min=0.01 max=10 step=0.01"/>
 			<var label="Wind Direction" type="RENDERER" context="CURRENT" component="windDir" />
 		</window>
-
+		<window label="Rendering">
+			<var label="Normal Offset" type="RENDERER" context="CURRENT" component="normalOffset" 
+				def="min=0.001 max=10 step=0.001"/>
+			<var label="Marching Step" type="RENDERER" context="CURRENT" component="marchingStep" 
+				def="min=0.001 max=1 step=0.001"/>
+			<var label="Marching Max" type="RENDERER" context="CURRENT" component="marchingMax" />
+		</window>
     </interface> 
 </project>

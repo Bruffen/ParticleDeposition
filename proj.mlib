@@ -62,14 +62,14 @@
 
 	<buffers>
 		<buffer name="Positions">
-			<DIM x=1000 y=1 z=1 />
+			<DIM x=100000 y=1 z=1 />
 			<structure>
 				<field value="VEC4" />
 			</structure>
 			<CLEAR value="NEVER" />
 		</buffer>
 		<buffer name="Directions">
-			<DIM x=1000 y=1 z=1 />
+			<DIM x=100000 y=1 z=1 />
 			<structure>
 				<field value="VEC4" />
 			</structure>
@@ -99,6 +99,9 @@
 					<valueof uniform="sceneRt"		type="CAMERA"			context="HeightCamera"	component="RIGHT" />
 					<valueof uniform="sceneDw"		type="CAMERA"			context="HeightCamera"	component="BOTTOM" />
 					<valueof uniform="windowSize"	type="VIEWPORT"			context="MainViewport"	component="SIZE" />
+					<valueof uniform="normalOffset"	type="RENDERER" 		context="CURRENT" 		component="normalOffset" />
+					<valueof uniform="marchingStep"	type="RENDERER" 		context="CURRENT" 		component="marchingStep" />
+					<valueof uniform="marchingMax"	type="RENDERER" 		context="CURRENT" 		component="marchingMax" />
 				</values>
 			</shader>
 			<textures>
