@@ -62,14 +62,14 @@
 
 	<buffers>
 		<buffer name="Positions">
-			<DIM x=100000 y=1 z=1 />
+			<DIM x=10000 y=1 z=1 />
 			<structure>
 				<field value="VEC4" />
 			</structure>
 			<CLEAR value="NEVER" />
 		</buffer>
 		<buffer name="Directions">
-			<DIM x=100000 y=1 z=1 />
+			<DIM x=10000 y=1 z=1 />
 			<structure>
 				<field value="VEC4" />
 			</structure>

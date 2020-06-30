@@ -4,13 +4,13 @@
         <attributes>
             <attribute name="offset" data="FLOAT" type="RENDERER" value=0.1 />
 			<attribute name="radius" data="FLOAT" type="RENDERER" value=100 />
-			<attribute name="gravity" data="FLOAT" type="RENDERER" value=0.1 />
+			<attribute name="gravity" data="FLOAT" type="RENDERER" value=10 />
 			<attribute name="speed" data="FLOAT" type="RENDERER" value=0.1 />
 			<attribute name="width" data="FLOAT" type="RENDERER" value=0.1 />
 			<attribute name="height" data="FLOAT" type="RENDERER" value=0.1 />
 			<attribute name="windDir" data="VEC3" type="RENDERER" x=1 y=0 z=0/>
 			<attribute name="normalOffset" data="FLOAT" type="RENDERER" value=0.1 />
-			<attribute name="marchingStep" data="FLOAT" type="RENDERER" value=0.01 />
+			<attribute name="marchingStep" data="FLOAT" type="RENDERER" value=0.05 />
 			<attribute name="marchingMax" data="INT" type="RENDERER" value=500 />
         </attributes>
 		<scenes>
@@ -80,16 +80,18 @@
 			<!-- Render the scene from above for height info -->
 		    <pass class="default" name="heightMapSetup">
 				<scenes>
-					<scene name="scene1" />
-					<!--scene name="Plane" /-->
-					<!--scene name="Sphere" /-->
+					<!--
+					<scene name="Plane" />
+					<scene name="Sphere" />
+					/-->
+					<scene name="scene1" /> 
 				</scenes>
 				<camera name="HeightCamera" />
                 <renderTarget name="HeightMap" fromLibrary="particleLib" />
 			</pass>
 			<!-- Compute all the particles in a compute shader -->
 			<pass class="compute" name="particles">
-				<material name="matParticles" fromLibrary="particleLib" dimX=100000 dimY=1 dimZ=1 />
+				<material name="matParticles" fromLibrary="particleLib" dimX=10000 dimY=1 dimZ=1 />
 			</pass>
 			<!-- Compute the deposition of particles -->
 			<pass class="compute" name="aux">
@@ -102,10 +104,12 @@
 			<!-- Render the scene from normal camera -->
 			<pass class="default" name="sceneRender">
 				<scenes>
-					<scene name="scene1" />
-					<scene name ="Particles" />  
-					<!--scene name="Plane" /-->
-					<!--scene name="Sphere" /-->
+					<!--
+					<scene name="Plane" />
+					<scene name="Sphere" />
+					/-->
+					<scene name="scene1" /> 
+					<scene name ="Particles" />
 				</scenes>
 				<camera name="MainCamera" />
 				<lights>
