@@ -36,6 +36,7 @@ uniform float zFar;
 uniform vec2  windowSize;
 
 uniform float normalOffset;
+uniform float volumeAlpha;
 uniform float marchingStep;
 uniform int   marchingMax;
 
@@ -142,18 +143,18 @@ vec4 rayMarch(vec3 rayPos, vec3 rayDir)
         vec2 texUVs = vec2((current.x - sceneLf) * inv_bbWidth,
                            (current.z - sceneDw) * inv_bbHeight);
 
-        float h = texture(texVolume, texUVs).r * sceneHt;
+        float h = texture(texVolume, texUVs).r;// * sceneHt;
         float z = (1 - texture(heightMap, vec2(-texUVs.x, texUVs.y)).r) * sceneHt;
         if (current.y < h && current.y > z) // TODO will have to use new depth buffer
         {
             // Calculate shading based on crossing directions to adjacent points to get the normal
-            float texel_step = normalOffset;
+            float texel_step = 1.0/1024.0; // replace for texture sizes instead of hardcoded values
             float world_step = texel_step * (sceneLf - sceneRt);
             // Convert [0, 1] height to [0, scene height]
-            float h_up = texture(texVolume, clamp(texUVs + vec2(0, texel_step), vec2(0), vec2(1))).r * sceneHt;
-            float h_dw = texture(texVolume, clamp(texUVs - vec2(0, texel_step), vec2(0), vec2(1))).r * sceneHt;
-            float h_rt = texture(texVolume, clamp(texUVs + vec2(texel_step, 0), vec2(0), vec2(1))).r * sceneHt;
-            float h_lf = texture(texVolume, clamp(texUVs - vec2(texel_step, 0), vec2(0), vec2(1))).r * sceneHt;
+            float h_up = texture(texVolume, max(texUVs + vec2(0, texel_step), vec2(0))).r;// * sceneHt;
+            float h_dw = texture(texVolume, max(texUVs - vec2(0, texel_step), vec2(0))).r;// * sceneHt;
+            float h_rt = texture(texVolume, max(texUVs + vec2(texel_step, 0), vec2(0))).r;// * sceneHt;
+            float h_lf = texture(texVolume, max(texUVs - vec2(texel_step, 0), vec2(0))).r;// * sceneHt;
 
             vec3 up = normalize(vec3( world_step, h_up - h, 0));
             vec3 dw = normalize(vec3(-world_step, h_dw - h, 0));
@@ -162,9 +163,12 @@ vec4 rayMarch(vec3 rayPos, vec3 rayDir)
 
             vec3 normal = normalize(cross(up, lf) + cross(lf, dw) + cross(dw, rt) + cross(rt, up));
             vec3 ldir   = normalize(-lightDir);
-            vec3 particleColor = vec3(0.3, 0.5, 0.8);
+            vec3 particleColor = vec3(1.0);
+            vec3 ambient = particleColor * 0.2; // ambient
+            vec3 diffuse = particleColor * 0.8; // diffuse
 
-            return vec4(particleColor * dot(normal, ldir), 0.7);
+            return vec4(ambient + diffuse * max(0, dot(normal, ldir)), volumeAlpha);
+            //return vec4(normal, 1);
         }
     }
     return vec4(0.0);

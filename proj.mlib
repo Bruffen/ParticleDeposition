@@ -99,7 +99,7 @@
 					<valueof uniform="sceneRt"		type="CAMERA"			context="HeightCamera"	component="RIGHT" />
 					<valueof uniform="sceneDw"		type="CAMERA"			context="HeightCamera"	component="BOTTOM" />
 					<valueof uniform="windowSize"	type="VIEWPORT"			context="MainViewport"	component="SIZE" />
-					<valueof uniform="normalOffset"	type="RENDERER" 		context="CURRENT" 		component="normalOffset" />
+					<valueof uniform="volumeAlpha"	type="RENDERER" 		context="CURRENT" 		component="volumeAlpha" />
 					<valueof uniform="marchingStep"	type="RENDERER" 		context="CURRENT" 		component="marchingStep" />
 					<valueof uniform="marchingMax"	type="RENDERER" 		context="CURRENT" 		component="marchingMax" />
 				</values>

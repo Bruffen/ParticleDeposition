@@ -9,7 +9,7 @@
 			<attribute name="width" data="FLOAT" type="RENDERER" value=0.1 />
 			<attribute name="height" data="FLOAT" type="RENDERER" value=0.1 />
 			<attribute name="windDir" data="VEC3" type="RENDERER" x=1 y=0 z=0/>
-			<attribute name="normalOffset" data="FLOAT" type="RENDERER" value=0.1 />
+			<attribute name="volumeAlpha" data="FLOAT" type="RENDERER" value=0.5 />
 			<attribute name="marchingStep" data="FLOAT" type="RENDERER" value=0.05 />
 			<attribute name="marchingMax" data="INT" type="RENDERER" value=500 />
         </attributes>
@@ -150,8 +150,8 @@
 			<var label="Wind Direction" type="RENDERER" context="CURRENT" component="windDir" />
 		</window>
 		<window label="Rendering">
-			<var label="Normal Offset" type="RENDERER" context="CURRENT" component="normalOffset" 
-				def="min=0.001 max=10 step=0.001"/>
+			<var label="Volume Alpha" type="RENDERER" context="CURRENT" component="volumeAlpha" 
+				def="min=0 max=1 step=0.01"/>
 			<var label="Marching Step" type="RENDERER" context="CURRENT" component="marchingStep" 
 				def="min=0.001 max=1 step=0.001"/>
 			<var label="Marching Max" type="RENDERER" context="CURRENT" component="marchingMax" />
