@@ -185,7 +185,7 @@ void main()
     if (rayPos != inf)
     {
         particleColor = rayMarch(rayPos, rayDir);
-        particleColor = vec4(0, 0.7, 0, 0.5);
+        //particleColor = vec4(0, 0.7, 0, 0.5);
     }
 
     color = mix(color, particleColor, particleColor.a);
