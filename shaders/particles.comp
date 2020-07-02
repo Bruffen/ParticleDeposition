@@ -148,7 +148,7 @@ void main()
 			value.y += particleSize;
 			value.z += particleSize;
 			imageStore(texVolume,
-		ivec2((particles.x / width + 0.5) * texWidth, (particles.z / height + 0.5) * texHeight), 
+		ivec2((-particles.x / width + 0.5) * texWidth, (-particles.z / height + 0.5) * texHeight), 
 		value);
 
 			particles.w = 0;
