@@ -6,4 +6,4 @@
 *.code-workspace
 composerImGui.exe
 imgui.ini
-Nau3D.lnk
+*.lnk
