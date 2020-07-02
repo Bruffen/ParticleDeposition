@@ -1,6 +1,6 @@
 #version 440
 
-uniform mat4 m_pvm;
+uniform mat4 m_model;
 
 //in float size;
 in vec4 position;
@@ -24,7 +24,7 @@ out data{
 
 void main()
 {
-    o.pos = position;//particlePos[gl_VertexID];
+    o.pos = m_model * position;//particlePos[gl_VertexID];
     o.uv = texCoord0;
     o.id = gl_VertexID;
     o.dir = particleDir[gl_VertexID];

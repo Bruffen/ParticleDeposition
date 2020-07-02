@@ -2,7 +2,7 @@
 layout(points) in;
 layout(triangle_strip, max_vertices=20) out;
 
-uniform mat4 m_pvm;
+uniform mat4 m_pv;
 uniform float width;
 uniform float height;
 
@@ -18,7 +18,7 @@ in data{
 
 void GenerateVertex(vec4 p)
 {
-	gl_Position = m_pvm * p;
+	gl_Position = m_pv * p;
     EmitVertex();
 }
 
@@ -54,42 +54,63 @@ void main()
 
     vec4 p = i[0].pos;
 
-    float w = random(i[0].id) * width + 0.01;
-    float h = random(i[0].id) * height + 0.01;
-    vec4 v[8];
-    v[0] = p+ vec4(-w, -h, 0, 0);
-    ouv = vec2(0,0);
-    GenerateVertex(v[0]);
+    float w = /*random(i[0].id) */ width + 0.01;
+    float h = /*random(i[0].id) */ height + 0.01;
+    // vec4 v[8];
+    // v[0] = p+ vec4(-w, -h, 0, 0);
+    // ouv = vec2(0,0);
+    // GenerateVertex(v[0]);
 
-    v[1] = p + vec4(w, -h, 0, 0);
-    ouv = vec2(1,0);
-    GenerateVertex(v[1]);
+    // v[1] = p + vec4(w, -h, 0, 0);
+    // ouv = vec2(1,0);
+    // GenerateVertex(v[1]);
 
-    v[2] = p + vec4(-w, +h, 0, 0);
-    ouv = vec2(0,1);
-    GenerateVertex(v[2]);
+    // v[2] = p + vec4(-w, +h, 0, 0);
+    // ouv = vec2(0,1);
+    // GenerateVertex(v[2]);
 
-    v[3] = p + vec4(w, + h, 0, 0);
-    ouv = vec2(1,1);
-    GenerateVertex(v[3]);
+    // v[3] = p + vec4(w, + h, 0, 0);
+    // ouv = vec2(1,1);
+    // GenerateVertex(v[3]);
 
-    //Back side
+    // //Back side
 
-    v[4] = p+ vec4(w, -h, 0, 0);
-    ouv = vec2(0,0);
-    GenerateVertex(v[0]);
+    // v[4] = p+ vec4(w, -h, 0, 0);
+    // ouv = vec2(0,0);
+    // GenerateVertex(v[0]);
 
-    v[5] = p + vec4(-w, -h, 0, 0);
-    ouv = vec2(1,0);
-    GenerateVertex(v[1]);
+    // v[5] = p + vec4(-w, -h, 0, 0);
+    // ouv = vec2(1,0);
+    // GenerateVertex(v[1]);
 
-    v[6] = p + vec4(w, +h, 0, 0);
-    ouv = vec2(0,1);
-    GenerateVertex(v[2]);
+    // v[6] = p + vec4(w, +h, 0, 0);
+    // ouv = vec2(0,1);
+    // GenerateVertex(v[2]);
 
-    v[7] = p + vec4(-w, + h, 0, 0);
-    ouv = vec2(1,1);
-    GenerateVertex(v[3]);
+    // v[7] = p + vec4(-w, + h, 0, 0);
+    // ouv = vec2(1,1);
+    // GenerateVertex(v[3]);
+    vec4 v[14];
+	v[0] = vec4(i[0].pos.x	- (width/2), i[0].pos.y	+ (height/2), i[0].pos.z	- (width/2), 1.0f);
+	v[1] = vec4(i[0].pos.x	+ (width/2), i[0].pos.y	+ (height/2), i[0].pos.z	- (width/2), 1.0f);
+	v[2] = vec4(i[0].pos.x	- (width/2), i[0].pos.y	- (height/2), i[0].pos.z	- (width/2), 1.0f);
+	v[3] = vec4(i[0].pos.x	+ (width/2), i[0].pos.y	- (height/2), i[0].pos.z	- (width/2), 1.0f);
+	v[4] = vec4(i[0].pos.x	+ (width/2), i[0].pos.y	- (height/2), i[0].pos.z	+ (width/2), 1.0f);
+	v[5] = vec4(i[0].pos.x	+ (width/2), i[0].pos.y	+ (height/2), i[0].pos.z	- (width/2), 1.0f);
+	v[6] = vec4(i[0].pos.x	+ (width/2), i[0].pos.y	+ (height/2), i[0].pos.z	+ (width/2), 1.0f);
+	v[7] = vec4(i[0].pos.x	- (width/2), i[0].pos.y	+ (height/2), i[0].pos.z	- (width/2), 1.0f);
+	v[8] = vec4(i[0].pos.x	- (width/2), i[0].pos.y	+ (height/2), i[0].pos.z	+ (width/2), 1.0f);
+	v[9] = vec4(i[0].pos.x	- (width/2), i[0].pos.y	- (height/2), i[0].pos.z	- (width/2), 1.0f);
+	v[10] = vec4(i[0].pos.x	- (width/2), i[0].pos.y	- (height/2), i[0].pos.z	+ (width/2), 1.0f);
+	v[11] = vec4(i[0].pos.x	+ (width/2), i[0].pos.y	- (height/2), i[0].pos.z	+ (width/2), 1.0f);
+	v[12] = vec4(i[0].pos.x	- (width/2), i[0].pos.y	+ (height/2), i[0].pos.z	+ (width/2), 1.0f);
+	v[13] = vec4(i[0].pos.x	+ (width/2), i[0].pos.y	+ (height/2), i[0].pos.z	+ (width/2), 1.0f);
+
+    for(int i = 0;i<14;i++)
+    {
+        ouv = vec2(1,1);
+        GenerateVertex(v[i]);
+    }
 
     EndPrimitive();
     

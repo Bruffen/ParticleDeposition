@@ -238,7 +238,8 @@
 		<material name="ParticlesBB">
 			<shader name="billboards">
 				<values>
-					<valueof uniform="m_pvm" type="RENDERER" context="CURRENT" component="PROJECTION_VIEW_MODEL" />
+					<valueof uniform="m_model" type="RENDERER" context="CURRENT" component="MODEL" />
+					<valueof uniform="m_pv" type="RENDERER" context="CURRENT" component="PROJECTION_VIEW" />
 					<valueof uniform="texVolume" type="TEXTURE_BINDING" context="CURRENT" component="UNIT" id=0 />
 					<valueof uniform="width" type="RENDERER" context="CURRENT" component="width" />
 					<valueof uniform="height" type="RENDERER" context="CURRENT" component="height" />

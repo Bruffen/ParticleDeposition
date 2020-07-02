@@ -141,6 +141,18 @@ void main()
 		if (particles.x > sceneUp)
 			particles.x = sceneDw;
 
+		if (particles.z < sceneLf)
+			particles.z = sceneRt;
+
+		if (particles.z > sceneRt)
+			particles.z = sceneLf;
+
+		if (particles.z < sceneDw)
+			particles.z = sceneUp;
+
+		if (particles.z > sceneUp)
+			particles.z = sceneDw;
+
 		if (particles.y <= 0)
 		{
 			vec4 value = imageLoad(texVolume, ivec2((-particles.x / width + 0.5) * texWidth, (-particles.z / height + 0.5) * texHeight));
