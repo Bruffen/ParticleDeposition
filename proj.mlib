@@ -26,12 +26,12 @@
 		<texture name="texVolume">
 			<WIDTH value=1024 />
 			<HEIGHT value=1024 />
-			<INTERNAL_FORMAT value="RGBA" />
+			<INTERNAL_FORMAT value="RGBA32F" />
 		</texture>
 		<texture name="texVolumeAux">
 			<WIDTH value=1024 />
 			<HEIGHT value=1024 />
-			<INTERNAL_FORMAT value="RGBA" />
+			<INTERNAL_FORMAT value="RGBA32F" />
 		</texture>
 		<texture name="test" filename="texture.png">
 		</texture>
@@ -62,14 +62,14 @@
 
 	<buffers>
 		<buffer name="Positions">
-			<DIM x=10000 y=1 z=1 />
+			<DIM x=100000 y=1 z=1 />
 			<structure>
 				<field value="VEC4" />
 			</structure>
 			<CLEAR value="NEVER" />
 		</buffer>
 		<buffer name="Directions">
-			<DIM x=10000 y=1 z=1 />
+			<DIM x=100000 y=1 z=1 />
 			<structure>
 				<field value="VEC4" />
 			</structure>
@@ -173,6 +173,8 @@
 					<valueof uniform="speed" 		type="RENDERER" 		context="CURRENT" 		component="speed" />
 					<valueof uniform="gravity" 		type="RENDERER" 		context="CURRENT" 		component="gravity" />
 					<valueof uniform="windDir" 		type="RENDERER" 		context="CURRENT" 		component="windDir" />
+					<valueof uniform="minHeight" 	type="RENDERER" 		context="CURRENT" 		component="minHeight" />
+					<valueof uniform="transferRate" type="RENDERER" 		context="CURRENT" 		component="transferRate" />
 				</values>
 			</shader>
 			<textures>

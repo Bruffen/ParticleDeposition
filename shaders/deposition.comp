@@ -42,7 +42,7 @@ layout (local_size_x = 1, local_size_y = 1, local_size_z = 1) in; // optimize
 uniform sampler2D heightMap;
 //uniform restrict image2D texVolume;
 
-layout(binding=0, rgba8) uniform image2D texVolumeAux;
+layout(binding=0, rgba32f) uniform image2D texVolumeAux;
 uniform image2D writeonly texVolume;
 uniform int texWidth;
 uniform int texHeight;
@@ -59,6 +59,8 @@ uniform float radius;
 uniform float gravity;
 uniform float speed;
 uniform vec3 windDir;
+uniform float minHeight;
+uniform float transferRate;
 
 uniform float time;
 
@@ -97,8 +99,6 @@ float snoise(vec2 v){
 float checkSend(uint i,uint j,int ipp,int jpp,float curr){
     vec4 neighboor = imageLoad(texVolumeAux, ivec2(i +ipp, j+jpp ));
     float height = curr;
-    float minHeight = 0.02;
-    float transferRate = 0.35;
     if(neighboor.x > curr && (neighboor.x-curr) > minHeight ){
             
             height = curr+(neighboor.x-curr)*(transferRate);
@@ -135,16 +135,57 @@ void main()
     
     
     
-    if(auxtime%10 == 0)
+    if(auxtime%4 == 0)
     {
         //TODO: Pick Directions properly as it's the major bug source
         vec4 curr  = imageLoad(texVolumeAux, ivec2(i, j ));
         float currval = curr.x;
         //left  
         currval = checkSend(i,j, 0,-1,currval);
-        //right 
+      
+        
+        imageStore(texVolume, ivec2(i, j ),
+                vec4(currval)
+            );
+        
+    }
+    if(auxtime%4 == 1)
+    {
+        //TODO: Pick Directions properly as it's the major bug source
+        vec4 curr  = imageLoad(texVolumeAux, ivec2(i, j ));
+        float currval = curr.x;
+        //left  
+       
         currval = checkSend(i,j,-1, 0,currval);
+        
+        
+        imageStore(texVolume, ivec2(i, j ),
+                vec4(currval)
+            );
+        
+    }
+    if(auxtime%4 == 2)
+    {
+        //TODO: Pick Directions properly as it's the major bug source
+        vec4 curr  = imageLoad(texVolumeAux, ivec2(i, j ));
+        float currval = curr.x;
+        //left  
+       
         currval = checkSend(i,j, 0,+1,currval);
+        //top   
+   
+        
+        imageStore(texVolume, ivec2(i, j ),
+                vec4(currval)
+            );
+        
+    }
+    if(auxtime%4 == 3)
+    {
+        //TODO: Pick Directions properly as it's the major bug source
+        vec4 curr  = imageLoad(texVolumeAux, ivec2(i, j ));
+        float currval = curr.x;
+       
         //top   
         //bot   
         currval = checkSend(i,j,+1, 0,currval);
