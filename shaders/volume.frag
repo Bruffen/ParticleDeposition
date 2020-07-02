@@ -145,7 +145,7 @@ vec4 rayMarch(vec3 rayPos, vec3 rayDir)
 
         float h = texture(texVolume, texUVs).r;// * sceneHt;
         float z = (1 - texture(heightMap, vec2(-texUVs.x, texUVs.y)).r) * sceneHt;
-        if (current.y < h && current.y > z) // TODO will have to use new depth buffer
+        if (current.y < h + z && current.y > z) // TODO will have to use new depth buffer
         {
             // Calculate shading based on crossing directions to adjacent points to get the normal
             float texel_step = 1.0/1024.0; // replace for texture sizes instead of hardcoded values

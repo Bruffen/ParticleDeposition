@@ -59,6 +59,8 @@ uniform float radius;
 uniform float gravity;
 uniform float speed;
 uniform vec3 windDir;
+uniform float minHeight;
+uniform float transferRate;
 
 uniform float time;
 
@@ -97,8 +99,6 @@ float snoise(vec2 v){
 float checkSend(uint i,uint j,int ipp,int jpp,float curr){
     vec4 neighboor = imageLoad(texVolumeAux, ivec2(i +ipp, j+jpp ));
     float height = curr;
-    float minHeight = 0.02;
-    float transferRate = 0.35;
     if(neighboor.x > curr && (neighboor.x-curr) > minHeight ){
             
             height = curr+(neighboor.x-curr)*(transferRate);
