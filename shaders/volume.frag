@@ -15,7 +15,7 @@
 uniform sampler2D texRender;    
 uniform sampler2D heightMap;    // World height map
 uniform sampler2D texVolume;    // World height map + particles heights
-const float particleHighest = 2.0;
+const float particleHighest = 3.5;
 
 uniform vec3 lightDir;
 
@@ -140,8 +140,9 @@ vec4 rayMarch(vec3 rayPos, vec3 rayDir)
             return vec4(0.0);
         
         // Normalize current position within scene bounding box to [0, 1]
-        vec2 texUVs = vec2((current.x - sceneLf) * inv_bbWidth,
-                           (current.z - sceneDw) * inv_bbHeight);
+        const float tol = 0.001;
+        vec2 texUVs = clamp(vec2((current.x - sceneLf) * inv_bbWidth,
+                           (current.z - sceneDw) * inv_bbHeight), 0 + tol, 1 - tol);
 
         float h = texture(texVolume, texUVs).r;// * sceneHt;
         float z = (1 - texture(heightMap, vec2(-texUVs.x, texUVs.y)).r) * sceneHt;

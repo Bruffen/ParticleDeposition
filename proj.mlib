@@ -26,12 +26,12 @@
 		<texture name="texVolume">
 			<WIDTH value=1024 />
 			<HEIGHT value=1024 />
-			<INTERNAL_FORMAT value="RGBA" />
+			<INTERNAL_FORMAT value="RGBA32F" />
 		</texture>
 		<texture name="texVolumeAux">
 			<WIDTH value=1024 />
 			<HEIGHT value=1024 />
-			<INTERNAL_FORMAT value="RGBA" />
+			<INTERNAL_FORMAT value="RGBA32F" />
 		</texture>
 		<texture name="test" filename="texture.png">
 		</texture>
