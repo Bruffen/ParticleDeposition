@@ -42,7 +42,7 @@ layout (local_size_x = 1, local_size_y = 1, local_size_z = 1) in; // optimize
 
 uniform sampler2D heightMap;
 
-uniform writeonly image2D texVolume;
+layout(binding=0, rgba8) uniform image2D texVolume;
 uniform int texWidth;
 uniform int texHeight;
 
@@ -58,6 +58,7 @@ uniform float radius;
 uniform float gravity;
 uniform float speed;
 uniform vec3 windDir;
+uniform float particleSize;
 
 uniform float time;
 
@@ -72,6 +73,7 @@ layout( std140, binding=2 ) buffer Directions
 	vec4 particleDir[];
 	//vec4 particleDir[];
 };
+
 /*
  * Another buffer for velocities or anything else can be added if needed
 */
@@ -141,9 +143,13 @@ void main()
 
 		if (particles.y <= 0)
 		{
+			vec4 value = imageLoad(texVolume, ivec2((-particles.x / width + 0.5) * texWidth, (-particles.z / height + 0.5) * texHeight));
+			value.x += particleSize;
+			value.y += particleSize;
+			value.z += particleSize;
 			imageStore(texVolume,
 		ivec2((particles.x / width + 0.5) * texWidth, (particles.z / height + 0.5) * texHeight), 
-		vec4(random(i * width + j)));
+		value);
 
 			particles.w = 0;
 

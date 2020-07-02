@@ -8,6 +8,7 @@
 			<attribute name="speed" data="FLOAT" type="RENDERER" value=0.1 />
 			<attribute name="width" data="FLOAT" type="RENDERER" value=0.1 />
 			<attribute name="height" data="FLOAT" type="RENDERER" value=0.1 />
+			<attribute name="particleSize" data="FLOAT" type="RENDERER" value=0.1 />
 			<attribute name="windDir" data="VEC3" type="RENDERER" x=1 y=0 z=0/>
 			<attribute name="volumeAlpha" data="FLOAT" type="RENDERER" value=0.5 />
 			<attribute name="marchingStep" data="FLOAT" type="RENDERER" value=0.05 />
@@ -140,13 +141,15 @@
 			<var label="Radius" type="RENDERER" context="CURRENT" component="radius" 
 				def="min=1 max=150 step=0.01"/>
 			<var label="Gravity" type="RENDERER" context="CURRENT" component="gravity" 
-				def="min=0.01 max=10 step=0.01"/>
+				def="min=0.01 max=20 step=0.01"/>
 			<var label="Speed" type="RENDERER" context="CURRENT" component="speed" 
 				def="min=0.01 max=5 step=0.01"/>
 			<var label="Width" type="RENDERER" context="CURRENT" component="width" 
 				def="min=0.01 max=10 step=0.01"/>
 			<var label="Height" type="RENDERER" context="CURRENT" component="height" 
 				def="min=0.01 max=10 step=0.01"/>
+			<var label="Particle Size" type="RENDERER" context="CURRENT" component="particleSize" 
+				def="min=0.1 max=20 step=0.1"/>
 			<var label="Wind Direction" type="RENDERER" context="CURRENT" component="windDir" />
 		</window>
 		<window label="Rendering">

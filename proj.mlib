@@ -132,6 +132,7 @@
 					<valueof uniform="speed" 		type="RENDERER" 		context="CURRENT" 		component="speed" />
 					<valueof uniform="gravity" 		type="RENDERER" 		context="CURRENT" 		component="gravity" />
 					<valueof uniform="windDir" 		type="RENDERER" 		context="CURRENT" 		component="windDir" />
+					<valueof uniform="particleSize" type="RENDERER" 		context="CURRENT" 		component="particleSize" />
 				</values>
 			</shader>
 			<textures>
@@ -241,6 +242,7 @@
 					<valueof uniform="texVolume" type="TEXTURE_BINDING" context="CURRENT" component="UNIT" id=0 />
 					<valueof uniform="width" type="RENDERER" context="CURRENT" component="width" />
 					<valueof uniform="height" type="RENDERER" context="CURRENT" component="height" />
+					<valueof uniform="particleSize" type="RENDERER" context="CURRENT" component="particleSize" />
 				</values>
 			</shader>
 			<buffers>
