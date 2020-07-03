@@ -53,6 +53,9 @@
 			<shader name="deposition"
 				cs = "shaders/deposition.comp" 
 				/>
+			<shader name="addVect"
+				cs = "shaders/addVect.comp" 
+				/>
 			<shader name="copyAuxdeposition"
 				cs = "shaders/copyAuxdeposition.comp" 
 				/>

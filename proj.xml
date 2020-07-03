@@ -4,10 +4,10 @@
         <attributes>
             <attribute name="offset" data="FLOAT" type="RENDERER" value=0.1 />
 			<attribute name="radius" data="FLOAT" type="RENDERER" value=100 />
-			<attribute name="gravity" data="FLOAT" type="RENDERER" value=10 />
+			<attribute name="gravity" data="FLOAT" type="RENDERER" value=0.4 />
 			<attribute name="speed" data="FLOAT" type="RENDERER" value=0.1 />
-			<attribute name="width" data="FLOAT" type="RENDERER" value=0.1 />
-			<attribute name="height" data="FLOAT" type="RENDERER" value=0.1 />
+			<attribute name="width" data="FLOAT" type="RENDERER" value=0.01 />
+			<attribute name="height" data="FLOAT" type="RENDERER" value=0.01 />
 			<attribute name="particleSize" data="FLOAT" type="RENDERER" value=0.1 />
 			<attribute name="minHeight" data="FLOAT" type="RENDERER" value=0.02 />
 			<attribute name="transferRate" data="FLOAT" type="RENDERER" value=0.35 />
@@ -104,6 +104,9 @@
 				<material name="depositionHeight" fromLibrary="particleLib" dimX=1024 dimY=1024 dimZ=1 />
 			</pass>
 			
+			<pass class="compute" name="addVect">
+				<material name="depositionHeight" fromLibrary="particleLib" dimX=1024 dimY=1024 dimZ=1 />
+			</pass>
 			<!-- Render the scene from normal camera -->
 			<pass class="default" name="sceneRender">
 				<scenes>
