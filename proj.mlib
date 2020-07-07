@@ -177,11 +177,11 @@
 					<valueof uniform="gravity" 		type="RENDERER" 		context="CURRENT" 		component="gravity" />
 					<valueof uniform="windDir" 		type="RENDERER" 		context="CURRENT" 		component="windDir" />
 					<valueof uniform="minHeight" 	type="RENDERER" 		context="CURRENT" 		component="minHeight" />
-					<valueof uniform="transferRate" type="RENDERER" 		context="CURRENT" 		component="transferRate" />
+					<valueof uniform="viscosity" type="RENDERER" 		context="CURRENT" 		component="viscosity" />
 				</values>
 			</shader>
 			<textures>
-                <texture name="heightMap" 	UNIT=1 />
+                <texture name="HeightMap_depth"  	UNIT=1 />
             </textures>
 			<imageTextures>
 				<imageTexture UNIT=0 texture="texVolume" >
@@ -214,7 +214,7 @@
 				</values>
 			</shader>
 			<textures>
-                <texture name="heightMap" 	UNIT=1 />
+                <texture name="HeightMap_depth" 	UNIT=1 />
             </textures>
 			<imageTextures>
 				<imageTexture UNIT=0 texture="texVolume" >

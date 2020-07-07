@@ -92,9 +92,11 @@ uniform float gravity;
 uniform float speed;
 uniform vec3 windDir;
 uniform float minHeight;
-uniform float transferRate;
+uniform float viscosity;
 
 uniform float time;
+
+
 
 
 
@@ -103,20 +105,34 @@ float checkSend(uint i,uint j,int ipp,int jpp,float curr){
     float height = curr;
     if(neighboor.x > curr && (neighboor.x-curr) > minHeight ){
             
-            height = curr+(neighboor.x-curr)*(transferRate);
+            height = curr+(neighboor.x-curr)*(viscosity);
             
     }else
     if(neighboor.x < curr && (curr-neighboor.x) > minHeight){
 
-            height = curr-(curr-neighboor.x)*(transferRate);
+            height = curr-(curr-neighboor.x)*(viscosity);
 
     }
     return height;
 }
 
 
-void main()
-{
+float sendRecieve(float totalheight,float particleheight, float neibtotal, float neibparticle){
+
+    float heightdif = neibtotal-totalheight;
+    
+    if(abs(heightdif) < viscosity)
+        return min(0.25,viscosity)*(1-viscosity)*clamp(heightdif, -1*particleheight,neibparticle); 
+    return 0.25*(1-viscosity)*clamp(heightdif, -1*particleheight,neibparticle);
+
+}
+
+float gettex(uint i,uint j){
+    return (vec4((1-texture(heightMap, vec2(-1,1)*(vec2(i,j)/1024))))*sceneHt).x ;
+}
+
+void main(){
+
     uint i = gl_GlobalInvocationID.x;
 	uint j = gl_GlobalInvocationID.y;
 	uint k = gl_GlobalInvocationID.x + gl_WorkGroupSize.x * gl_GlobalInvocationID.y;
@@ -126,42 +142,78 @@ void main()
 	const float center_x = width/2;
 	const float center_z = height/2;
     int auxtime = int(time);
-    
-    barrier();
 
-  //  if (auxtime<1000)
-//
-    //imageStore(texVolume, ivec2(i, j ), texture(heightMap,ivec2(i,j))+vec4(1.0));
-    //    if((i==j) || ((i-j)%10 == 0) || (((1024-i)-j)%10 == 0) )
-    //        imageStore(texVolume, ivec2(i, j ), vec4(1.0));
-    //        else 
-    //        imageStore(texVolume, ivec2(i, j ), vec4(0));
-    //    return;
-    //}
+    float curr  = imageLoad(texVolumeAux,ivec2(i,j)).x;
+    float top   = imageLoad(texVolumeAux,ivec2(i-1,j)).x;
+    float bot   = imageLoad(texVolumeAux,ivec2(i+1,j)).x;
+    float right = imageLoad(texVolumeAux,ivec2(i,j+1)).x;
+    float left  = imageLoad(texVolumeAux,ivec2(i,j-1)).x;
+    float totalcurr  = curr  + gettex(i,j);
+    float totaltop   = top   + gettex(i-1,j);
+    float totalbot   = bot   + gettex(i+1,j);
+    float totalright = right + gettex(i,j+1);
+    float totalleft  = left  + gettex(i,j-1);
 
-    float viscosidade = minHeight;
-    
-    //Delta time
+    float aux = curr;
+    aux += sendRecieve(totalcurr,curr,totaltop,top);    
+    aux += sendRecieve(totalcurr,curr,totalbot,bot);
+    aux += sendRecieve(totalcurr,curr,totalright,right);
+    aux += sendRecieve(totalcurr,curr,totalleft,left);
 
-    float dt = 1;
-    
-    float a = viscosidade * dt / ((width-2) * (height-2));
-    float c = 1 +4*a;
-    //if(i!=0 && j !=0 && i < width && j < height){
-
-        vec4 curr = imageLoad(texVolumeAux, ivec2(i, j ));
-
-        vec4 aux =  imageLoad(texVolume, ivec2(i+1, j))+
-                    imageLoad(texVolume, ivec2(i-1, j))+
-                    imageLoad(texVolume, ivec2(i, j+1))+
-                    imageLoad(texVolume, ivec2(i, j-1));
-
-        //aux = aux/4;
-        curr = (curr+a*aux)/c;
-        imageStore(texVolume, ivec2(i, j ),
-                    vec4(curr)
-                );
+    imageStore(texVolume, ivec2(i, j ),
+            vec4(aux)
+        );
         
-    //}    
-
+    //imageStore(texVolume, ivec2(i, j ), vec4(gettex(i,j)) );
 }
+
+//void main()
+//{
+//    uint i = gl_GlobalInvocationID.x;
+//	uint j = gl_GlobalInvocationID.y;
+//	uint k = gl_GlobalInvocationID.x + gl_WorkGroupSize.x * gl_GlobalInvocationID.y;
+//
+//    const float width  = sceneLf - sceneRt;
+//	const float height = sceneDw - sceneUp;
+//	const float center_x = width/2;
+//	const float center_z = height/2;
+//    int auxtime = int(time);
+//    
+//    barrier();
+//
+//  //  if (auxtime<1000)
+////
+//    //imageStore(texVolume, ivec2(i, j ), texture(heightMap,ivec2(i,j))+vec4(1.0));
+//    //    if((i==j) || ((i-j)%10 == 0) || (((1024-i)-j)%10 == 0) )
+//    //        imageStore(texVolume, ivec2(i, j ), vec4(1.0));
+//    //        else 
+//    //        imageStore(texVolume, ivec2(i, j ), vec4(0));
+//    //    return;
+//    //}
+//
+//    float viscosidade = minHeight;
+//    
+//    //Delta time
+//
+//    float dt = 1;
+//    
+//    float a = viscosidade * dt / ((width-2) * (height-2));
+//    float c = 1 +4*a;
+//    //if(i!=0 && j !=0 && i < width && j < height){
+//
+//        vec4 curr = imageLoad(texVolumeAux, ivec2(i, j ));
+//
+//        vec4 aux =  imageLoad(texVolume, ivec2(i+1, j))+
+//                    imageLoad(texVolume, ivec2(i-1, j))+
+//                    imageLoad(texVolume, ivec2(i, j+1))+
+//                    imageLoad(texVolume, ivec2(i, j-1));
+//
+//        //aux = aux/4;
+//        curr = (curr+a*aux)/c;
+//        imageStore(texVolume, ivec2(i, j ),
+//                    vec4(curr)
+//                );
+//        
+//    //}    
+//
+//}

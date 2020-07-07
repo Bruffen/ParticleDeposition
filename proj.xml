@@ -4,13 +4,13 @@
         <attributes>
             <attribute name="offset" data="FLOAT" type="RENDERER" value=0.1 />
 			<attribute name="radius" data="FLOAT" type="RENDERER" value=100 />
-			<attribute name="gravity" data="FLOAT" type="RENDERER" value=0.4 />
+			<attribute name="gravity" data="FLOAT" type="RENDERER" value=9.8 />
 			<attribute name="speed" data="FLOAT" type="RENDERER" value=0.1 />
 			<attribute name="width" data="FLOAT" type="RENDERER" value=0.01 />
 			<attribute name="height" data="FLOAT" type="RENDERER" value=0.01 />
 			<attribute name="particleSize" data="FLOAT" type="RENDERER" value=0.1 />
 			<attribute name="minHeight" data="FLOAT" type="RENDERER" value=0.02 />
-			<attribute name="transferRate" data="FLOAT" type="RENDERER" value=0.35 />
+			<attribute name="viscosity" data="FLOAT" type="RENDERER" value=0.35 />
 			<attribute name="windDir" data="VEC3" type="RENDERER" x=1 y=0 z=0/>
 			<attribute name="volumeAlpha" data="FLOAT" type="RENDERER" value=0.5 />
 			<attribute name="marchingStep" data="FLOAT" type="RENDERER" value=0.008 />
@@ -104,9 +104,9 @@
 				<material name="depositionHeight" fromLibrary="particleLib" dimX=1024 dimY=1024 dimZ=1 />
 			</pass>
 			
-			<pass class="compute" name="addVect">
+			<!--pass class="compute" name="addVect">
 				<material name="depositionHeight" fromLibrary="particleLib" dimX=1024 dimY=1024 dimZ=1 />
-			</pass>
+			</pass-->
 			<!-- Render the scene from normal camera -->
 			<pass class="default" name="sceneRender">
 				<scenes>
@@ -157,9 +157,9 @@
 				def="min=0.1 max=20 step=0.1"/>
 			<var label="Wind Direction" type="RENDERER" context="CURRENT" component="windDir" />
 			<var label="Transfer Min Height" type="RENDERER" context="CURRENT" component="minHeight" 
-				def="min=0.001 max=10 step=0.001"/>
-			<var label="Transfer Rate" type="RENDERER" context="CURRENT" component="transferRate" 
-				def="min=0.01 max=1 step=0.01"/>
+				def="min=0.001 max=1 step=0.001"/>
+			<var label="Viscosity" type="RENDERER" context="CURRENT" component="viscosity" 
+				def="min=0.002 max=1 step=0.01"/>
 		</window>
 		<window label="Rendering">
 			<var label="Volume Alpha" type="RENDERER" context="CURRENT" component="volumeAlpha" 
