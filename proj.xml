@@ -10,7 +10,7 @@
 			<attribute name="height" data="FLOAT" type="RENDERER" value=0.01 />
 			<attribute name="particleSize" data="FLOAT" type="RENDERER" value=0.1 />
 			<attribute name="minHeight" data="FLOAT" type="RENDERER" value=0.02 />
-			<attribute name="viscosity" data="FLOAT" type="RENDERER" value=0.35 />
+			<attribute name="viscosity" data="FLOAT" type="RENDERER" value=0.009 />
 			<attribute name="windDir" data="VEC3" type="RENDERER" x=1 y=0 z=0/>
 			<attribute name="volumeAlpha" data="FLOAT" type="RENDERER" value=0.5 />
 			<attribute name="marchingStep" data="FLOAT" type="RENDERER" value=0.008 />

@@ -122,7 +122,7 @@ float sendRecieve(float totalheight,float particleheight, float neibtotal, float
     float heightdif = neibtotal-totalheight;
     
     if(abs(heightdif) < viscosity)
-        return min(0.25,viscosity)*(1-viscosity)*clamp(heightdif, -1*particleheight,neibparticle); 
+        return min(0.1,viscosity)*(1-viscosity)*clamp(heightdif, -1*particleheight,neibparticle); 
     return 0.25*(1-viscosity)*clamp(heightdif, -1*particleheight,neibparticle);
 
 }
