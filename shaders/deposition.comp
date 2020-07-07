@@ -119,11 +119,11 @@ float checkSend(uint i,uint j,int ipp,int jpp,float curr){
 
 float sendRecieve(float totalheight,float particleheight, float neibtotal, float neibparticle){
 
-    float heightdif = neibtotal-totalheight;
-    
-    if(abs(heightdif) < viscosity)
-        return min(0.1,viscosity)*(1-viscosity)*clamp(heightdif, -1*particleheight,neibparticle); 
-    return 0.25*(1-viscosity)*clamp(heightdif, -1*particleheight,neibparticle);
+    float heightdif = (neibtotal-totalheight);
+    float transfer = 0.25*min(max(heightdif,-1*particleheight),neibparticle);//clamp(heightdif, -1*particleheight,neibparticle);
+    if(abs(heightdif*0.25) < viscosity)
+        return 0.1*(1-viscosity)*transfer; 
+    return (1-viscosity)*transfer;
 
 }
 
