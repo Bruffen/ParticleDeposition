@@ -47,6 +47,24 @@ float floatConstruct( uint m ) {
 }
 
 
+mat3 AngleAxis3x3(float anglex, float angley, vec3 axis)
+{
+	float c, s;
+	c = cos(anglex);
+	s = sin(angley);
+
+	float t = 1 - c;
+	float x = axis.x;
+	float y = axis.y;
+	float z = axis.z;
+
+	return mat3(
+		t * x * x + c, t * x * y - s * z, t * x * z + s * y,
+		t * x * y + s * z, t * y * y + c, t * y * z - s * x,
+		t * x * z - s * y, t * y * z + s * x, t * z * z + c
+		);
+}
+
 float random( float x ) { return floatConstruct(hash(floatBitsToUint(x))); }
 
 out vec2 ouv;
@@ -59,40 +77,12 @@ void main()
 
     float w = /*random(i[0].id) */ width + 0.01;
     float h = /*random(i[0].id) */ height + 0.01;
-    // vec4 v[8];
-    // v[0] = p+ vec4(-w, -h, 0, 0);
-    // ouv = vec2(0,0);
-    // GenerateVertex(v[0]);
 
-    // v[1] = p + vec4(w, -h, 0, 0);
-    // ouv = vec2(1,0);
-    // GenerateVertex(v[1]);
+    float x = dot(vec3(0,1,0), vec3(1,0,0));
+    float y = dot(vec3(0,1,0), vec3(0,0,1));
 
-    // v[2] = p + vec4(-w, +h, 0, 0);
-    // ouv = vec2(0,1);
-    // GenerateVertex(v[2]);
+    mat3 directionMatrix = AngleAxis3x3(x,y, vec3(1,0,1));
 
-    // v[3] = p + vec4(w, + h, 0, 0);
-    // ouv = vec2(1,1);
-    // GenerateVertex(v[3]);
-
-    // //Back side
-
-    // v[4] = p+ vec4(w, -h, 0, 0);
-    // ouv = vec2(0,0);
-    // GenerateVertex(v[0]);
-
-    // v[5] = p + vec4(-w, -h, 0, 0);
-    // ouv = vec2(1,0);
-    // GenerateVertex(v[1]);
-
-    // v[6] = p + vec4(w, +h, 0, 0);
-    // ouv = vec2(0,1);
-    // GenerateVertex(v[2]);
-
-    // v[7] = p + vec4(-w, + h, 0, 0);
-    // ouv = vec2(1,1);
-    // GenerateVertex(v[3]);
     if (particlesActive == 1)
     {
         vec4 v[14];
