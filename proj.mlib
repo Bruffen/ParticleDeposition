@@ -10,7 +10,7 @@
 			<depth name="texRenderZ" internalFormat="DEPTH_COMPONENT32F" />
 		</renderTarget>
 		<renderTarget name ="HeightMap">
-			<SIZE width=1024 height=1024 />
+			<SIZE width="TEXTURE_RESOLUTION" height="TEXTURE_RESOLUTION" />
 			<colors>
 				<color name="heightMap" internalFormat="R32F" />
 			</colors>
@@ -24,13 +24,13 @@
     </renderTargets>
 	<textures>
 		<texture name="texVolume">
-			<WIDTH value=1024 />
-			<HEIGHT value=1024 />
+			<WIDTH value="TEXTURE_RESOLUTION" />
+			<HEIGHT value="TEXTURE_RESOLUTION" />
 			<INTERNAL_FORMAT value="RGBA32F" />
 		</texture>
 		<texture name="texVolumeAux">
-			<WIDTH value=1024 />
-			<HEIGHT value=1024 />
+			<WIDTH value="TEXTURE_RESOLUTION" />
+			<HEIGHT value="TEXTURE_RESOLUTION" />
 			<INTERNAL_FORMAT value="RGBA32F" />
 		</texture>
 		<texture name="test" filename="transferir.jpg">
@@ -65,14 +65,14 @@
 
 	<buffers>
 		<buffer name="Positions">
-			<DIM x=100000 y=1 z=1 />
+			<DIM x="NUMBER_OF_PARTICLES" y=1 z=1 />
 			<structure>
 				<field value="VEC4" />
 			</structure>
 			<CLEAR value="NEVER" />
 		</buffer>
 		<buffer name="Directions">
-			<DIM x=100000 y=1 z=1 />
+			<DIM x="NUMBER_OF_PARTICLES" y=1 z=1 />
 			<structure>
 				<field value="VEC4" />
 			</structure>
