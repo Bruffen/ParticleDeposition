@@ -36,7 +36,8 @@ uniform float zFar;
 uniform vec2  windowSize;
 
 uniform float normalOffset;
-uniform float volumeAlpha;
+uniform float particleAlpha;
+uniform vec3  particleColor;
 uniform float marchingStep;
 uniform int   marchingMax;
 
@@ -127,6 +128,8 @@ vec4 rayMarch(vec3 rayPos, vec3 rayDir)
     maxDepth = (2.0 * zNear * zFar) / (zFar + zNear - maxDepth * (zFar - zNear));
     maxDepth = length(rayDir * maxDepth);
 
+    float lastH = 0;
+    float lastZ = 0;
     for (int i = 0; i < marchingMax; i++)
     {
         //TODO calculate step of ray based on texel size and ray direction
@@ -146,31 +149,56 @@ vec4 rayMarch(vec3 rayPos, vec3 rayDir)
 
         float h = texture(texVolume, texUVs).r;// * sceneHt;
         float z = (1 - texture(heightMap, vec2(-texUVs.x, texUVs.y)).r) * sceneHt;
+        // If distances are too different, then we have a vertical disconnection between particles
+        if (abs(lastH - h + lastZ - z) > 0.05)
+        {
+            lastH = h;
+            lastZ = z;
+            continue;
+        }
+
         if (current.y < h + z && current.y > z) // TODO will have to use new depth buffer
         {
             // Calculate shading based on crossing directions to adjacent points to get the normal
             float texel_step = 1.0/1024.0; // replace for texture sizes instead of hardcoded values
             float world_step = texel_step * (sceneLf - sceneRt);
-            // Convert [0, 1] height to [0, scene height]
-            float h_up = texture(texVolume, max(texUVs + vec2(0, texel_step), vec2(0))).r;// * sceneHt;
-            float h_dw = texture(texVolume, max(texUVs - vec2(0, texel_step), vec2(0))).r;// * sceneHt;
-            float h_rt = texture(texVolume, max(texUVs + vec2(texel_step, 0), vec2(0))).r;// * sceneHt;
-            float h_lf = texture(texVolume, max(texUVs - vec2(texel_step, 0), vec2(0))).r;// * sceneHt;
 
-            vec3 up = normalize(vec3( world_step, h_up - h, 0));
-            vec3 dw = normalize(vec3(-world_step, h_dw - h, 0));
-            vec3 rt = normalize(vec3(0, h_rt - h,  world_step));
-            vec3 lf = normalize(vec3(0, h_lf - h, -world_step));
+            // Get uvs from 4 directions away
+            vec2 uv_up = clamp(texUVs + vec2(0, texel_step), vec2(0), vec2(1));
+            vec2 uv_dw = clamp(texUVs - vec2(0, texel_step), vec2(0), vec2(1));
+            vec2 uv_rt = clamp(texUVs + vec2(texel_step, 0), vec2(0), vec2(1));
+            vec2 uv_lf = clamp(texUVs - vec2(texel_step, 0), vec2(0), vec2(1));
 
+            // Get heights from particles
+            float h_up = texture(texVolume, uv_up).r;
+            float h_dw = texture(texVolume, uv_dw).r;
+            float h_rt = texture(texVolume, uv_rt).r;
+            float h_lf = texture(texVolume, uv_lf).r;
+
+            // Get heights from the scene
+            float z_up = (1 - texture((heightMap), vec2(-uv_up.x, uv_up.y)).r) * sceneHt;
+            float z_dw = (1 - texture((heightMap), vec2(-uv_dw.x, uv_dw.y)).r) * sceneHt;
+            float z_rt = (1 - texture((heightMap), vec2(-uv_rt.x, uv_rt.y)).r) * sceneHt;
+            float z_lf = (1 - texture((heightMap), vec2(-uv_lf.x, uv_lf.y)).r) * sceneHt;
+
+            // Calculate directions with slopes
+            vec3 up = normalize(vec3( world_step, (h_up + z_up) - (h + z), 0));
+            vec3 dw = normalize(vec3(-world_step, (h_dw + z_dw) - (h + z), 0));
+            vec3 rt = normalize(vec3(0, (h_rt + z_rt)- (h + z),  world_step));
+            vec3 lf = normalize(vec3(0, (h_lf + z_lf)- (h + z), -world_step));
+
+            // Cross all directions to get a reasonable normal for shading the current pixel
             vec3 normal = normalize(cross(up, lf) + cross(lf, dw) + cross(dw, rt) + cross(rt, up));
             vec3 ldir   = normalize(-lightDir);
-            vec3 particleColor = vec3(1.0);
             vec3 ambient = particleColor * 0.2; // ambient
             vec3 diffuse = particleColor * 0.8; // diffuse
 
-            return vec4(ambient + diffuse * max(0, dot(normal, ldir)), volumeAlpha);
+            return vec4(ambient + diffuse * max(0, dot(normal, ldir)), particleAlpha);
             //return vec4(normal, 1);
         }
+        
+        lastH = h;
+        lastZ = z;
     }
     return vec4(0.0);
 }
