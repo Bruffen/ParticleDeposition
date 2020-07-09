@@ -3,6 +3,7 @@
 	<assets>
 		<constants>
 			<constant name="TEXTURE_RESOLUTION" value="1024" />
+			<constant name="NUMBER_OF_PARTICLES" value="100000" />
 		</constants>
         <attributes>
             <attribute name="offset" data="FLOAT" type="RENDERER" value=0.1 />
@@ -105,7 +106,7 @@
 			</pass>
 			<!-- Compute all the particles in a compute shader -->
 			<pass class="compute" name="particles">
-				<material name="matParticles" fromLibrary="particleLib" dimX=100000 dimY=1 dimZ=1 />
+				<material name="matParticles" fromLibrary="particleLib" dimX="NUMBER_OF_PARTICLES" dimY=1 dimZ=1 />
 			</pass>
 			<!-- Compute the deposition of particles -->
 			<pass class="compute" name="aux">
