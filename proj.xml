@@ -1,13 +1,16 @@
 <?xml version="1.0" ?>
 <project name="Particle Deposition" width = "1280" height = "720">
 	<assets>
+		<constants>
+			<constant name="TEXTURE_RESOLUTION" value="1024" />
+		</constants>
         <attributes>
             <attribute name="offset" data="FLOAT" type="RENDERER" value=0.1 />
 			<attribute name="radius" data="FLOAT" type="RENDERER" value=100 />
 			<attribute name="gravity" data="FLOAT" type="RENDERER" value=9.8 />
 			<attribute name="speed" data="FLOAT" type="RENDERER" value=0.1 />
 			<attribute name="width" data="FLOAT" type="RENDERER" value=0.01 />
-			<attribute name="height" data="FLOAT" type="RENDERER" value=0.01 />
+			<attribute name="height" data="FLOAT" type="RENDERER" value=0.04 />
 			<attribute name="particleSize" data="FLOAT" type="RENDERER" value=0.1 />
 			<attribute name="minHeight" data="FLOAT" type="RENDERER" value=0.02 />
 			<attribute name="viscosity" data="FLOAT" type="RENDERER" value=0.009 />
@@ -106,10 +109,10 @@
 			</pass>
 			<!-- Compute the deposition of particles -->
 			<pass class="compute" name="aux">
-				<material name="depositionAux" fromLibrary="particleLib" dimX=1024 dimY=1024 dimZ=1 />
+				<material name="depositionAux" fromLibrary="particleLib" dimX="TEXTURE_RESOLUTION" dimY="TEXTURE_RESOLUTION" dimZ=1 />
 			</pass>
 			<pass class="compute" name="deposition">
-				<material name="depositionHeight" fromLibrary="particleLib" dimX=1024 dimY=1024 dimZ=1 />
+				<material name="depositionHeight" fromLibrary="particleLib" dimX="TEXTURE_RESOLUTION" dimY="TEXTURE_RESOLUTION" dimZ=1 />
 			</pass>
 			
 			<!--pass class="compute" name="addVect">
