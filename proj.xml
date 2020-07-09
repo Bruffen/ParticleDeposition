@@ -165,9 +165,9 @@
 				def="min=0.01 max=5 step=0.01"/>
 			<var label="Wind Direction" type="RENDERER" context="CURRENT" component="windDir" />
 			<var label="Transfer Min Height" type="RENDERER" context="CURRENT" component="minHeight" 
-				def="min=0.001 max=1 step=0.001"/>
+				def="min=0.0 max=0.01 step=0.001"/>
 			<var label="Viscosity" type="RENDERER" context="CURRENT" component="viscosity" 
-				def="min=0.002 max=1 step=0.01"/>
+				def="min=0.0 max=1 step=0.01"/>
 		</window>
 		<window label="Rendering">
 			<var label="Particle Color" type="RENDERER" context="CURRENT" component="particleColor" 
