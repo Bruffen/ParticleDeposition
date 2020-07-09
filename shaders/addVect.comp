@@ -1,0 +1,83 @@
+#version 430
+layout (local_size_x = 1, local_size_y = 1, local_size_z = 1) in; // optimize
+
+uniform sampler2D heightMap;
+//uniform restrict image2D texVolume;
+
+layout(binding=0, rgba32f) uniform image2D texVolumeAux;
+uniform image2D writeonly texVolume;
+uniform int texWidth;
+uniform int texHeight;
+
+// Params from the camera that renders the scene from above
+uniform float sceneHt; // max y bound
+uniform float sceneRt; // max x bound
+uniform float sceneLf; // min x bound
+uniform float sceneUp; // max z bound
+uniform float sceneDw; // min z bound
+
+//Particle "stats"
+uniform float radius;
+uniform float gravity;
+uniform float speed;
+uniform vec3 windDir;
+uniform float minHeight;
+uniform float transferRate;
+
+uniform float time;
+
+
+
+void main()
+{
+    uint i = gl_GlobalInvocationID.x;
+	uint j = gl_GlobalInvocationID.y;
+	uint k = gl_GlobalInvocationID.x + gl_WorkGroupSize.x * gl_GlobalInvocationID.y;
+
+    const float width  = sceneLf - sceneRt;
+	const float height = sceneDw - sceneUp;
+	const float center_x = width/2;
+	const float center_z = height/2;
+    int auxtime = int(time);
+    
+    float viscosidade = minHeight;
+        
+
+    
+
+    ivec2 ij0,ij1;
+
+    float x,y,s1,s0,t1,t0;
+
+    vec2 vel =-2*normalize((texture(heightMap,ivec2(i+1,j).xx +imageLoad(texVolumeAux,ivec2(i+1,j)).xx ))
+                        -(texture(heightMap,ivec2(i-1,j).xx +imageLoad(texVolumeAux,ivec2(i-1,j)).xx )) 
+                        +(texture(heightMap,ivec2(i,j+1).xx +imageLoad(texVolumeAux,ivec2(i,j+1)).xx ))
+                        -(texture(heightMap,ivec2(i,j-1).xx +imageLoad(texVolumeAux,ivec2(i,j-1)).xx ))).xy;
+    
+    vec2 xy = (i,j)*-1*(-10,0);//vel; 
+
+    x = clamp(xy.x,0.5,width+0.5);
+    y = clamp(xy.y,0.5,height+0.5);
+    //if(i!=0 && j !=0 && i< width && j < height){
+
+        ij0 = ivec2(floor(x),floor(y));ij1 = ij0+ivec2(1);
+        s1 = x-ij0.x;
+        s0 = 1-s1;
+        t1 = y-ij0.y;
+        t0 = 1-t1;
+
+    vec4 curr =  t0*(s0*imageLoad(texVolumeAux, ij0)+
+                s1*imageLoad(texVolumeAux, ivec2(ij0.x, ij1.y)))+
+            t1*(s0*imageLoad(texVolumeAux, ivec2(ij1.x, ij0.y))+
+                s1*imageLoad(texVolumeAux, ij1));
+    //}
+
+    imageStore(texVolume, ivec2(i, j ),
+                curr
+            );
+
+
+    ////PROJECTION STEP
+    ////Divergence
+    //  imageStore(div,)
+}

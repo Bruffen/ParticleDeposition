@@ -53,6 +53,9 @@
 			<shader name="deposition"
 				cs = "shaders/deposition.comp" 
 				/>
+			<shader name="addVect"
+				cs = "shaders/addVect.comp" 
+				/>
 			<shader name="copyAuxdeposition"
 				cs = "shaders/copyAuxdeposition.comp" 
 				/>
@@ -99,7 +102,8 @@
 					<valueof uniform="sceneRt"		type="CAMERA"			context="HeightCamera"	component="RIGHT" />
 					<valueof uniform="sceneDw"		type="CAMERA"			context="HeightCamera"	component="BOTTOM" />
 					<valueof uniform="windowSize"	type="VIEWPORT"			context="MainViewport"	component="SIZE" />
-					<valueof uniform="volumeAlpha"	type="RENDERER" 		context="CURRENT" 		component="volumeAlpha" />
+					<valueof uniform="particleAlpha" type="RENDERER" 		context="CURRENT" 		component="particleAlpha" />
+					<valueof uniform="particleColor" type="RENDERER" 		context="CURRENT" 		component="particleColor" />
 					<valueof uniform="marchingStep"	type="RENDERER" 		context="CURRENT" 		component="marchingStep" />
 					<valueof uniform="marchingMax"	type="RENDERER" 		context="CURRENT" 		component="marchingMax" />
 				</values>
@@ -133,6 +137,7 @@
 					<valueof uniform="gravity" 		type="RENDERER" 		context="CURRENT" 		component="gravity" />
 					<valueof uniform="windDir" 		type="RENDERER" 		context="CURRENT" 		component="windDir" />
 					<valueof uniform="particleSize" type="RENDERER" 		context="CURRENT" 		component="particleSize" />
+					<valueof uniform="particleColor" type="RENDERER" 		context="CURRENT" 		component="particleColor" />
 				</values>
 			</shader>
 			<textures>
@@ -174,11 +179,11 @@
 					<valueof uniform="gravity" 		type="RENDERER" 		context="CURRENT" 		component="gravity" />
 					<valueof uniform="windDir" 		type="RENDERER" 		context="CURRENT" 		component="windDir" />
 					<valueof uniform="minHeight" 	type="RENDERER" 		context="CURRENT" 		component="minHeight" />
-					<valueof uniform="transferRate" type="RENDERER" 		context="CURRENT" 		component="transferRate" />
+					<valueof uniform="viscosity" 	type="RENDERER" 		context="CURRENT" 		component="viscosity" />
 				</values>
 			</shader>
 			<textures>
-                <texture name="heightMap" 	UNIT=1 />
+                <texture name="HeightMap_depth"  	UNIT=1 />
             </textures>
 			<imageTextures>
 				<imageTexture UNIT=0 texture="texVolume" >
@@ -211,7 +216,7 @@
 				</values>
 			</shader>
 			<textures>
-                <texture name="heightMap" 	UNIT=1 />
+                <texture name="HeightMap_depth" 	UNIT=1 />
             </textures>
 			<imageTextures>
 				<imageTexture UNIT=0 texture="texVolume" >

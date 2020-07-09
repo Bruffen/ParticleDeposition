@@ -37,33 +37,6 @@ float rand(vec2 co){
     return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
 }
 
-layout (local_size_x = 1, local_size_y = 1, local_size_z = 1) in; // optimize
-
-uniform sampler2D heightMap;
-//uniform restrict image2D texVolume;
-
-layout(binding=0, rgba32f) uniform image2D texVolumeAux;
-uniform image2D writeonly texVolume;
-uniform int texWidth;
-uniform int texHeight;
-
-// Params from the camera that renders the scene from above
-uniform float sceneHt; // max y bound
-uniform float sceneRt; // max x bound
-uniform float sceneLf; // min x bound
-uniform float sceneUp; // max z bound
-uniform float sceneDw; // min z bound
-
-//Particle "stats"
-uniform float radius;
-uniform float gravity;
-uniform float speed;
-uniform vec3 windDir;
-uniform float minHeight;
-uniform float transferRate;
-
-uniform float time;
-
 
 // Simplex 2D noise
 //
@@ -96,24 +69,70 @@ float snoise(vec2 v){
   return 130.0 * dot(m, g);
 }
 
+layout (local_size_x = 1, local_size_y = 1, local_size_z = 1) in; // optimize
+
+uniform sampler2D heightMap;
+//uniform restrict image2D texVolume;
+
+layout(binding=0, rgba32f) uniform image2D texVolumeAux;
+layout(binding=0, rgba32f) uniform image2D  texVolume;
+uniform int texWidth;
+uniform int texHeight;
+
+// Params from the camera that renders the scene from above
+uniform float sceneHt; // max y bound
+uniform float sceneRt; // max x bound
+uniform float sceneLf; // min x bound
+uniform float sceneUp; // max z bound
+uniform float sceneDw; // min z bound
+
+//Particle "stats"
+uniform float radius;
+uniform float gravity;
+uniform float speed;
+uniform vec3 windDir;
+uniform float minHeight;
+uniform float viscosity;
+
+uniform float time;
+
+
+
+
+
 float checkSend(uint i,uint j,int ipp,int jpp,float curr){
     vec4 neighboor = imageLoad(texVolumeAux, ivec2(i +ipp, j+jpp ));
     float height = curr;
     if(neighboor.x > curr && (neighboor.x-curr) > minHeight ){
             
-            height = curr+(neighboor.x-curr)*(transferRate);
+            height = curr+(neighboor.x-curr)*(viscosity);
             
     }else
     if(neighboor.x < curr && (curr-neighboor.x) > minHeight){
 
-            height = curr-(curr-neighboor.x)*(transferRate);
+            height = curr-(curr-neighboor.x)*(viscosity);
 
     }
     return height;
 }
 
-void main()
-{
+
+float sendRecieve(float totalheight,float particleheight, float neibtotal, float neibparticle){
+
+    float heightdif = (neibtotal-totalheight);
+    float transfer = 0.25*min(max(heightdif,-1*particleheight),neibparticle);//clamp(heightdif, -1*particleheight,neibparticle);
+    if(abs(heightdif*0.25) < viscosity)
+        return 0.1*(1-viscosity)*transfer; 
+    return (1-viscosity)*transfer;
+
+}
+
+float gettex(uint i,uint j){
+    return (vec4((1-texture(heightMap, vec2(-1,1)*(vec2(i,j)/1024))))*sceneHt).x ;
+}
+
+void main(){
+
     uint i = gl_GlobalInvocationID.x;
 	uint j = gl_GlobalInvocationID.y;
 	uint k = gl_GlobalInvocationID.x + gl_WorkGroupSize.x * gl_GlobalInvocationID.y;
@@ -123,76 +142,78 @@ void main()
 	const float center_x = width/2;
 	const float center_z = height/2;
     int auxtime = int(time);
-    barrier();
-    if (auxtime<1000){
 
-        if((i==j) || ((i-j)%10 == 0) || (((1024-i)-j)%10 == 0) )
-            imageStore(texVolume, ivec2(i, j ), vec4(1.0));
-            else 
-            imageStore(texVolume, ivec2(i, j ), vec4(0));
-        return;
-    }
-    
-    
-    
-    if(auxtime%4 == 0)
-    {
-        //TODO: Pick Directions properly as it's the major bug source
-        vec4 curr  = imageLoad(texVolumeAux, ivec2(i, j ));
-        float currval = curr.x;
-        //left  
-        currval = checkSend(i,j, 0,-1,currval);
-      
+    float curr  = imageLoad(texVolumeAux,ivec2(i,j)).x;
+    float top   = imageLoad(texVolumeAux,ivec2(i-1,j)).x;
+    float bot   = imageLoad(texVolumeAux,ivec2(i+1,j)).x;
+    float right = imageLoad(texVolumeAux,ivec2(i,j+1)).x;
+    float left  = imageLoad(texVolumeAux,ivec2(i,j-1)).x;
+    float totalcurr  = curr  + gettex(i,j);
+    float totaltop   = top   + gettex(i-1,j);
+    float totalbot   = bot   + gettex(i+1,j);
+    float totalright = right + gettex(i,j+1);
+    float totalleft  = left  + gettex(i,j-1);
+
+    float aux = curr;
+    aux += sendRecieve(totalcurr,curr,totaltop,top);    
+    aux += sendRecieve(totalcurr,curr,totalbot,bot);
+    aux += sendRecieve(totalcurr,curr,totalright,right);
+    aux += sendRecieve(totalcurr,curr,totalleft,left);
+
+    imageStore(texVolume, ivec2(i, j ),
+            vec4(aux)
+        );
         
-        imageStore(texVolume, ivec2(i, j ),
-                vec4(currval)
-            );
-        
-    }
-    if(auxtime%4 == 1)
-    {
-        //TODO: Pick Directions properly as it's the major bug source
-        vec4 curr  = imageLoad(texVolumeAux, ivec2(i, j ));
-        float currval = curr.x;
-        //left  
-       
-        currval = checkSend(i,j,-1, 0,currval);
-        
-        
-        imageStore(texVolume, ivec2(i, j ),
-                vec4(currval)
-            );
-        
-    }
-    if(auxtime%4 == 2)
-    {
-        //TODO: Pick Directions properly as it's the major bug source
-        vec4 curr  = imageLoad(texVolumeAux, ivec2(i, j ));
-        float currval = curr.x;
-        //left  
-       
-        currval = checkSend(i,j, 0,+1,currval);
-        //top   
-   
-        
-        imageStore(texVolume, ivec2(i, j ),
-                vec4(currval)
-            );
-        
-    }
-    if(auxtime%4 == 3)
-    {
-        //TODO: Pick Directions properly as it's the major bug source
-        vec4 curr  = imageLoad(texVolumeAux, ivec2(i, j ));
-        float currval = curr.x;
-       
-        //top   
-        //bot   
-        currval = checkSend(i,j,+1, 0,currval);
-        
-        imageStore(texVolume, ivec2(i, j ),
-                vec4(currval)
-            );
-        
-    }
+    //imageStore(texVolume, ivec2(i, j ), vec4(gettex(i,j)) );
 }
+
+//void main()
+//{
+//    uint i = gl_GlobalInvocationID.x;
+//	uint j = gl_GlobalInvocationID.y;
+//	uint k = gl_GlobalInvocationID.x + gl_WorkGroupSize.x * gl_GlobalInvocationID.y;
+//
+//    const float width  = sceneLf - sceneRt;
+//	const float height = sceneDw - sceneUp;
+//	const float center_x = width/2;
+//	const float center_z = height/2;
+//    int auxtime = int(time);
+//    
+//    barrier();
+//
+//  //  if (auxtime<1000)
+////
+//    //imageStore(texVolume, ivec2(i, j ), texture(heightMap,ivec2(i,j))+vec4(1.0));
+//    //    if((i==j) || ((i-j)%10 == 0) || (((1024-i)-j)%10 == 0) )
+//    //        imageStore(texVolume, ivec2(i, j ), vec4(1.0));
+//    //        else 
+//    //        imageStore(texVolume, ivec2(i, j ), vec4(0));
+//    //    return;
+//    //}
+//
+//    float viscosidade = minHeight;
+//    
+//    //Delta time
+//
+//    float dt = 1;
+//    
+//    float a = viscosidade * dt / ((width-2) * (height-2));
+//    float c = 1 +4*a;
+//    //if(i!=0 && j !=0 && i < width && j < height){
+//
+//        vec4 curr = imageLoad(texVolumeAux, ivec2(i, j ));
+//
+//        vec4 aux =  imageLoad(texVolume, ivec2(i+1, j))+
+//                    imageLoad(texVolume, ivec2(i-1, j))+
+//                    imageLoad(texVolume, ivec2(i, j+1))+
+//                    imageLoad(texVolume, ivec2(i, j-1));
+//
+//        //aux = aux/4;
+//        curr = (curr+a*aux)/c;
+//        imageStore(texVolume, ivec2(i, j ),
+//                    vec4(curr)
+//                );
+//        
+//    //}    
+//
+//}

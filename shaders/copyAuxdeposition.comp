@@ -29,7 +29,9 @@ void main()
     uint i = gl_GlobalInvocationID.x;
 	uint j = gl_GlobalInvocationID.y;
 
-    vec4 aux = imageLoad(texVolume, ivec2((i)%1024, j ));
+    vec4 aux = imageLoad(texVolume, ivec2(i, j ));
+    imageStore(texVolume, ivec2(i, j),imageLoad(texVolume, ivec2(i,j)););
     imageStore(texVolumeAux, ivec2(i, j),aux);
+    //SWAP
     
 }

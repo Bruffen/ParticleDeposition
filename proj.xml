@@ -4,15 +4,16 @@
         <attributes>
             <attribute name="offset" data="FLOAT" type="RENDERER" value=0.1 />
 			<attribute name="radius" data="FLOAT" type="RENDERER" value=100 />
-			<attribute name="gravity" data="FLOAT" type="RENDERER" value=10 />
+			<attribute name="gravity" data="FLOAT" type="RENDERER" value=9.8 />
 			<attribute name="speed" data="FLOAT" type="RENDERER" value=0.1 />
-			<attribute name="width" data="FLOAT" type="RENDERER" value=0.1 />
-			<attribute name="height" data="FLOAT" type="RENDERER" value=0.1 />
+			<attribute name="width" data="FLOAT" type="RENDERER" value=0.01 />
+			<attribute name="height" data="FLOAT" type="RENDERER" value=0.01 />
 			<attribute name="particleSize" data="FLOAT" type="RENDERER" value=0.1 />
 			<attribute name="minHeight" data="FLOAT" type="RENDERER" value=0.02 />
-			<attribute name="transferRate" data="FLOAT" type="RENDERER" value=0.35 />
+			<attribute name="viscosity" data="FLOAT" type="RENDERER" value=0.009 />
 			<attribute name="windDir" data="VEC3" type="RENDERER" x=1 y=0 z=0/>
-			<attribute name="volumeAlpha" data="FLOAT" type="RENDERER" value=0.5 />
+			<attribute name="particleAlpha" data="FLOAT" type="RENDERER" value=0.75 />
+			<attribute name="particleColor" data="VEC3" type="RENDERER" x=0.3 y=0.7 z=0.9 />
 			<attribute name="marchingStep" data="FLOAT" type="RENDERER" value=0.008 />
 			<attribute name="marchingMax" data="INT" type="RENDERER" value=750 />
         </attributes>
@@ -20,13 +21,18 @@
 			<scene name="scene1">
 				<file name="models/scene1.obj"/>
 			</scene>
+			<scene name="car">
+				<file name="models/lamborghini_aventador.obj"/>
+				<SCALE x=0.02 y=0.02 z=0.02 />
+			</scene>
 			<scene name="Plane">
 				<geometry name = "square" type = "SQUARE" />
 				<SCALE x=10 y=1 z=10 />
 			</scene>
 			<scene name="Sphere">
 				<geometry name = "sphere" type = "SPHERE" />
-				<SCALE x=2 y=2 z=2 />
+				<TRANSLATE x=5 y=0 z=0 />
+				<SCALE x=1 y=1 z=1 />
 			</scene>
 			<scene name="Particles" >
 				<buffers name="Positions" primitive="POINTS" material=ParticlesBB>
@@ -84,10 +90,11 @@
 		    <pass class="default" name="heightMapSetup">
 				<scenes>
 					<!--
+					<scene name="scene1" /> 
+					/-->
+					<scene name="car" /> 
 					<scene name="Plane" />
 					<scene name="Sphere" />
-					/-->
-					<scene name="scene1" /> 
 				</scenes>
 				<camera name="HeightCamera" />
                 <renderTarget name="HeightMap" fromLibrary="particleLib" />
@@ -104,14 +111,18 @@
 				<material name="depositionHeight" fromLibrary="particleLib" dimX=1024 dimY=1024 dimZ=1 />
 			</pass>
 			
+			<!--pass class="compute" name="addVect">
+				<material name="depositionHeight" fromLibrary="particleLib" dimX=1024 dimY=1024 dimZ=1 />
+			</pass-->
 			<!-- Render the scene from normal camera -->
 			<pass class="default" name="sceneRender">
 				<scenes>
 					<!--
+					<scene name="scene1" /> 
+					/-->
+					<scene name="car" /> 
 					<scene name="Plane" />
 					<scene name="Sphere" />
-					/-->
-					<scene name="scene1" /> 
 					<scene name ="Particles" />
 				</scenes>
 				<camera name="MainCamera" />
@@ -151,15 +162,17 @@
 			<var label="Height" type="RENDERER" context="CURRENT" component="height" 
 				def="min=0.01 max=10 step=0.01"/>
 			<var label="Particle Size" type="RENDERER" context="CURRENT" component="particleSize" 
-				def="min=0.1 max=20 step=0.1"/>
+				def="min=0.01 max=5 step=0.01"/>
 			<var label="Wind Direction" type="RENDERER" context="CURRENT" component="windDir" />
 			<var label="Transfer Min Height" type="RENDERER" context="CURRENT" component="minHeight" 
-				def="min=0.001 max=10 step=0.001"/>
-			<var label="Transfer Rate" type="RENDERER" context="CURRENT" component="transferRate" 
-				def="min=0.01 max=1 step=0.01"/>
+				def="min=0.001 max=1 step=0.001"/>
+			<var label="Viscosity" type="RENDERER" context="CURRENT" component="viscosity" 
+				def="min=0.002 max=1 step=0.01"/>
 		</window>
 		<window label="Rendering">
-			<var label="Volume Alpha" type="RENDERER" context="CURRENT" component="volumeAlpha" 
+			<var label="Particle Color" type="RENDERER" context="CURRENT" component="particleColor" 
+				def="min=0 max=1 step=0.01"/>
+			<var label="Particle Alpha" type="RENDERER" context="CURRENT" component="particleAlpha" 
 				def="min=0 max=1 step=0.01"/>
 			<var label="Marching Step" type="RENDERER" context="CURRENT" component="marchingStep" 
 				def="min=0.001 max=1 step=0.001"/>
