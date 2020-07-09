@@ -59,6 +59,7 @@ uniform float gravity;
 uniform float speed;
 uniform vec3 windDir;
 uniform float particleSize;
+uniform int particlesActive;
 
 uniform float time;
 
@@ -78,6 +79,10 @@ layout( std140, binding=2 ) buffer Directions
  * Another buffer for velocities or anything else can be added if needed
 */
 
+float gettex(uint i,uint j){
+    return (vec4((1-texture(heightMap, vec2(-1,1)*(vec2(i,j)/1024))))*sceneHt).x ;
+}
+
 void main()
 {
 	uint i = gl_GlobalInvocationID.x;
@@ -91,80 +96,83 @@ void main()
 	const float center_x = width/2;
 	const float center_z = height/2;
 
-	if (particles.w == 0) // if particle is unused, generate new position
+	if (particlesActive == 1)
 	{
-		float r = sqrt(random(k + time) * radius);
-		float theta = random(k) * (2 * 3.1415);
-
-		float x = clamp(r * cos(theta), sceneLf, sceneRt);
-		float z = clamp(r * sin(theta), sceneDw, sceneUp);
-
-		vec3 velocity = vec3(
-			(random((i * width + j + random(i)) * time) *2 -1), 
-			-1, 
-			(random((i * width + j + random(j)) * time) *2 -1));
-		direction = vec4(normalize(velocity),1);// * 0.04;
-
-		particles.w = 1;
-		particles.x = x;
-		particles.y = random((i + 1)) * 30 + 20;
-		particles.z = z;
-	}
-	else
-	{
-		vec3 velocity = direction.xyz;
-
-		velocity.x *= speed * 0.01;
-		velocity.y *= gravity * 0.01;
-		velocity.z *= speed * 0.01;
-
-		velocity += windDir * 0.001;
-
-		particles.x += velocity.x;
-		particles.y += velocity.y;
-		particles.z += velocity.z;
-
-		// if (particles.x < sceneLf || particles.x > sceneRt)
-		// 	particles.x = clamp(particles.x, sceneLf, sceneRt);
-
-		// if (particles.z < sceneDw || particles.z > sceneUp)
-		// 	particles.z = clamp(particles.z, sceneDw, sceneUp);
-		if (particles.x < sceneLf)
-			particles.x = sceneRt;
-
-		if (particles.x > sceneRt)
-			particles.x = sceneLf;
-
-		if (particles.x < sceneDw)
-			particles.x = sceneUp;
-
-		if (particles.x > sceneUp)
-			particles.x = sceneDw;
-
-		if (particles.z < sceneLf)
-			particles.z = sceneRt;
-
-		if (particles.z > sceneRt)
-			particles.z = sceneLf;
-
-		if (particles.z < sceneDw)
-			particles.z = sceneUp;
-
-		if (particles.z > sceneUp)
-			particles.z = sceneDw;
-
-		if (particles.y <= 0)
+		if (particles.w == 0) // if particle is unused, generate new position
 		{
-			vec4 value = imageLoad(texVolume, ivec2((-particles.x / width + 0.5) * texWidth, (-particles.z / height + 0.5) * texHeight));
-			value.x += particleSize;
-			value.y += particleSize;
-			value.z += particleSize;
-			imageStore(texVolume,
-		ivec2((-particles.x / width + 0.5) * texWidth, (-particles.z / height + 0.5) * texHeight), 
-		value);
+			float r = sqrt(random(k + time) * radius);
+			float theta = random(k) * (2 * 3.1415);
 
-			particles.w = 0;
+			float x = clamp(r * cos(theta), sceneLf, sceneRt);
+			float z = clamp(r * sin(theta), sceneDw, sceneUp);
 
+			vec3 velocity = vec3(
+				(random((i * width + j + random(i)) * time) *2 -1), 
+				-1, 
+				(random((i * width + j + random(j)) * time) *2 -1));
+			direction = vec4(normalize(velocity),1);// * 0.04;
+
+			particles.w = 1;
+			particles.x = x;
+			particles.y = random((i + 1)) * 30 + 20;
+			particles.z = z;
+		}
+		else
+		{
+			vec3 velocity = direction.xyz;
+
+			velocity.x *= speed * 0.01;
+			velocity.y *= gravity * 0.01;
+			velocity.z *= speed * 0.01;
+
+			velocity += windDir * 0.001;
+
+			particles.x += velocity.x;
+			particles.y += velocity.y;
+			particles.z += velocity.z;
+
+			// if (particles.x < sceneLf || particles.x > sceneRt)
+			// 	particles.x = clamp(particles.x, sceneLf, sceneRt);
+
+			// if (particles.z < sceneDw || particles.z > sceneUp)
+			// 	particles.z = clamp(particles.z, sceneDw, sceneUp);
+			if (particles.x < sceneLf)
+				particles.x = sceneRt;
+
+			if (particles.x > sceneRt)
+				particles.x = sceneLf;
+
+			if (particles.x < sceneDw)
+				particles.x = sceneUp;
+
+			if (particles.x > sceneUp)
+				particles.x = sceneDw;
+
+			if (particles.z < sceneLf)
+				particles.z = sceneRt;
+
+			if (particles.z > sceneRt)
+				particles.z = sceneLf;
+
+			if (particles.z < sceneDw)
+				particles.z = sceneUp;
+
+			if (particles.z > sceneUp)
+				particles.z = sceneDw;
+
+			if (particles.y <= gettex(i,j))
+			{
+				vec4 value = imageLoad(texVolume, ivec2((-particles.x / width + 0.5) * texWidth, (-particles.z / height + 0.5) * texHeight));
+				value.x += particleSize;
+				value.y += particleSize;
+				value.z += particleSize;
+				imageStore(texVolume,
+			ivec2((-particles.x / width + 0.5) * texWidth, (-particles.z / height + 0.5) * texHeight), 
+			value);
+
+				particles.w = 0;
+
+			}
 		}
 	}
 

@@ -138,6 +138,7 @@
 					<valueof uniform="windDir" 		type="RENDERER" 		context="CURRENT" 		component="windDir" />
 					<valueof uniform="particleSize" type="RENDERER" 		context="CURRENT" 		component="particleSize" />
 					<valueof uniform="particleColor" type="RENDERER" 		context="CURRENT" 		component="particleColor" />
+					<valueof uniform="particlesActive" type="RENDERER" 		context="CURRENT" 		component="particlesActive" />
 				</values>
 			</shader>
 			<textures>
@@ -251,6 +252,9 @@
 					<valueof uniform="width" type="RENDERER" context="CURRENT" component="width" />
 					<valueof uniform="height" type="RENDERER" context="CURRENT" component="height" />
 					<valueof uniform="particleSize" type="RENDERER" context="CURRENT" component="particleSize" />
+					<valueof uniform="particleColor" type="RENDERER" context="CURRENT" component="particleColor" />
+					<valueof uniform="particlesActive" type="RENDERER" context="CURRENT" component="particlesActive" />
+					<valueof uniform="radius" type="RENDERER" context="CURRENT" component="radius" />
 				</values>
 			</shader>
 			<buffers>
