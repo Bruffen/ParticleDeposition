@@ -30,7 +30,7 @@ void main()
 	uint j = gl_GlobalInvocationID.y;
 
     vec4 aux = imageLoad(texVolume, ivec2(i, j ));
-    imageStore(texVolume, ivec2(i, j),imageLoad(texVolume, ivec2(i,j)););
+    imageStore(texVolume, ivec2(i, j),imageLoad(texVolumeAux, ivec2(i,j)));
     imageStore(texVolumeAux, ivec2(i, j),aux);
     //SWAP
     

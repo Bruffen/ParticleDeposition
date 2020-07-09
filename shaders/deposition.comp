@@ -121,8 +121,8 @@ float sendRecieve(float totalheight,float particleheight, float neibtotal, float
 
     float heightdif = (neibtotal-totalheight);
     float transfer = 0.25*min(max(heightdif,-1*particleheight),neibparticle);//clamp(heightdif, -1*particleheight,neibparticle);
-    if(abs(heightdif*0.25) < viscosity)
-        return 0.1*(1-viscosity)*transfer; 
+    if(abs(heightdif*0.25) < minHeight)
+        return 0;//0.1*(1-viscosity)*transfer; 
     return (1-viscosity)*transfer;
 
 }
@@ -162,6 +162,7 @@ void main(){
 
     imageStore(texVolume, ivec2(i, j ),
             vec4(aux)
+            //vec4(curr*viscosity + (1-viscosity)*0.25*(top+bot+right+left))
         );
         
     //imageStore(texVolume, ivec2(i, j ), vec4(gettex(i,j)) );
