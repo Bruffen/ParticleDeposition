@@ -33,7 +33,7 @@
 			<HEIGHT value=1024 />
 			<INTERNAL_FORMAT value="RGBA32F" />
 		</texture>
-		<texture name="test" filename="texture.png">
+		<texture name="test" filename="transferir.jpg">
 		</texture>
 	</textures>	
 
@@ -254,6 +254,9 @@
 					<BINDING_POINT value="1" />
 				</buffer>
 			</buffers>
+			<textures>
+                <texture name="test" UNIT = 0 />
+            </textures>
 		</material>
 	</materials>
 </materialLib>

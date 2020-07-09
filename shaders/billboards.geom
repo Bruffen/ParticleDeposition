@@ -91,24 +91,42 @@ void main()
     // ouv = vec2(1,1);
     // GenerateVertex(v[3]);
     vec4 v[14];
+    vec2 uv_array[14];
 	v[0] = vec4(i[0].pos.x	- (width/2), i[0].pos.y	+ (height/2), i[0].pos.z	- (width/2), 1.0f);
+    uv_array[0] = vec2(0,1);
 	v[1] = vec4(i[0].pos.x	+ (width/2), i[0].pos.y	+ (height/2), i[0].pos.z	- (width/2), 1.0f);
+    uv_array[0] = vec2(1,1);
 	v[2] = vec4(i[0].pos.x	- (width/2), i[0].pos.y	- (height/2), i[0].pos.z	- (width/2), 1.0f);
+    uv_array[0] = vec2(0,0);
 	v[3] = vec4(i[0].pos.x	+ (width/2), i[0].pos.y	- (height/2), i[0].pos.z	- (width/2), 1.0f);
+    uv_array[0] = vec2(1,0);
+
 	v[4] = vec4(i[0].pos.x	+ (width/2), i[0].pos.y	- (height/2), i[0].pos.z	+ (width/2), 1.0f);
+    uv_array[0] = vec2(0,0);
 	v[5] = vec4(i[0].pos.x	+ (width/2), i[0].pos.y	+ (height/2), i[0].pos.z	- (width/2), 1.0f);
+    uv_array[0] = vec2(0,1);
 	v[6] = vec4(i[0].pos.x	+ (width/2), i[0].pos.y	+ (height/2), i[0].pos.z	+ (width/2), 1.0f);
+     uv_array[0] = vec2(1,1);
 	v[7] = vec4(i[0].pos.x	- (width/2), i[0].pos.y	+ (height/2), i[0].pos.z	- (width/2), 1.0f);
+    uv_array[0] = vec2(0,1);
+
 	v[8] = vec4(i[0].pos.x	- (width/2), i[0].pos.y	+ (height/2), i[0].pos.z	+ (width/2), 1.0f);
+    uv_array[0] = vec2(1,1);
 	v[9] = vec4(i[0].pos.x	- (width/2), i[0].pos.y	- (height/2), i[0].pos.z	- (width/2), 1.0f);
+    uv_array[0] = vec2(0,0);
 	v[10] = vec4(i[0].pos.x	- (width/2), i[0].pos.y	- (height/2), i[0].pos.z	+ (width/2), 1.0f);
+    uv_array[0] = vec2(1,0);
 	v[11] = vec4(i[0].pos.x	+ (width/2), i[0].pos.y	- (height/2), i[0].pos.z	+ (width/2), 1.0f);
+    uv_array[0] = vec2(0,0);
+
 	v[12] = vec4(i[0].pos.x	- (width/2), i[0].pos.y	+ (height/2), i[0].pos.z	+ (width/2), 1.0f);
+    uv_array[0] = vec2(1,0);
 	v[13] = vec4(i[0].pos.x	+ (width/2), i[0].pos.y	+ (height/2), i[0].pos.z	+ (width/2), 1.0f);
+    uv_array[0] = vec2(1,0);
 
     for(int i = 0;i<14;i++)
     {
-        ouv = vec2(1,1);
+        ouv = uv_array[i];
         GenerateVertex(v[i]);
     }
 
