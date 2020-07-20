@@ -110,20 +110,20 @@
 			</shader>
 			<textures>
                 <texture name="texRender" 			UNIT=0 >
-					<MAG_FILTER value="NEAREST" />
-					<MIN_FILTER value="NEAREST" />
+					<MAG_FILTER value="LINEAR" />
+					<MIN_FILTER value="LINEAR" />
 				 </texture>
                 <texture name="texRenderZ"			UNIT=1 />
                 <texture name="texVolume" 			UNIT=2 >
-					<MAG_FILTER value="NEAREST" />
-					<MIN_FILTER value="NEAREST" />
+					<MAG_FILTER value="LINEAR" />
+					<MIN_FILTER value="LINEAR" />
 				 </texture>
                 <!-->
 				<texture name="test" 				UNIT=2 />
 				<-->
                 <texture name="HeightMap_depth" 	UNIT=3 >
-					<MAG_FILTER value="NEAREST" />
-					<MIN_FILTER value="NEAREST" />
+					<MAG_FILTER value="LINEAR" />
+					<MIN_FILTER value="LINEAR" />
 				 </texture>
             </textures>
 		</material>
