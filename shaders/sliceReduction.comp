@@ -52,18 +52,22 @@ void main()
     do{
         imsize = imsize/2;
         if(i < imsize && j < imsize){
-            if(k%2 == 0)
+            if(k%2 == 0){
+
                 vec4 v1 = imageLoad(texVolume, ivec2(i,j));
                 vec4 v2 = imageLoad(texVolume, ivec2(i+imsize,j));
                 vec4 v3 = imageLoad(texVolume, ivec2(i,j+imsize));
                 vec4 v4 = imageLoad(texVolume, ivec2(i+imsize,j+imsize));
                 imageStore(texVolumeAux, ivec2(i, j), max(max(v1,v2),max(v3,v4)));
-            else
+            }
+            else{
+
                 vec4 v1 = imageLoad(texVolumeAux, ivec2(i,j));
                 vec4 v2 = imageLoad(texVolumeAux, ivec2(i+imsize,j));
                 vec4 v3 = imageLoad(texVolumeAux, ivec2(i,j+imsize));
                 vec4 v4 = imageLoad(texVolumeAux, ivec2(i+imsize,j+imsize));
                 imageStore(texVolume, ivec2(i, j), max(max(v1,v2),max(v3,v4)));
+            }
         }
         k++;
         groupMemoryBarrier();
@@ -71,10 +75,10 @@ void main()
 
     if(i+j == 0){
         if(k%2==0){
-            slices[0] = imageLoad(texVolumeAux, ivec2(i,j));
+            slice[0] = imageLoad(texVolumeAux, ivec2(i,j));
         }
         else{
-            slices[0] = imageLoad(texVolume, ivec2(i,j));
+            slice[0] = imageLoad(texVolume, ivec2(i,j));
         }
     }
 }
