@@ -129,7 +129,7 @@ float sendRecieve(float totalheight,float particleheight, float neibtotal, float
 }
 
 float gettex(uint i,uint j){
-    return (vec4((1-texture(heightMap, vec2(-1,1)*(vec2(i,j)/1024))))*sceneHt).x ;
+    return (vec4((1-texture(heightMap, vec2(-1,1)*(vec2(i,j)/texWidth))))*sceneHt).x ;
 }
 
 void swapBuffers(){

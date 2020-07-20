@@ -191,8 +191,8 @@
 			<var label="Marching Step" type="RENDERER" context="CURRENT" component="marchingStep" 
 				def="min=0.001 max=1 step=0.001"/>
 			<var label="Marching Max" type="RENDERER" context="CURRENT" component="marchingMax" />
-			<var label="OffsetX" type="RENDERER" context="CURRENT" component="offsetX" def="step=0.0001"/>
-			<var label="OffsetY" type="RENDERER" context="CURRENT" component="offsetY" def="step=0.0001"/>
+			<var label="OffsetX" type="RENDERER" context="CURRENT" component="offsetX" def="step=0.00001" min="-0.0001" max="0.0001" />
+			<var label="OffsetY" type="RENDERER" context="CURRENT" component="offsetY" def="step=0.00001" min="-0.0001" max="0.0001"/>
 		</window>
     </interface> 
 </project>
