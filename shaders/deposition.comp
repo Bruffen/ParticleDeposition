@@ -93,8 +93,9 @@ uniform float speed;
 uniform vec3 windDir;
 uniform float minHeight;
 uniform float viscosity;
-
+uniform int simulIterations;
 uniform float time;
+
 
 
 
@@ -131,6 +132,16 @@ float gettex(uint i,uint j){
     return (vec4((1-texture(heightMap, vec2(-1,1)*(vec2(i,j)/1024))))*sceneHt).x ;
 }
 
+void swapBuffers(){
+    uint i = gl_GlobalInvocationID.x;
+	uint j = gl_GlobalInvocationID.y;
+
+    vec4 aux = imageLoad(texVolume, ivec2(i, j ));
+    imageStore(texVolume, ivec2(i, j),imageLoad(texVolumeAux, ivec2(i,j)));
+    imageStore(texVolumeAux, ivec2(i, j),aux);
+    groupMemoryBarrier();
+}
+
 void main(){
 
     uint i = gl_GlobalInvocationID.x;
@@ -142,29 +153,32 @@ void main(){
 	const float center_x = width/2;
 	const float center_z = height/2;
     int auxtime = int(time);
+    for(int iter=0; iter < simulIterations;iter ++)
+    {
+        swapBuffers();
+        float curr  = imageLoad(texVolumeAux,ivec2(i,j)).x;
+        float top   = imageLoad(texVolumeAux,ivec2(i-1,j)).x;
+        float bot   = imageLoad(texVolumeAux,ivec2(i+1,j)).x;
+        float right = imageLoad(texVolumeAux,ivec2(i,j+1)).x;
+        float left  = imageLoad(texVolumeAux,ivec2(i,j-1)).x;
+        float totalcurr  = curr  + gettex(i,j);
+        float totaltop   = top   + gettex(i-1,j);
+        float totalbot   = bot   + gettex(i+1,j);
+        float totalright = right + gettex(i,j+1);
+        float totalleft  = left  + gettex(i,j-1);
 
-    float curr  = imageLoad(texVolumeAux,ivec2(i,j)).x;
-    float top   = imageLoad(texVolumeAux,ivec2(i-1,j)).x;
-    float bot   = imageLoad(texVolumeAux,ivec2(i+1,j)).x;
-    float right = imageLoad(texVolumeAux,ivec2(i,j+1)).x;
-    float left  = imageLoad(texVolumeAux,ivec2(i,j-1)).x;
-    float totalcurr  = curr  + gettex(i,j);
-    float totaltop   = top   + gettex(i-1,j);
-    float totalbot   = bot   + gettex(i+1,j);
-    float totalright = right + gettex(i,j+1);
-    float totalleft  = left  + gettex(i,j-1);
+        float aux = curr;
+        aux += sendRecieve(totalcurr,curr,totaltop,top);    
+        aux += sendRecieve(totalcurr,curr,totalbot,bot);
+        aux += sendRecieve(totalcurr,curr,totalright,right);
+        aux += sendRecieve(totalcurr,curr,totalleft,left);
 
-    float aux = curr;
-    aux += sendRecieve(totalcurr,curr,totaltop,top);    
-    aux += sendRecieve(totalcurr,curr,totalbot,bot);
-    aux += sendRecieve(totalcurr,curr,totalright,right);
-    aux += sendRecieve(totalcurr,curr,totalleft,left);
+        imageStore(texVolume, ivec2(i, j ),
+                vec4(aux)
+                //vec4(curr*viscosity + (1-viscosity)*0.25*(top+bot+right+left))
+            );
+    }
 
-    imageStore(texVolume, ivec2(i, j ),
-            vec4(aux)
-            //vec4(curr*viscosity + (1-viscosity)*0.25*(top+bot+right+left))
-        );
-        
     //imageStore(texVolume, ivec2(i, j ), vec4(gettex(i,j)) );
 }
 
