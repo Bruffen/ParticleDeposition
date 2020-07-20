@@ -75,7 +75,7 @@ uniform sampler2D heightMap;
 //uniform restrict image2D texVolume;
 
 layout(binding=0, rgba32f) uniform image2D texVolumeAux;
-layout(binding=0, rgba32f) uniform image2D  texVolume;
+layout(binding=2, rgba32f) uniform image2D  texVolume;
 uniform int texWidth;
 uniform int texHeight;
 

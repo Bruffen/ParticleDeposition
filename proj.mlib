@@ -104,16 +104,27 @@
 					<valueof uniform="particleColor" type="RENDERER" 		context="CURRENT" 		component="particleColor" />
 					<valueof uniform="marchingStep"	type="RENDERER" 		context="CURRENT" 		component="marchingStep" />
 					<valueof uniform="marchingMax"	type="RENDERER" 		context="CURRENT" 		component="marchingMax" />
+					<valueof uniform="offsetX"	type="RENDERER" 		context="CURRENT" 		component="offsetX" />
+					<valueof uniform="offsetY"	type="RENDERER" 		context="CURRENT" 		component="offsetY" />
 				</values>
 			</shader>
 			<textures>
-                <texture name="texRender" 			UNIT=0 />
+                <texture name="texRender" 			UNIT=0 >
+					<MAG_FILTER value="NEAREST" />
+					<MIN_FILTER value="NEAREST" />
+				 </texture>
                 <texture name="texRenderZ"			UNIT=1 />
-                <texture name="texVolume" 			UNIT=2 />
+                <texture name="texVolume" 			UNIT=2 >
+					<MAG_FILTER value="NEAREST" />
+					<MIN_FILTER value="NEAREST" />
+				 </texture>
                 <!-->
 				<texture name="test" 				UNIT=2 />
 				<-->
-                <texture name="HeightMap_depth" 	UNIT=3 />
+                <texture name="HeightMap_depth" 	UNIT=3 >
+					<MAG_FILTER value="NEAREST" />
+					<MIN_FILTER value="NEAREST" />
+				 </texture>
             </textures>
 		</material>
 
@@ -164,6 +175,7 @@
 			<shader name="deposition">
 				<values>
                     <valueof uniform="texVolume" 		type="IMAGE_TEXTURE" 	context="CURRENT" 		component="UNIT" id=0 />
+                    <valueof uniform="texVolumeAux" 	type="IMAGE_TEXTURE" 	context="CURRENT" 		component="UNIT" id=2 />
                     <valueof uniform="heightMap" 		type="TEXTURE_BINDING" 	context="CURRENT" 		component="UNIT" id=1 />
 					<valueof uniform="sceneHt"			type="CAMERA"			context="HeightCamera"	component="FAR" />
 					<valueof uniform="sceneUp"			type="CAMERA"			context="HeightCamera"	component="TOP" />

@@ -6,7 +6,6 @@
 			<constant name="NUMBER_OF_PARTICLES" value="100000" />
 		</constants>
         <attributes>
-            <attribute name="offset" data="FLOAT" type="RENDERER" value=0.1 />
 			<attribute name="radius" data="FLOAT" type="RENDERER" value=100 />
 			<attribute name="gravity" data="FLOAT" type="RENDERER" value=9.8 />
 			<attribute name="speed" data="FLOAT" type="RENDERER" value=0.1 />
@@ -22,6 +21,8 @@
 			<attribute name="marchingMax" data="INT" type="RENDERER" value=750 />
 			<attribute name="particlesActive" data="INT" type="RENDERER" value=1 />
 			<attribute name="simulIterations" data="INT" type="RENDERER" value=1 />
+			<attribute name="offsetX" data="FLOAT" type="RENDERER" value=0/>
+			<attribute name="offsetY" data="FLOAT" type="RENDERER" value=0/>
         </attributes>
 		<scenes>
 			<scene name="scene1">
@@ -30,6 +31,9 @@
 			<scene name="car">
 				<file name="models/lamborghini_aventador.obj"/>
 				<SCALE x=0.02 y=0.02 z=0.02 />
+			</scene>
+			<scene name="camoes">
+				<file name="models/LargoCamoes/largoCamoes.nbo"/>
 			</scene>
 			<scene name="Plane">
 				<geometry name = "square" type = "SQUARE" />
@@ -92,11 +96,15 @@
 	
 	<pipelines>
 		<pipeline name="pip" >
+			<!-- Set the orthographic cameras properties -->
+			<preScript script="adapt" file="scripts/cameraAdapt.lua" />
+
 			<!-- Render the scene from above for height info -->
 		    <pass class="default" name="heightMapSetup">
 				<scenes>
 					<!--
 					<scene name="scene1" /> 
+					<scene name="camoes" /> 
 					/-->
 					<scene name="car" /> 
 					<scene name="Plane" />
@@ -123,6 +131,7 @@
 				<scenes>
 					<!--
 					<scene name="scene1" /> 
+					<scene name="camoes" /> 
 					/-->
 					<scene name="car" /> 
 					<scene name="Plane" />
@@ -151,9 +160,6 @@
 	</pipelines>
 
     <interface> 
-        <!--window label="Variables">
-            <var label="Offset" type="RENDERER" context="CURRENT" component="offset" def="step=0.001"/>
-        </window-->
 		<window label="Particles">
 			<var label="Radius" type="RENDERER" context="CURRENT" component="radius" 
 				def="min=1 max=150 step=0.01"/>
@@ -185,6 +191,8 @@
 			<var label="Marching Step" type="RENDERER" context="CURRENT" component="marchingStep" 
 				def="min=0.001 max=1 step=0.001"/>
 			<var label="Marching Max" type="RENDERER" context="CURRENT" component="marchingMax" />
+			<var label="OffsetX" type="RENDERER" context="CURRENT" component="offsetX" def="step=0.0001"/>
+			<var label="OffsetY" type="RENDERER" context="CURRENT" component="offsetY" def="step=0.0001"/>
 		</window>
     </interface> 
 </project>
