@@ -112,7 +112,7 @@
 					<scene name="scene1" /> 
 					<scene name="camoes" /> 
 					/-->
-					<scene name="scene1" /> 
+					<scene name="car" /> 
 					<scene name="Plane" />
 					<scene name="Sphere" />
 				</scenes>
@@ -133,7 +133,7 @@
 
 			<pass class="default" name="depthMapSetup">
 				<scenes>
-					<scene name="scene1" /> 
+					<scene name="car" /> 
 					<scene name="Plane" />
 					<scene name="Sphere" />
 				</scenes>
@@ -155,7 +155,7 @@
 					<scene name="scene1" /> 
 					<scene name="camoes" /> 
 					/-->
-					<scene name="scene1" /> 
+					<scene name="car" /> 
 					<scene name="Plane" />
 					<scene name="Sphere" />
 					<scene name ="Particles" />
