@@ -113,6 +113,8 @@ float sendRecieve(float totalheight,float particleheight, float neibtotal, float
 }
 
 float gettex(uint i,uint j){
+    if(i <= 0 || j <= 0 || i == texWidth || j == texWidth)
+        return 9999.0;
     return (vec4((1-texture(heightMap, vec2(-1,1)*(vec2(i,j)/texWidth))))*sceneHt).x ;
 }
 
