@@ -28,11 +28,6 @@
 			<HEIGHT value="TEXTURE_RESOLUTION" />
 			<INTERNAL_FORMAT value="RGBA32F" />
 		</texture>
-		<texture name="texVolumeAux">
-			<WIDTH value="TEXTURE_RESOLUTION" />
-			<HEIGHT value="TEXTURE_RESOLUTION" />
-			<INTERNAL_FORMAT value="RGBA32F" />
-		</texture>
 		<texture name="test" filename="transferir.jpg">
 		</texture>
 	</textures>	
@@ -175,7 +170,6 @@
 			<shader name="deposition">
 				<values>
                     <valueof uniform="texVolume" 		type="IMAGE_TEXTURE" 	context="CURRENT" 		component="UNIT" id=0 />
-                    <valueof uniform="texVolumeAux" 	type="IMAGE_TEXTURE" 	context="CURRENT" 		component="UNIT" id=2 />
                     <valueof uniform="heightMap" 		type="TEXTURE_BINDING" 	context="CURRENT" 		component="UNIT" id=1 />
 					<valueof uniform="sceneHt"			type="CAMERA"			context="HeightCamera"	component="FAR" />
 					<valueof uniform="sceneUp"			type="CAMERA"			context="HeightCamera"	component="TOP" />
@@ -199,10 +193,6 @@
             </textures>
 			<imageTextures>
 				<imageTexture UNIT=0 texture="texVolume" >
-					<ACCESS value="READ_WRITE" />
-					<LEVEL value=0 />
-				</imageTexture>
-				<imageTexture UNIT=2 texture="texVolumeAux" >
 					<ACCESS value="READ_WRITE" />
 					<LEVEL value=0 />
 				</imageTexture>
