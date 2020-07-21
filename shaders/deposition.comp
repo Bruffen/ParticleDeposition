@@ -174,7 +174,7 @@ void main(){
         aux += sendRecieve(totalcurr,curr,totalleft,left);
 
         imageStore(texVolume, ivec2(i, j ),
-                vec4(aux,gettex(i,j),0,0)
+                vec4(max(aux,0),gettex(i,j),0,0)
                 //vec4(curr*viscosity + (1-viscosity)*0.25*(top+bot+right+left))
             );
     }
