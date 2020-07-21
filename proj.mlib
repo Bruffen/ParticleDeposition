@@ -36,11 +36,6 @@
 			<HEIGHT value="TEXTURE_RESOLUTION" />
 			<INTERNAL_FORMAT value="RGBA32F" />
 		</texture>
-		<texture name="texVolumeAux">
-			<WIDTH value="TEXTURE_RESOLUTION" />
-			<HEIGHT value="TEXTURE_RESOLUTION" />
-			<INTERNAL_FORMAT value="RGBA32F" />
-		</texture>
 		<texture name="test" filename="transferir.jpg">
 		</texture>
 	</textures>	
@@ -64,9 +59,7 @@
 			<shader name="addVect"
 				cs = "shaders/addVect.comp" 
 				/>
-			<shader name="copyAuxdeposition"
-				cs = "shaders/copyAuxdeposition.comp" 
-				/>
+			
 	</shaders>
 <!-- 
 	gs = "shaders/billboards.geom" -->
@@ -118,7 +111,6 @@
 					<valueof uniform="zFar"			type="CAMERA"			context="MainCamera"	component="FAR" />
 					<valueof uniform="m_pvm" 		type="RENDERER" 		context="CURRENT" 		component="PROJECTION_VIEW_MODEL" />
 					<valueof uniform="m_pv" 		type="RENDERER" 		context="CURRENT" 		component="PROJECTION_VIEW" />
-					<valueof uniform="derivWeight"	type="RENDERER"			context="CURRENT"		component="derivWeight" />
 					<valueof uniform="fov"			type="CAMERA"			context="MainCamera"	component="FOV" />
 					<valueof uniform="sceneHt"		type="CAMERA"			context="HeightCamera"	component="FAR" />
 					<valueof uniform="sceneUp"		type="CAMERA"			context="HeightCamera"	component="TOP" />
@@ -130,17 +122,28 @@
 					<valueof uniform="particleColor" type="RENDERER" 		context="CURRENT" 		component="particleColor" />
 					<valueof uniform="marchingStep"	type="RENDERER" 		context="CURRENT" 		component="marchingStep" />
 					<valueof uniform="marchingMax"	type="RENDERER" 		context="CURRENT" 		component="marchingMax" />
+					<valueof uniform="offsetX"	type="RENDERER" 		context="CURRENT" 		component="offsetX" />
+					<valueof uniform="offsetY"	type="RENDERER" 		context="CURRENT" 		component="offsetY" />
 				</values>
 			</shader>
 			<!-- <state name="frontCull" /> -->
 			<textures>
-                <texture name="texRender" 			UNIT=0 />
+                <texture name="texRender" 			UNIT=0 >
+					<MAG_FILTER value="LINEAR" />
+					<MIN_FILTER value="LINEAR" />
+				 </texture>
                 <texture name="texRenderZ"			UNIT=1 />
-                <texture name="texVolume" 			UNIT=2 />
+                <texture name="texVolume" 			UNIT=2 >
+					<MAG_FILTER value="LINEAR" />
+					<MIN_FILTER value="LINEAR" />
+				 </texture>
                 <!-->
 				<texture name="test" 				UNIT=2 />
 				<-->
-                <texture name="HeightMap_depth" 	UNIT=3 />
+                <texture name="HeightMap_depth" 	UNIT=3 >
+					<MAG_FILTER value="LINEAR" />
+					<MIN_FILTER value="LINEAR" />
+				 </texture>
 				<texture name="depthrender" 		UNIT=4 />
             </textures>
 		</material>
@@ -191,22 +194,23 @@
 		<material name="depositionHeight">
 			<shader name="deposition">
 				<values>
-                    <valueof uniform="texVolume" 	type="IMAGE_TEXTURE" 	context="CURRENT" 		component="UNIT" id=0 />
-                    <valueof uniform="heightMap" 	type="TEXTURE_BINDING" 	context="CURRENT" 		component="UNIT" id=1 />
-					<valueof uniform="sceneHt"		type="CAMERA"			context="HeightCamera"	component="FAR" />
-					<valueof uniform="sceneUp"		type="CAMERA"			context="HeightCamera"	component="TOP" />
-					<valueof uniform="sceneLf"		type="CAMERA"			context="HeightCamera"	component="LEFT" />
-					<valueof uniform="sceneRt"		type="CAMERA"			context="HeightCamera"	component="RIGHT" />
-					<valueof uniform="sceneDw"		type="CAMERA"			context="HeightCamera"	component="BOTTOM" />
-					<valueof uniform="texWidth"		type="TEXTURE"			context="texVolume"		component="WIDTH" />
-					<valueof uniform="texHeight"	type="TEXTURE"			context="texVolume"		component="HEIGHT" />
-					<valueof uniform="time" 		type="RENDERER" 		context="CURRENT" 		component="TIMER" />
-					<valueof uniform="radius" 		type="RENDERER" 		context="CURRENT" 		component="radius" />
-					<valueof uniform="speed" 		type="RENDERER" 		context="CURRENT" 		component="speed" />
-					<valueof uniform="gravity" 		type="RENDERER" 		context="CURRENT" 		component="gravity" />
-					<valueof uniform="windDir" 		type="RENDERER" 		context="CURRENT" 		component="windDir" />
-					<valueof uniform="minHeight" 	type="RENDERER" 		context="CURRENT" 		component="minHeight" />
-					<valueof uniform="viscosity" 	type="RENDERER" 		context="CURRENT" 		component="viscosity" />
+                    <valueof uniform="texVolume" 		type="IMAGE_TEXTURE" 	context="CURRENT" 		component="UNIT" id=0 />
+                    <valueof uniform="heightMap" 		type="TEXTURE_BINDING" 	context="CURRENT" 		component="UNIT" id=1 />
+					<valueof uniform="sceneHt"			type="CAMERA"			context="HeightCamera"	component="FAR" />
+					<valueof uniform="sceneUp"			type="CAMERA"			context="HeightCamera"	component="TOP" />
+					<valueof uniform="sceneLf"			type="CAMERA"			context="HeightCamera"	component="LEFT" />
+					<valueof uniform="sceneRt"			type="CAMERA"			context="HeightCamera"	component="RIGHT" />
+					<valueof uniform="sceneDw"			type="CAMERA"			context="HeightCamera"	component="BOTTOM" />
+					<valueof uniform="texWidth"			type="TEXTURE"			context="texVolume"		component="WIDTH" />
+					<valueof uniform="texHeight"		type="TEXTURE"			context="texVolume"		component="HEIGHT" />
+					<valueof uniform="time" 			type="RENDERER" 		context="CURRENT" 		component="TIMER" />
+					<valueof uniform="radius" 			type="RENDERER" 		context="CURRENT" 		component="radius" />
+					<valueof uniform="speed" 			type="RENDERER" 		context="CURRENT" 		component="speed" />
+					<valueof uniform="gravity" 			type="RENDERER" 		context="CURRENT" 		component="gravity" />
+					<valueof uniform="windDir" 			type="RENDERER" 		context="CURRENT" 		component="windDir" />
+					<valueof uniform="minHeight" 		type="RENDERER" 		context="CURRENT" 		component="minHeight" />
+					<valueof uniform="viscosity" 		type="RENDERER" 		context="CURRENT" 		component="viscosity" />
+					<valueof uniform="simulIterations" 	type="RENDERER" 		context="CURRENT" 		component="simulIterations" />
 				</values>
 			</shader>
 			<textures>
@@ -214,43 +218,6 @@
             </textures>
 			<imageTextures>
 				<imageTexture UNIT=0 texture="texVolume" >
-					<ACCESS value="READ_WRITE" />
-					<LEVEL value=0 />
-				</imageTexture>
-				<imageTexture UNIT=2 texture="texVolumeAux" >
-					<ACCESS value="READ_WRITE" />
-					<LEVEL value=0 />
-				</imageTexture>
-			</imageTextures>
-		</material>
-		<material name="depositionAux">
-			<shader name="copyAuxdeposition">
-				<values>
-                    <valueof uniform="texVolume" 	type="IMAGE_TEXTURE" 	context="CURRENT" 		component="UNIT" id=0 />
-                    <valueof uniform="heightMap" 	type="TEXTURE_BINDING" 	context="CURRENT" 		component="UNIT" id=1 />
-					<valueof uniform="sceneHt"		type="CAMERA"			context="HeightCamera"	component="FAR" />
-					<valueof uniform="sceneUp"		type="CAMERA"			context="HeightCamera"	component="TOP" />
-					<valueof uniform="sceneLf"		type="CAMERA"			context="HeightCamera"	component="LEFT" />
-					<valueof uniform="sceneRt"		type="CAMERA"			context="HeightCamera"	component="RIGHT" />
-					<valueof uniform="sceneDw"		type="CAMERA"			context="HeightCamera"	component="BOTTOM" />
-					<valueof uniform="texWidth"		type="TEXTURE"			context="texVolume"		component="WIDTH" />
-					<valueof uniform="texHeight"	type="TEXTURE"			context="texVolume"		component="HEIGHT" />
-					<valueof uniform="time" 		type="RENDERER" 		context="CURRENT" 		component="TIMER" />
-					<valueof uniform="radius" 		type="RENDERER" 		context="CURRENT" 		component="radius" />
-					<valueof uniform="speed" 		type="RENDERER" 		context="CURRENT" 		component="speed" />
-					<valueof uniform="gravity" 		type="RENDERER" 		context="CURRENT" 		component="gravity" />
-					<valueof uniform="windDir" 		type="RENDERER" 		context="CURRENT" 		component="windDir" />
-				</values>
-			</shader>
-			<textures>
-                <texture name="HeightMap_depth" 	UNIT=1 />
-            </textures>
-			<imageTextures>
-				<imageTexture UNIT=0 texture="texVolume" >
-					<ACCESS value="READ_WRITE" />
-					<LEVEL value=0 />
-				</imageTexture>
-				<imageTexture UNIT=2 texture="texVolumeAux" >
 					<ACCESS value="READ_WRITE" />
 					<LEVEL value=0 />
 				</imageTexture>

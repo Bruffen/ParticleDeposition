@@ -80,7 +80,7 @@ layout( std140, binding=2 ) buffer Directions
 */
 
 float gettex(uint i,uint j){
-    return (vec4((1-texture(heightMap, vec2(-1,1)*(vec2(i,j)/1024))))*sceneHt).x ;
+    return (vec4((1-texture(heightMap, vec2(-1,1)*(vec2(i,j)/texWidth))))*sceneHt).x ;
 }
 
 void main()
@@ -93,6 +93,8 @@ void main()
 
 	const float width  = sceneLf - sceneRt;
 	const float height = sceneDw - sceneUp;
+	const float inv_bbWidth  = -1 / width;
+	const float inv_bbHeight = -1 / height;
 	const float center_x = width/2;
 	const float center_z = height/2;
 
@@ -160,9 +162,11 @@ void main()
 			if (particles.z > sceneUp)
 				particles.z = sceneDw;
 
-			if (particles.y <= gettex(i,j))
+			vec2 uvs = vec2((particles.x - sceneLf) * inv_bbWidth, (particles.z - sceneDw) * inv_bbHeight);
+			vec4 value = imageLoad(texVolume, ivec2((-particles.x / width + 0.5) * texWidth, (-particles.z / height + 0.5) * texHeight));
+			float sceneHeight = (1 - texture(heightMap, uvs).r) * sceneHt;
+			if (particles.y <= sceneHeight + value.r)
 			{
-				vec4 value = imageLoad(texVolume, ivec2((-particles.x / width + 0.5) * texWidth, (-particles.z / height + 0.5) * texHeight));
 				value.x += particleSize;
 				value.y += particleSize;
 				value.z += particleSize;

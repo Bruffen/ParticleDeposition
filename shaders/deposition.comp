@@ -74,8 +74,7 @@ layout (local_size_x = 1, local_size_y = 1, local_size_z = 1) in; // optimize
 uniform sampler2D heightMap;
 //uniform restrict image2D texVolume;
 
-layout(binding=0, rgba32f) uniform image2D texVolumeAux;
-layout(binding=0, rgba32f) uniform image2D  texVolume;
+layout(binding=2, rgba32f) uniform image2D  texVolume;
 uniform int texWidth;
 uniform int texHeight;
 
@@ -93,28 +92,14 @@ uniform float speed;
 uniform vec3 windDir;
 uniform float minHeight;
 uniform float viscosity;
-
+uniform int simulIterations;
 uniform float time;
 
 
 
 
 
-float checkSend(uint i,uint j,int ipp,int jpp,float curr){
-    vec4 neighboor = imageLoad(texVolumeAux, ivec2(i +ipp, j+jpp ));
-    float height = curr;
-    if(neighboor.x > curr && (neighboor.x-curr) > minHeight ){
-            
-            height = curr+(neighboor.x-curr)*(viscosity);
-            
-    }else
-    if(neighboor.x < curr && (curr-neighboor.x) > minHeight){
 
-            height = curr-(curr-neighboor.x)*(viscosity);
-
-    }
-    return height;
-}
 
 
 float sendRecieve(float totalheight,float particleheight, float neibtotal, float neibparticle){
@@ -128,8 +113,12 @@ float sendRecieve(float totalheight,float particleheight, float neibtotal, float
 }
 
 float gettex(uint i,uint j){
-    return (vec4((1-texture(heightMap, vec2(-1,1)*(vec2(i,j)/1024))))*sceneHt).x ;
+    if(i <= 0 || j <= 0 || i == texWidth || j == texWidth)
+        return 9999.0;
+    return (vec4((1-texture(heightMap, vec2(-1,1)*(vec2(i,j)/texWidth))))*sceneHt).x ;
 }
+
+
 
 void main(){
 
@@ -142,29 +131,33 @@ void main(){
 	const float center_x = width/2;
 	const float center_z = height/2;
     int auxtime = int(time);
+    for(int iter=0; iter < simulIterations;iter ++)
+    {
+        groupMemoryBarrier();
 
-    float curr  = imageLoad(texVolumeAux,ivec2(i,j)).x;
-    float top   = imageLoad(texVolumeAux,ivec2(i-1,j)).x;
-    float bot   = imageLoad(texVolumeAux,ivec2(i+1,j)).x;
-    float right = imageLoad(texVolumeAux,ivec2(i,j+1)).x;
-    float left  = imageLoad(texVolumeAux,ivec2(i,j-1)).x;
-    float totalcurr  = curr  + gettex(i,j);
-    float totaltop   = top   + gettex(i-1,j);
-    float totalbot   = bot   + gettex(i+1,j);
-    float totalright = right + gettex(i,j+1);
-    float totalleft  = left  + gettex(i,j-1);
+        float curr  = imageLoad(texVolume,ivec2(i,j)).x;
+        float top   = imageLoad(texVolume,ivec2(i-1,j)).x;
+        float bot   = imageLoad(texVolume,ivec2(i+1,j)).x;
+        float right = imageLoad(texVolume,ivec2(i,j+1)).x;
+        float left  = imageLoad(texVolume,ivec2(i,j-1)).x;
+        float totalcurr  = curr  + gettex(i,j);
+        float totaltop   = top   + gettex(i-1,j);
+        float totalbot   = bot   + gettex(i+1,j);
+        float totalright = right + gettex(i,j+1);
+        float totalleft  = left  + gettex(i,j-1);
 
-    float aux = curr;
-    aux += sendRecieve(totalcurr,curr,totaltop,top);    
-    aux += sendRecieve(totalcurr,curr,totalbot,bot);
-    aux += sendRecieve(totalcurr,curr,totalright,right);
-    aux += sendRecieve(totalcurr,curr,totalleft,left);
+        float aux = curr;
+        aux += sendRecieve(totalcurr,curr,totaltop,top);    
+        aux += sendRecieve(totalcurr,curr,totalbot,bot);
+        aux += sendRecieve(totalcurr,curr,totalright,right);
+        aux += sendRecieve(totalcurr,curr,totalleft,left);
+        groupMemoryBarrier();
+        imageStore(texVolume, ivec2(i, j ),
+                vec4(max(aux,0),gettex(i,j),0,0)
+                //vec4(curr*viscosity + (1-viscosity)*0.25*(top+bot+right+left))
+            );
+    }
 
-    imageStore(texVolume, ivec2(i, j ),
-            vec4(aux)
-            //vec4(curr*viscosity + (1-viscosity)*0.25*(top+bot+right+left))
-        );
-        
     //imageStore(texVolume, ivec2(i, j ), vec4(gettex(i,j)) );
 }
 

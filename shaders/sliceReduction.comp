@@ -1,0 +1,84 @@
+#version 430
+
+layout (local_size_x = 1, local_size_y = 1, local_size_z = 1) in; // optimize
+
+//2 Heightmaps
+uniform sampler2D heightMap;
+uniform sampler2D heightMapBot;
+
+//2 Auxiliares
+layout(binding=0, rgba32f) uniform image2D texVolume;
+layout(binding=0, rgba32f) uniform image2D texVolumeAux;
+
+uniform int texWidth;
+uniform int texHeight;
+
+// Params from the camera that renders the scene from above
+uniform float sceneHt; // max y bound
+uniform float sceneRt; // max x bound
+uniform float sceneLf; // min x bound
+uniform float sceneUp; // max z bound
+uniform float sceneDw; // min z bound
+
+layout( std140, binding=1 ) buffer Slice
+{
+	vec4 slice[];
+	//vec4 particleDir[];
+};
+
+float gettex(uint i,uint j, sampler2D text){
+    return (vec4((1-texture(text, vec2(-1,1)*(vec2(i,j)/1024))))*sceneHt).x ;
+}
+
+void main()
+{
+    uint i = gl_GlobalInvocationID.x;
+	uint j = gl_GlobalInvocationID.y;
+
+
+    //Calculate Values
+    float valtop = gettex(i,j,heightMap);
+    float valbot = gettex(i,j,heightMapBot);
+
+    float distance = valbot > valtop ? 0 : valtop - valbot;
+    float cutHeight = distance > 0 ? (valtop + valbot)/2 : 0;
+
+    imageStore(texVolume, ivec2(i, j),vec4(distance,cutHeight,0,0));
+
+    groupMemoryBarrier();
+    int imsize  = texWidth;
+    int k = 0;
+    //PARALLEL REDUCTION
+    do{
+        imsize = imsize/2;
+        if(i < imsize && j < imsize){
+            if(k%2 == 0){
+
+                vec4 v1 = imageLoad(texVolume, ivec2(i,j));
+                vec4 v2 = imageLoad(texVolume, ivec2(i+imsize,j));
+                vec4 v3 = imageLoad(texVolume, ivec2(i,j+imsize));
+                vec4 v4 = imageLoad(texVolume, ivec2(i+imsize,j+imsize));
+                imageStore(texVolumeAux, ivec2(i, j), max(max(v1,v2),max(v3,v4)));
+            }
+            else{
+
+                vec4 v1 = imageLoad(texVolumeAux, ivec2(i,j));
+                vec4 v2 = imageLoad(texVolumeAux, ivec2(i+imsize,j));
+                vec4 v3 = imageLoad(texVolumeAux, ivec2(i,j+imsize));
+                vec4 v4 = imageLoad(texVolumeAux, ivec2(i+imsize,j+imsize));
+                imageStore(texVolume, ivec2(i, j), max(max(v1,v2),max(v3,v4)));
+            }
+        }
+        k++;
+        groupMemoryBarrier();
+    } while(i > 1);
+
+    if(i+j == 0){
+        if(k%2==0){
+            slice[0] = imageLoad(texVolumeAux, ivec2(i,j));
+        }
+        else{
+            slice[0] = imageLoad(texVolume, ivec2(i,j));
+        }
+    }
+}
