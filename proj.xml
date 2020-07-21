@@ -8,13 +8,13 @@
         <attributes>
 			<attribute name="radius" data="FLOAT" type="RENDERER" value=100 />
 			<attribute name="gravity" data="FLOAT" type="RENDERER" value=9.8 />
-			<attribute name="speed" data="FLOAT" type="RENDERER" value=0.1 />
+			<attribute name="speed" data="FLOAT" type="RENDERER" value=3.228 />
 			<attribute name="width" data="FLOAT" type="RENDERER" value=0.01 />
 			<attribute name="height" data="FLOAT" type="RENDERER" value=0.04 />
 			<attribute name="particleSize" data="FLOAT" type="RENDERER" value=0.1 />
-			<attribute name="minHeight" data="FLOAT" type="RENDERER" value=0.02 />
+			<attribute name="minHeight" data="FLOAT" type="RENDERER" value=0.002 />
 			<attribute name="viscosity" data="FLOAT" type="RENDERER" value=0.009 />
-			<attribute name="windDir" data="VEC3" type="RENDERER" x=1 y=0 z=0/>
+			<attribute name="windDir" data="VEC3" type="RENDERER" x=15 y=15 z=-10/>
 			<attribute name="particleAlpha" data="FLOAT" type="RENDERER" value=0.75 />
 			<attribute name="particleColor" data="VEC3" type="RENDERER" x=0.3 y=0.7 z=0.9 />
 			<attribute name="marchingStep" data="FLOAT" type="RENDERER" value=0.008 />
