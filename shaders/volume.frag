@@ -153,10 +153,11 @@ vec4 rayMarch(vec3 rayPos, vec3 rayDir)
                            (current.z - sceneDw) * inv_bbHeight), 0 + tol, 1 - tol);
 
         vec2 offset = vec2(offsetX, offsetY);
-        float h = texture(texVolume, texUVs + offset).r;// * sceneHt;
-        float z = (1 - texture(heightMap, vec2(-texUVs.x, texUVs.y)).r) * sceneHt;
+        vec4 hvec = texture(texVolume, texUVs + offset);
+        float h = hvec.r;// * sceneHt;
+        float z = hvec.g;//(1 - texture(heightMap, vec2(-texUVs.x, texUVs.y)).r) * sceneHt;
         // If distances are too different, then we have a vertical disconnection between particles
-        if (abs(lastH - h + lastZ - z) > 0.01)
+        if (abs(lastH - h + lastZ - z) > 0.05)
         {
             lastH = h;
             lastZ = z;
@@ -179,11 +180,12 @@ vec4 rayMarch(vec3 rayPos, vec3 rayDir)
             float h_lf = texture(texVolume, uv_lf + offset).r;
 
             // Get heights from the scene
-            float z_up = (1 - texture((heightMap), vec2(-uv_up.x, uv_up.y)).r) * sceneHt;
-            float z_dw = (1 - texture((heightMap), vec2(-uv_dw.x, uv_dw.y)).r) * sceneHt;
-            float z_rt = (1 - texture((heightMap), vec2(-uv_rt.x, uv_rt.y)).r) * sceneHt;
-            float z_lf = (1 - texture((heightMap), vec2(-uv_lf.x, uv_lf.y)).r) * sceneHt;
+            float z_up = texture(texVolume, uv_up + offset).g;// (1 - texture((heightMap), vec2(-uv_up.x, uv_up.y)).r) * sceneHt;
+            float z_dw = texture(texVolume, uv_dw + offset).g;// (1 - texture((heightMap), vec2(-uv_dw.x, uv_dw.y)).r) * sceneHt;
+            float z_rt = texture(texVolume, uv_rt + offset).g;// (1 - texture((heightMap), vec2(-uv_rt.x, uv_rt.y)).r) * sceneHt;
+            float z_lf = texture(texVolume, uv_lf + offset).g;// (1 - texture((heightMap), vec2(-uv_lf.x, uv_lf.y)).r) * sceneHt;
 
+            
             // Calculate directions with slopes
             vec3 up = normalize(vec3( world_step, (h_up + z_up) - (h + z), 0));
             vec3 dw = normalize(vec3(-world_step, (h_dw + z_dw) - (h + z), 0));
