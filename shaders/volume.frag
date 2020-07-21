@@ -15,10 +15,11 @@
 uniform sampler2D texRender;    
 uniform sampler2D heightMap;    // World height map
 uniform sampler2D texVolume;    // World height map + particles heights
+uniform sampler2D DepthTex;    
 const float particleHighest = 3.5;
 
 uniform vec3 lightDir;
-
+uniform mat4 m_pv;
 uniform vec4  position;
 uniform vec3  view;
 uniform vec3  right;
@@ -33,6 +34,7 @@ uniform float sceneDw;
 uniform sampler2D texRenderZ;
 uniform float zNear;
 uniform float zFar;
+uniform float derivWeight;
 uniform vec2  windowSize;
 
 uniform float normalOffset;
@@ -46,6 +48,7 @@ const vec3 inf = vec3(1e20, 1e20, 1e20);
 in vec2 uv;
 
 out vec4 color;
+out float gl_FragDepth ;
 
 vec3 rayDir()
 {
@@ -122,23 +125,20 @@ vec4 rayMarch(vec3 rayPos, vec3 rayDir)
     float inv_bbHeight = -1 / (sceneDw - sceneUp);
 
     // Calculate maximum depth acceptable until we hit a scene object
-    float maxDepth = texture(texRenderZ, uv).r;
-    // Convert Depth Buffer values to a linear format
-    maxDepth = maxDepth * 2.0 - 1.0;
-    maxDepth = (2.0 * zNear * zFar) / (zFar + zNear - maxDepth * (zFar - zNear));
-    maxDepth = length(rayDir * maxDepth);
+    float maxDepth = texture(DepthTex, uv).x;
 
     float lastH = 0;
     float lastZ = 0;
     for (int i = 0; i < marchingMax; i++)
     {
         //TODO calculate step of ray based on texel size and ray direction
-        vec3  currentStep = rayDir * i * marchingStep;
-        float currentLength = length(currentStep);
-        //if (currentLength >= maxDepth)
-        //    return vec4(0.0);
-
+        vec3 currentStep = rayDir * i * marchingStep;
         vec3 current = rayPos + currentStep;
+        float currentLength = length(current - position.xyz);
+
+        if (currentLength > maxDepth )
+           return vec4(0);            
+
         if (!isInsideBoundingBoxTol(current)) 
             return vec4(0.0);
         
@@ -222,14 +222,4 @@ void main()
     }
 
     color = mix(color, particleColor, particleColor.a);
-    
-    /*
-    float depth = texture(texRenderZ, uv).r;
-    // have to linearize depth maybe
-    depth = depth * 2.0 - 1.0;
-    depth = (2.0 * zNear * zFar) / (zFar + zNear - depth * (zFar - zNear));
-    vec3 worldPos = position.xyz + rayDir * depth;
-    color = mix(color, vec4(worldPos, 1), 1);
-    //color = vec4(depth / zFar - zNear);
-    */
 }

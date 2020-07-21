@@ -15,6 +15,14 @@
 				<color name="heightMap" internalFormat="R32F" />
 			</colors>
 		</renderTarget>
+		<renderTarget name = "Depth">
+			<CLEAR_VALUES x=1000 y=0 z=0 w=1 />
+			<SIZE width=1280 height=720 />
+			<colors>
+				<color name="depthrender" internalFormat="RGBA32F" />
+			</colors>
+		</renderTarget>
+
 		<!--renderTarget name ="VolumeHeight">
 			<SIZE width=1024 height=1024 />
 			<colors>
@@ -43,7 +51,7 @@
 			<shader name = "screenSpaceVolume"
 				vs = "shaders/quad.vert"
 				ps = "shaders/volume.frag" />
-            <shader name = "tex"
+            <shader name = "DepthMap"
                 vs = "shaders/tex.vert"
                 ps = "shaders/tex.frag" />
 			<shader name = "billboards"
@@ -81,6 +89,18 @@
 	</buffers>
 	
 	<materials>
+		<material name="DepthMap">
+			<shader name="DepthMap">
+				<values>
+                    <valueof uniform="m_pvm" 		type="RENDERER" 		context="CURRENT" 		component="PROJECTION_VIEW_MODEL" />
+					<valueof uniform="camerapos"	type="CAMERA" 			context="MainCamera" 	component="POSITION" />
+					<valueof uniform="m_pv" 		type="RENDERER" 		context="CURRENT" 		component="PROJECTION_VIEW" />
+					<valueof uniform="m_vm" 		type="RENDERER" 		context="CURRENT" 		component="VIEW_MODEL" />
+					<valueof uniform="m_view" 		type="RENDERER" 		context="CURRENT" 		component="VIEW" />
+				</values>
+			</shader>
+				
+		</material>
 		<material name="matRenderVolume">
 			<shader name="screenSpaceVolume">
 				<values>
@@ -88,6 +108,7 @@
                     <valueof uniform="texRenderZ"	type="TEXTURE_BINDING" 	context="CURRENT" 		component="UNIT" id=1 />
                     <valueof uniform="texVolume"	type="TEXTURE_BINDING" 	context="CURRENT" 		component="UNIT" id=2 />
                     <valueof uniform="heightMap"	type="TEXTURE_BINDING" 	context="CURRENT" 		component="UNIT" id=3 />
+					<valueof uniform="DepthTex"		type="TEXTURE_BINDING" 	context="CURRENT" 		component="UNIT" id=4 />
 					<valueof uniform="lightDir"		type="LIGHT" 			context="Sun" 			component="DIRECTION" />
 					<valueof uniform="view"			type="CAMERA"			context="MainCamera"	component="VIEW" />
 					<valueof uniform="right"		type="CAMERA"			context="MainCamera"	component="NORMALIZED_RIGHT" />
@@ -95,6 +116,9 @@
 					<valueof uniform="position"		type="CAMERA"			context="MainCamera"	component="POSITION" />
 					<valueof uniform="zNear"		type="CAMERA"			context="MainCamera"	component="NEAR" />
 					<valueof uniform="zFar"			type="CAMERA"			context="MainCamera"	component="FAR" />
+					<valueof uniform="m_pvm" 		type="RENDERER" 		context="CURRENT" 		component="PROJECTION_VIEW_MODEL" />
+					<valueof uniform="m_pv" 		type="RENDERER" 		context="CURRENT" 		component="PROJECTION_VIEW" />
+					<valueof uniform="derivWeight"	type="RENDERER"			context="CURRENT"		component="derivWeight" />
 					<valueof uniform="fov"			type="CAMERA"			context="MainCamera"	component="FOV" />
 					<valueof uniform="sceneHt"		type="CAMERA"			context="HeightCamera"	component="FAR" />
 					<valueof uniform="sceneUp"		type="CAMERA"			context="HeightCamera"	component="TOP" />
@@ -108,6 +132,7 @@
 					<valueof uniform="marchingMax"	type="RENDERER" 		context="CURRENT" 		component="marchingMax" />
 				</values>
 			</shader>
+			<!-- <state name="frontCull" /> -->
 			<textures>
                 <texture name="texRender" 			UNIT=0 />
                 <texture name="texRenderZ"			UNIT=1 />
@@ -116,6 +141,7 @@
 				<texture name="test" 				UNIT=2 />
 				<-->
                 <texture name="HeightMap_depth" 	UNIT=3 />
+				<texture name="depthrender" 		UNIT=4 />
             </textures>
 		</material>
 
@@ -230,31 +256,22 @@
 				</imageTexture>
 			</imageTextures>
 		</material>
-
-		<material name="Tex">
-			<shader name="tex">
-				<values>
-					<valueof uniform="m_pvm" type="RENDERER" context="CURRENT" component="PROJECTION_VIEW_MODEL" />
-					<valueof uniform="texVolume" type="TEXTURE_BINDING" context="CURRENT" component="UNIT" id=0 />
-				</values>
-			</shader>
-            <textures>
-                <texture name="texVolume" UNIT = 0 />
-            </textures>
-		</material>
 		
 		<material name="ParticlesBB">
 			<shader name="billboards">
 				<values>
-					<valueof uniform="m_model" type="RENDERER" context="CURRENT" component="MODEL" />
-					<valueof uniform="m_pv" type="RENDERER" context="CURRENT" component="PROJECTION_VIEW" />
-					<valueof uniform="texVolume" type="TEXTURE_BINDING" context="CURRENT" component="UNIT" id=0 />
-					<valueof uniform="width" type="RENDERER" context="CURRENT" component="width" />
-					<valueof uniform="height" type="RENDERER" context="CURRENT" component="height" />
-					<valueof uniform="particleSize" type="RENDERER" context="CURRENT" component="particleSize" />
-					<valueof uniform="particleColor" type="RENDERER" context="CURRENT" component="particleColor" />
-					<valueof uniform="particlesActive" type="RENDERER" context="CURRENT" component="particlesActive" />
-					<valueof uniform="radius" type="RENDERER" context="CURRENT" component="radius" />
+					<valueof uniform="m_model" 			type="RENDERER" 		context="CURRENT" component="MODEL" />
+					<valueof uniform="m_pv" 			type="RENDERER" 		context="CURRENT" component="PROJECTION_VIEW" />
+					<valueof uniform="texVolume"		type="TEXTURE_BINDING" 	context="CURRENT" component="UNIT" id=0 />
+					<valueof uniform="width" 			type="RENDERER" 		context="CURRENT" component="width" />
+					<valueof uniform="height" 			type="RENDERER" 		context="CURRENT" component="height" />
+					<valueof uniform="particleSize" 	type="RENDERER" 		context="CURRENT" component="particleSize" />
+					<valueof uniform="particleColor" 	type="RENDERER" 		context="CURRENT" component="particleColor" />
+					<valueof uniform="particlesActive"  type="RENDERER" 		context="CURRENT" component="particlesActive" />
+					<valueof uniform="radius" 			type="RENDERER" 		context="CURRENT" component="radius" />
+					<valueof uniform="speed" 			type="RENDERER" 		context="CURRENT" component="speed" />
+					<valueof uniform="windDir" 			type="RENDERER" 		context="CURRENT" component="windDir" />
+					<valueof uniform="gravity" 			type="RENDERER" 		context="CURRENT" component="gravity" />
 				</values>
 			</shader>
 			<buffers>

@@ -8,6 +8,9 @@ uniform float width;
 uniform float height;
 uniform int particlesActive;
 uniform float radius;
+uniform vec3 windDir;
+uniform float gravity;
+uniform float speed;
 
 in data{
     vec2 uv;
@@ -47,22 +50,47 @@ float floatConstruct( uint m ) {
 }
 
 
-mat3 AngleAxis3x3(float anglex, float angley, vec3 axis)
-{
-	float c, s;
-	c = cos(anglex);
-	s = sin(angley);
+vec4 setAxisAngle (vec3 axis, float rad) {
+  rad = rad * 0.5;
+  float s = sin(rad);
+  return vec4(s * axis[0], s * axis[1], s * axis[2], cos(rad));
+}
 
-	float t = 1 - c;
-	float x = axis.x;
-	float y = axis.y;
-	float z = axis.z;
+vec3 xUnitVec3 = vec3(1.0, 0.0, 0.0);
+vec3 yUnitVec3 = vec3(0.0, 1.0, 0.0);
 
-	return mat3(
-		t * x * x + c, t * x * y - s * z, t * x * z + s * y,
-		t * x * y + s * z, t * y * y + c, t * y * z - s * x,
-		t * x * z - s * y, t * y * z + s * x, t * z * z + c
-		);
+vec4 rotationTo (vec3 a, vec3 b) {
+  float vecDot = dot(a, b);
+  vec3 tmpvec3 = vec3(0);
+  if (vecDot < -0.999999) {
+    tmpvec3 = cross(xUnitVec3, a);
+    if (length(tmpvec3) < 0.000001) {
+      tmpvec3 = cross(yUnitVec3, a);
+    }
+    tmpvec3 = normalize(tmpvec3);
+    return setAxisAngle(tmpvec3, 3.1415);
+  } else if (vecDot > 0.999999) {
+    return vec4(0,0,0,1);
+  } else {
+    tmpvec3 = cross(a, b);
+    vec4 _out = vec4(tmpvec3[0], tmpvec3[1], tmpvec3[2], 1.0 + vecDot);
+    return normalize(_out);
+  }
+}
+
+vec4 multQuat(vec4 q1, vec4 q2) {
+  return vec4(
+    q1.w * q2.x + q1.x * q2.w + q1.z * q2.y - q1.y * q2.z,
+    q1.w * q2.y + q1.y * q2.w + q1.x * q2.z - q1.z * q2.x,
+    q1.w * q2.z + q1.z * q2.w + q1.y * q2.x - q1.x * q2.y,
+    q1.w * q2.w - q1.x * q2.x - q1.y * q2.y - q1.z * q2.z
+  );
+}
+
+vec3 rotateVector( vec4 quat, vec3 vec ) {
+  // https://twistedpairdevelopment.wordpress.com/2013/02/11/rotating-a-vector-by-a-quaternion-in-glsl/
+  vec4 qv = multQuat( quat, vec4(vec, 0.0) );
+  return multQuat( qv, vec4(-quat.x, -quat.y, -quat.z, quat.w) ).xyz;
 }
 
 float random( float x ) { return floatConstruct(hash(floatBitsToUint(x))); }
@@ -78,52 +106,65 @@ void main()
     float w = /*random(i[0].id) */ width + 0.01;
     float h = /*random(i[0].id) */ height + 0.01;
 
-    float x = dot(vec3(0,1,0), vec3(1,0,0));
-    float y = dot(vec3(0,1,0), vec3(0,0,1));
+    vec4 d = i[0].dir;// + vec4(windDir,1);
+    d.x *= (speed+windDir.x);
+    d.z *= (speed+windDir.z);
+    d.y = (gravity+windDir.y);
+    d = normalize(d);
 
-    mat3 directionMatrix = AngleAxis3x3(x,y, vec3(1,0,1));
+    float x = dot(vec3(d), vec3(1,0,1));
+    //float y =  dot(vec3(0,0,d.z), vec3(0,0,1));
+
+    //mat3 directionMatrix = AngleAxis3x3(x,vec3(1,1,1));
+    vec3 forward = vec3(0,-1,0);
+
+    vec4 quaternion1 = rotationTo(vec3(d), forward);
+    //directionMatrix *= AngleAxis3x3(y,vec3(d));
 
     if (particlesActive == 1)
     {
-        vec4 v[14];
+        vec3 v[14];
         vec2 uv_array[14];
-        v[0] = vec4(i[0].pos.x	- (width/2), i[0].pos.y	+ (height/2), i[0].pos.z	- (width/2), 1.0f);
+        v[0] = vec3(- (width/2), + (height/2), - (width/2));
         uv_array[0] = vec2(0,1);
-        v[1] = vec4(i[0].pos.x	+ (width/2), i[0].pos.y	+ (height/2), i[0].pos.z	- (width/2), 1.0f);
+        v[1] = vec3(+ (width/2), + (height/2), - (width/2));
         uv_array[1] = vec2(1,1);
-        v[2] = vec4(i[0].pos.x	- (width/2), i[0].pos.y	- (height/2), i[0].pos.z	- (width/2), 1.0f);
+        v[2] = vec3(- (width/2), - (height/2), - (width/2));
         uv_array[2] = vec2(0,0);
-        v[3] = vec4(i[0].pos.x	+ (width/2), i[0].pos.y	- (height/2), i[0].pos.z	- (width/2), 1.0f);
+        v[3] = vec3(+ (width/2), - (height/2), - (width/2));
         uv_array[3] = vec2(1,0);
 
-        v[4] = vec4(i[0].pos.x	+ (width/2), i[0].pos.y	- (height/2), i[0].pos.z	+ (width/2), 1.0f);
+        v[4] = vec3(+ (width/2), - (height/2), + (width/2));
         uv_array[4] = vec2(0,0);
-        v[5] = vec4(i[0].pos.x	+ (width/2), i[0].pos.y	+ (height/2), i[0].pos.z	- (width/2), 1.0f);
+        v[5] = vec3(+ (width/2), + (height/2), - (width/2));
         uv_array[5] = vec2(0,1);
-        v[6] = vec4(i[0].pos.x	+ (width/2), i[0].pos.y	+ (height/2), i[0].pos.z	+ (width/2), 1.0f);
+        v[6] = vec3(+ (width/2), + (height/2), + (width/2));
         uv_array[6] = vec2(1,1);
-        v[7] = vec4(i[0].pos.x	- (width/2), i[0].pos.y	+ (height/2), i[0].pos.z	- (width/2), 1.0f);
+        v[7] = vec3(- (width/2), + (height/2), - (width/2));
         uv_array[7] = vec2(0,1);
 
-        v[8] = vec4(i[0].pos.x	- (width/2), i[0].pos.y	+ (height/2), i[0].pos.z	+ (width/2), 1.0f);
+        v[8] = vec3(- (width/2), + (height/2), + (width/2));
         uv_array[8] = vec2(1,1);
-        v[9] = vec4(i[0].pos.x	- (width/2), i[0].pos.y	- (height/2), i[0].pos.z	- (width/2), 1.0f);
+        v[9] = vec3(- (width/2), - (height/2), - (width/2));
         uv_array[9] = vec2(0,0);
-        v[10] = vec4(i[0].pos.x	- (width/2), i[0].pos.y	- (height/2), i[0].pos.z	+ (width/2), 1.0f);
+        v[10] = vec3(- (width/2), - (height/2), + (width/2));
         uv_array[10] = vec2(1,0);
-        v[11] = vec4(i[0].pos.x	+ (width/2), i[0].pos.y	- (height/2), i[0].pos.z	+ (width/2), 1.0f);
+        v[11] = vec3(+ (width/2), - (height/2), + (width/2));
         uv_array[11] = vec2(0,0);
 
-        v[12] = vec4(i[0].pos.x	- (width/2), i[0].pos.y	+ (height/2), i[0].pos.z	+ (width/2), 1.0f);
+        v[12] = vec3(- (width/2), + (height/2), + (width/2));
         uv_array[12] = vec2(1,0);
-        v[13] = vec4(i[0].pos.x	+ (width/2), i[0].pos.y	+ (height/2), i[0].pos.z	+ (width/2), 1.0f);
+        v[13] = vec3(+ (width/2), + (height/2), + (width/2));
         uv_array[13] = vec2(1,0);
 
         for(int i = 0;i<14;i++)
         {
+            vec3 offset = (m_model * vec4(v[i],1)).xyz;//rotateVector(quaternion1, (m_model * vec4(v[i],1)).xyz);
+            vec3 point = p.xyz + offset;
             ouv = uv_array[i];
-            GenerateVertex(v[i]);
+            GenerateVertex(vec4(point,1));
         }
+
 
         EndPrimitive();
     }
@@ -139,6 +180,7 @@ void main()
             GenerateVertex(vec4(circlepos.x+r*cos(i),circlepos.y,circlepos.z+r*sin(i),1.0));   //circle parametric equation
             GenerateVertex(vec4(circlepos.x,circlepos.y,circlepos.z,1.0));
         }
+
         GenerateVertex(vec4(circlepos.x+r*cos(0),circlepos.y,circlepos.z+r*sin(0),1.0));
     }
     
