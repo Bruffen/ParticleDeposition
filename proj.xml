@@ -196,15 +196,17 @@
 				def="min=0.01 max=10 step=0.01"/>
 			<var label="Particle Size" type="RENDERER" context="CURRENT" component="particleSize" 
 				def="min=0.01 max=5 step=0.01"/>
-			<var label="Wind Direction" type="RENDERER" context="CURRENT" component="windDir" />
-			<var label="Transfer Min Height" type="RENDERER" context="CURRENT" component="minHeight" 
+			<var label="Wind Direction" type="RENDERER" context="CURRENT" component="windDir" />	
+			<var label="Particles Active" type="RENDERER" context="CURRENT" component="particlesActive" 
+				def="min=0 max=1 step=1"/>
+		</window>
+		<window label="Particle Simulation">
+			<var label="Rugosidade" type="RENDERER" context="CURRENT" component="minHeight" 
 				def="min=0.0 max=0.01 step=0.001"/>
 			<var label="Viscosity" type="RENDERER" context="CURRENT" component="viscosity" 
 				def="min=0.0 max=1 step=0.01"/>
-			<var label="Iterations per Sim Step" type="RENDERER" context="CURRENT" component="simulIterations" 
+			<var label="Iters per Sim step" type="RENDERER" context="CURRENT" component="simulIterations" 
 				def="min=1 max=10 step=1"/>
-			<var label="Particles Active" type="RENDERER" context="CURRENT" component="particlesActive" 
-				def="min=0 max=1 step=1"/>
 		</window>
 		<window label="Rendering">
 			<var label="Particle Color" type="RENDERER" context="CURRENT" component="particleColor" 
