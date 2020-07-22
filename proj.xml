@@ -175,6 +175,7 @@
 				<camera name="MainCamera" />
 				<materialMaps>
 					<map fromMaterial="*" toMaterial="DepthMap" toLibrary="particleLib"/>
+					<map fromMaterial="ParticlesBB" toMaterial="ParticlesBB" toLibrary="particleLib" />
 				</materialMaps>
                 <renderTarget name="Depth" fromLibrary="particleLib" />
 
