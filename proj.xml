@@ -316,6 +316,10 @@
 			<pass class="compute" name="slice">
 				<material name="slice" fromLibrary="particleLib" dimX="TEXTURE_RESOLUTION" dimY="TEXTURE_RESOLUTION" dimZ=1 />
 			</pass>
+			<pass class="quad" name="activateCamera">
+                <camera name="MainCamera" />
+				<viewport name="MainViewport" />
+			</pass>
 		</pipeline>
 		<pipeline name="pip" >
 			<!-- Compute all the particles in a compute shader -->

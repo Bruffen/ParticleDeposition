@@ -13,9 +13,18 @@
  */
 
 uniform sampler2D texRender;    
-uniform sampler2D heightMap;    // World height map
-uniform sampler2D texVolume;    // Particles heights
-const float particleHighest = 3.5;
+uniform sampler2D heightMap1;    // World height map
+uniform sampler2D heightMap2;
+uniform sampler2D heightMap3;
+uniform sampler2D heightMap4;
+uniform sampler2D texVolume1;    // Particles heights
+uniform sampler2D texVolume2;
+uniform sampler2D texVolume3;
+uniform sampler2D texVolume4;
+uniform float height1;
+uniform float height2;
+uniform float height3;
+const   float particleHighest = 3.5;
 
 uniform vec3 lightDir;
 
@@ -120,6 +129,30 @@ bool isInsideBoundingBoxTol(vec3 pos)
            pos.y > 0.0 - tol && pos.y < particleHighest + tol;
 }
 
+// Descending order in heights for textures
+vec4 textureHeight(float height, vec2 uvs)
+{
+    if (height > height1)
+        return texture(heightMap1, uvs);
+    else if (height > height2)
+        return texture(heightMap2, uvs);
+    else if (height > height3)
+        return texture(heightMap3, uvs);
+    else
+        return texture(heightMap4, uvs);
+}
+
+vec4 textureVolume(float height, vec2 uvs)
+{
+    if (height > height1)
+        return texture(texVolume1, uvs);
+    else if (height > height2)
+        return texture(texVolume2, uvs);
+    else if (height > height3)
+        return texture(texVolume3, uvs);
+    else
+        return texture(texVolume4, uvs);
+}
 
 vec4 rayMarch(vec3 rayPos, vec3 rayDir)
 {
@@ -155,8 +188,9 @@ vec4 rayMarch(vec3 rayPos, vec3 rayDir)
                            (current.z - sceneDw) * inv_bbHeight), 0 + tol, 1 - tol);
 
         vec2 offset = vec2(offsetX, offsetY);
-        float h = texture(texVolume, texUVs + offset).r;// * sceneHt;
-        float z = (1 - texture(heightMap, vec2(-texUVs.x, texUVs.y)).r) * sceneHt;
+        
+        float h = textureVolume(current.y, texUVs + offset).r;// * sceneHt;
+        float z = (1 - textureHeight(current.y, vec2(-texUVs.x, texUVs.y)).r) * sceneHt;
         // If distances are too different, then we have a vertical disconnection between particles
         if (abs(lastH - h + lastZ - z) > 0.01)
         {
@@ -175,16 +209,16 @@ vec4 rayMarch(vec3 rayPos, vec3 rayDir)
             vec2 uv_lf = clamp(texUVs - vec2(texel_step, 0), vec2(0), vec2(1));
 
             // Get heights from particles
-            float h_up = texture(texVolume, uv_up + offset).r;
-            float h_dw = texture(texVolume, uv_dw + offset).r;
-            float h_rt = texture(texVolume, uv_rt + offset).r;
-            float h_lf = texture(texVolume, uv_lf + offset).r;
+            float h_up = textureVolume(current.y, uv_up + offset).r;
+            float h_dw = textureVolume(current.y, uv_dw + offset).r;
+            float h_rt = textureVolume(current.y, uv_rt + offset).r;
+            float h_lf = textureVolume(current.y, uv_lf + offset).r;
 
             // Get heights from the scene
-            float z_up = (1 - texture((heightMap), vec2(-uv_up.x, uv_up.y)).r) * sceneHt;
-            float z_dw = (1 - texture((heightMap), vec2(-uv_dw.x, uv_dw.y)).r) * sceneHt;
-            float z_rt = (1 - texture((heightMap), vec2(-uv_rt.x, uv_rt.y)).r) * sceneHt;
-            float z_lf = (1 - texture((heightMap), vec2(-uv_lf.x, uv_lf.y)).r) * sceneHt;
+            float z_up = (1 - textureHeight(current.y, vec2(-uv_up.x, uv_up.y)).r) * sceneHt;
+            float z_dw = (1 - textureHeight(current.y, vec2(-uv_dw.x, uv_dw.y)).r) * sceneHt;
+            float z_rt = (1 - textureHeight(current.y, vec2(-uv_rt.x, uv_rt.y)).r) * sceneHt;
+            float z_lf = (1 - textureHeight(current.y, vec2(-uv_lf.x, uv_lf.y)).r) * sceneHt;
 
             // Calculate directions with slopes
             vec3 up = normalize(vec3( world_step, (h_up + z_up) - (h + z), 0));

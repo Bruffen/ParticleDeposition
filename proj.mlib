@@ -70,6 +70,21 @@
 			<HEIGHT value="TEXTURE_RESOLUTION" />
 			<INTERNAL_FORMAT value="RGBA32F" />
 		</texture>
+		<texture name="texVolume2">
+			<WIDTH value="TEXTURE_RESOLUTION" />
+			<HEIGHT value="TEXTURE_RESOLUTION" />
+			<INTERNAL_FORMAT value="RGBA32F" />
+		</texture>
+		<texture name="texVolume3">
+			<WIDTH value="TEXTURE_RESOLUTION" />
+			<HEIGHT value="TEXTURE_RESOLUTION" />
+			<INTERNAL_FORMAT value="RGBA32F" />
+		</texture>
+		<texture name="texVolume4">
+			<WIDTH value="TEXTURE_RESOLUTION" />
+			<HEIGHT value="TEXTURE_RESOLUTION" />
+			<INTERNAL_FORMAT value="RGBA32F" />
+		</texture>
 		<texture name="texVolumeAux">
 			<WIDTH value="TEXTURE_RESOLUTION" />
 			<HEIGHT value="TEXTURE_RESOLUTION" />
@@ -135,8 +150,17 @@
 				<values>
                     <valueof uniform="texRender"	type="TEXTURE_BINDING" 	context="CURRENT" 		component="UNIT" id=0 />
                     <valueof uniform="texRenderZ"	type="TEXTURE_BINDING" 	context="CURRENT" 		component="UNIT" id=1 />
-                    <valueof uniform="texVolume"	type="TEXTURE_BINDING" 	context="CURRENT" 		component="UNIT" id=2 />
-                    <valueof uniform="heightMap"	type="TEXTURE_BINDING" 	context="CURRENT" 		component="UNIT" id=3 />
+                    <valueof uniform="texVolume1"	type="TEXTURE_BINDING" 	context="CURRENT" 		component="UNIT" id=2 />
+                    <valueof uniform="texVolume2"	type="TEXTURE_BINDING" 	context="CURRENT" 		component="UNIT" id=3 />
+                    <valueof uniform="texVolume3"	type="TEXTURE_BINDING" 	context="CURRENT" 		component="UNIT" id=4 />
+                    <valueof uniform="texVolume4"	type="TEXTURE_BINDING" 	context="CURRENT" 		component="UNIT" id=5 />
+                    <valueof uniform="heightMap1"	type="TEXTURE_BINDING" 	context="CURRENT" 		component="UNIT" id=6 />
+                    <valueof uniform="heightMap2"	type="TEXTURE_BINDING" 	context="CURRENT" 		component="UNIT" id=7 />
+                    <valueof uniform="heightMap3"	type="TEXTURE_BINDING" 	context="CURRENT" 		component="UNIT" id=8 />
+                    <valueof uniform="heightMap4"	type="TEXTURE_BINDING" 	context="CURRENT" 		component="UNIT" id=9 />
+					<valueof uniform="height1" 		type="RENDERER" 		context="CURRENT" 		component="height1" />
+					<valueof uniform="height2" 		type="RENDERER" 		context="CURRENT" 		component="height2" />
+					<valueof uniform="height3" 		type="RENDERER" 		context="CURRENT" 		component="height3" />
 					<valueof uniform="lightDir"		type="LIGHT" 			context="Sun" 			component="DIRECTION" />
 					<valueof uniform="view"			type="CAMERA"			context="MainCamera"	component="VIEW" />
 					<valueof uniform="right"		type="CAMERA"			context="MainCamera"	component="NORMALIZED_RIGHT" />
@@ -161,22 +185,16 @@
 				</values>
 			</shader>
 			<textures>
-                <texture name="texRender" 			UNIT=0 >
-					<MAG_FILTER value="LINEAR" />
-					<MIN_FILTER value="LINEAR" />
-				 </texture>
+                <texture name="texRender" 			UNIT=0 />
                 <texture name="texRenderZ"			UNIT=1 />
-                <texture name="texVolume" 			UNIT=2 >
-					<MAG_FILTER value="LINEAR" />
-					<MIN_FILTER value="LINEAR" />
-				 </texture>
-                <!-->
-				<texture name="test" 				UNIT=2 />
-				<-->
-                <texture name="HeightMap_depth" 	UNIT=3 >
-					<MAG_FILTER value="LINEAR" />
-					<MIN_FILTER value="LINEAR" />
-				 </texture>
+                <texture name="texVolume" 			UNIT=2 />
+                <texture name="texVolume2" 			UNIT=3 />
+                <texture name="texVolume3" 			UNIT=4 />
+                <texture name="texVolume4" 			UNIT=5 />
+                <texture name="HeightMap_depth" 	UNIT=6 />
+                <texture name="HeightMap2_depth" 	UNIT=7 />
+                <texture name="HeightMap3_depth" 	UNIT=8 />
+                <texture name="HeightMap4_depth" 	UNIT=9 />
             </textures>
 		</material>
 
