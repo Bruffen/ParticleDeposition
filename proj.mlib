@@ -15,6 +15,12 @@
 				<color name="heightMap" internalFormat="R32F" />
 			</colors>
 		</renderTarget>
+		<renderTarget name ="HeightMapBot">
+			<SIZE width="TEXTURE_RESOLUTION" height="TEXTURE_RESOLUTION" />
+			<colors>
+				<color name="heightMapbot" internalFormat="R32F" />
+			</colors>
+		</renderTarget>
 		<renderTarget name = "Depth">
 			<CLEAR_VALUES x=1000 y=0 z=0 w=1 />
 			<SIZE width=1280 height=720 />
@@ -199,6 +205,7 @@
 				<values>
                     <valueof uniform="texVolume" 		type="IMAGE_TEXTURE" 	context="CURRENT" 		component="UNIT" id=0 />
                     <valueof uniform="heightMap" 		type="TEXTURE_BINDING" 	context="CURRENT" 		component="UNIT" id=1 />
+                    <valueof uniform="heightMapBot" 	type="TEXTURE_BINDING" 	context="CURRENT" 		component="UNIT" id=2 />
 					<valueof uniform="sceneHt"			type="CAMERA"			context="HeightCamera"	component="FAR" />
 					<valueof uniform="sceneUp"			type="CAMERA"			context="HeightCamera"	component="TOP" />
 					<valueof uniform="sceneLf"			type="CAMERA"			context="HeightCamera"	component="LEFT" />
@@ -218,6 +225,7 @@
 			</shader>
 			<textures>
                 <texture name="HeightMap_depth"  	UNIT=1 />
+                <texture name="HeightMapBot_depth" 	UNIT=2 />
             </textures>
 			<imageTextures>
 				<imageTexture UNIT=0 texture="texVolume" >

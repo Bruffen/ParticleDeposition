@@ -209,11 +209,11 @@ void main()
 			if (particles.y <= sceneHeight + value.r)
 			{
 				value.x += particleSize;
-				value.y += particleSize;
-				value.z += particleSize;
+				
 				imageStore(texVolume,
-			ivec2((-particles.x / width + 0.5) * texWidth, (-particles.z / height + 0.5) * texHeight), 
-			value);
+							ivec2((-particles.x / width + 0.5) * texWidth,
+							 (-particles.z / height + 0.5) * texHeight), 
+				value);
 
 				particles.w = 0;
 

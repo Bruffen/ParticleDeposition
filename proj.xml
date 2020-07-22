@@ -46,7 +46,7 @@
 			</scene>
 			<scene name="Sphere">
 				<geometry name = "sphere" type = "SPHERE" />
-				<TRANSLATE x=5 y=0 z=0 />
+				<TRANSLATE x=5 y=3 z=0 />
 				<SCALE x=1 y=1 z=1 />
 			</scene>
 			<scene name="Particles" >
@@ -83,6 +83,19 @@
 				<viewport name="MainViewport" />
 				<POSITION x=0.0 y=10.0 z=0.0 />
 				<VIEW 	x=0.0 y=-1.0 z=0.0 />
+				<UP 	x=0.0 y=0.0 z=1.0 />
+			</camera>
+			<camera name="HeightCameraBot" >
+				<TYPE 	value="ORTHO" />
+				<RIGHT 	value=10 />
+				<LEFT 	value=-10 />
+				<TOP 	value=10 />
+				<BOTTOM value=-10 />
+				<NEAR	value=0.0001/>
+				<FAR	value=10 />
+				<viewport name="MainViewport" />
+				<POSITION x=0.0 y=0.0 z=0.0 />
+				<VIEW 	x=0.0 y=1.0 z=0.0 />
 				<UP 	x=0.0 y=0.0 z=1.0 />
 			</camera>
 			<camera name="MainCamera" >
@@ -124,7 +137,19 @@
 				<camera name="HeightCamera" />
                 <renderTarget name="HeightMap" fromLibrary="particleLib" />
 			</pass>
-
+			<pass class="default" name="heightMapSetup">
+				<scenes>
+					<!--
+					<scene name="scene1" /> 
+					<scene name="camoes" /> 
+					/-->
+					<scene name="car" /> 
+					<scene name="Plane" />
+					<scene name="Sphere" />
+				</scenes>
+				<camera name="HeightCameraBot" />
+                <renderTarget name="HeightMapBot" fromLibrary="particleLib" />
+			</pass>
 
 			<!-- Compute all the particles in a compute shader -->
 			<pass class="compute" name="particles">

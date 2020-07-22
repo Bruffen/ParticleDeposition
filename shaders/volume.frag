@@ -159,8 +159,11 @@ vec4 rayMarch(vec3 rayPos, vec3 rayDir)
             lastZ = z;
             continue;
         }
+        
+        float maxunder = hvec.z;
+        float underh = hvec.w;
 
-        if (current.y < h + z && current.y > z) // TODO will have to use new depth buffer
+        if ((current.y < h + z && current.y > z) || (current.y < underh && current.y < maxunder) ) // TODO will have to use new depth buffer
         {
             // Calculate shading based on crossing directions to adjacent points to get the normal
             // Get uvs from 4 directions away
@@ -186,6 +189,38 @@ vec4 rayMarch(vec3 rayPos, vec3 rayDir)
             vec3 dw = normalize(vec3(-world_step, (h_dw + z_dw) - (h + z), 0));
             vec3 rt = normalize(vec3(0, (h_rt + z_rt)- (h + z),  world_step));
             vec3 lf = normalize(vec3(0, (h_lf + z_lf)- (h + z), -world_step));
+
+            // Cross all directions to get a reasonable normal for shading the current pixel
+            vec3 normal = normalize(cross(up, lf) + cross(lf, dw) + cross(dw, rt) + cross(rt, up));
+            vec3 ldir   = normalize(-lightDir);
+            vec3 ambient = particleColor * 0.2; // ambient
+            vec3 diffuse = particleColor * 0.8; // diffuse
+
+            return vec4(ambient + diffuse * max(0, dot(normal, ldir)), particleAlpha);
+            //return vec4(normal, 1);
+        }
+
+        if (current.y < underh && current.y < maxunder) // TODO will have to use new depth buffer
+        {
+            // Calculate shading based on crossing directions to adjacent points to get the normal
+            // Get uvs from 4 directions away
+            vec2 uv_up = clamp(texUVs + vec2(0, texel_step), vec2(0), vec2(1));
+            vec2 uv_dw = clamp(texUVs - vec2(0, texel_step), vec2(0), vec2(1));
+            vec2 uv_rt = clamp(texUVs + vec2(texel_step, 0), vec2(0), vec2(1));
+            vec2 uv_lf = clamp(texUVs - vec2(texel_step, 0), vec2(0), vec2(1));
+
+            // Get heights from particles
+            float h_up = texture(texVolume, uv_up + offset).w;
+            float h_dw = texture(texVolume, uv_dw + offset).w;
+            float h_rt = texture(texVolume, uv_rt + offset).w;
+            float h_lf = texture(texVolume, uv_lf + offset).w;
+
+            
+            // Calculate directions with slopes
+            vec3 up = normalize(vec3( world_step, (h_up ) - (h), 0));
+            vec3 dw = normalize(vec3(-world_step, (h_dw) - (h), 0));
+            vec3 rt = normalize(vec3(0, (h_rt)- (h),  world_step));
+            vec3 lf = normalize(vec3(0, (h_lf)- (h), -world_step));
 
             // Cross all directions to get a reasonable normal for shading the current pixel
             vec3 normal = normalize(cross(up, lf) + cross(lf, dw) + cross(dw, rt) + cross(rt, up));

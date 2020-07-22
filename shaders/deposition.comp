@@ -3,6 +3,7 @@
 layout (local_size_x = 1, local_size_y = 1, local_size_z = 1) in; // optimize
 
 uniform sampler2D heightMap;
+uniform sampler2D heightMapBot;
 //uniform restrict image2D texVolume;
 
 layout(binding=2, rgba32f) uniform image2D  texVolume;
@@ -46,10 +47,15 @@ float gettex(uint i,uint j){
     return (vec4((1-texture(heightMap, vec2(-1,1)*(vec2(i,j)/texWidth))))*sceneHt).x ;
 }
 
+
 float getmax(uint i, uint j){
-    return max(0,sceneHt - gettex(i,j));    
-    //return max(0,1+sin(float(i)/20) - gettex(i,j));
+    float topmap =  gettex(i,j);
+    float botmap = (texture(heightMapBot, (vec2(i,j)/texWidth))*sceneHt).x;
+    if( topmap < botmap )
+        return sceneHt;
+    return max(0,topmap - botmap);
 }
+
 
 void main(){
 
@@ -67,6 +73,7 @@ void main(){
         groupMemoryBarrier();
 
         float curr  = imageLoad(texVolume,ivec2(i,j)).x;
+        float currw  = imageLoad(texVolume,ivec2(i,j)).w;
         float top   = imageLoad(texVolume,ivec2(i-1,j)).x;
         float bot   = imageLoad(texVolume,ivec2(i+1,j)).x;
         float right = imageLoad(texVolume,ivec2(i,j+1)).x;
@@ -89,11 +96,12 @@ void main(){
         aux += sendRecieve(totalcurr,curr,totalbot,bot,maxcurr,maxbot);
         aux += sendRecieve(totalcurr,curr,totalright,right,maxcurr,maxright);
         aux += sendRecieve(totalcurr,curr,totalleft,left,maxcurr,maxleft);
-
+        
         groupMemoryBarrier();
+        
         imageStore(texVolume, ivec2(i, j ),
                 vec4( clamp(aux, 0,maxcurr)
-                   ,gettex(i,j),0,0)
+                   ,gettex(i,j),maxcurr,currw)
             );
     }
 
