@@ -13,6 +13,7 @@
  */
 
 uniform sampler2D texRender;    
+uniform sampler2D DepthTex;    
 uniform sampler2D heightMap1;    // World height map
 uniform sampler2D heightMap2;
 uniform sampler2D heightMap3;
@@ -27,7 +28,7 @@ uniform float height3;
 const   float particleHighest = 10;
 
 uniform vec3 lightDir;
-
+uniform mat4 m_pv;
 uniform vec4  position;
 uniform vec3  view;
 uniform vec3  right;
@@ -43,6 +44,7 @@ uniform vec3  sceneCt;
 uniform sampler2D texRenderZ;
 uniform float zNear;
 uniform float zFar;
+uniform float derivWeight;
 uniform vec2  windowSize;
 
 uniform float normalOffset;
@@ -59,6 +61,7 @@ const vec3 inf = vec3(1e20, 1e20, 1e20);
 in vec2 uv;
 
 out vec4 color;
+out float gl_FragDepth ;
 
 vec3 rayDir()
 {
@@ -162,23 +165,20 @@ vec4 rayMarch(vec3 rayPos, vec3 rayDir)
     float world_step = texel_step * (sceneLf - sceneRt);
 
     // Calculate maximum depth acceptable until we hit a scene object
-    float maxDepth = texture(texRenderZ, uv).r;
-    // Convert Depth Buffer values to a linear format
-    maxDepth = maxDepth * 2.0 - 1.0;
-    maxDepth = (2.0 * zNear * zFar) / (zFar + zNear - maxDepth * (zFar - zNear));
-    maxDepth = length(rayDir * maxDepth);
+    float maxDepth = texture(DepthTex, uv).x;
 
     float lastH = 0;
     float lastZ = 0;
     for (int i = 0; i < marchingMax; i++)
     {
         //TODO calculate step of ray based on texel size and ray direction
-        vec3  currentStep = rayDir * i * marchingStep;
-        float currentLength = length(currentStep);
-        //if (currentLength >= maxDepth)
-        //    return vec4(0.0);
-
+        vec3 currentStep = rayDir * i * marchingStep;
         vec3 current = rayPos + currentStep;
+        float currentLength = length(current - position.xyz);
+
+        if (currentLength > maxDepth )
+           return vec4(0);            
+
         if (!isInsideBoundingBoxTol(current)) 
             return vec4(0.0);
         
@@ -188,11 +188,19 @@ vec4 rayMarch(vec3 rayPos, vec3 rayDir)
                            (current.z - sceneDw) * inv_bbHeight), 0 + tol, 1 - tol);
 
         vec2 offset = vec2(offsetX, offsetY);
+    
+      
+        //TODO
+        //vec4 hvec = texture(texVolume, texUVs + offset);
+        //float h = hvec.r;// * sceneHt;
+        //float z = hvec.g;//(1 - texture(heightMap, vec2(-texUVs.x, texUVs.y)).r) * sceneHt;
+
         
         float h = textureVolume(current.y, texUVs + offset).r;// * sceneHt;
         float z = (1 - textureHeight(current.y, vec2(-texUVs.x, texUVs.y)).r) * sceneHt;
+
         // If distances are too different, then we have a vertical disconnection between particles
-        if (abs(lastH - h + lastZ - z) > 0.01)
+        if (abs(lastH - h + lastZ - z) > 0.05)
         {
             lastH = h;
             lastZ = z;
@@ -215,11 +223,19 @@ vec4 rayMarch(vec3 rayPos, vec3 rayDir)
             float h_lf = textureVolume(current.y, uv_lf + offset).r;
 
             // Get heights from the scene
+
+            //TODO
+            //float z_up = texture(texVolume, uv_up + offset).g;// (1 - texture((heightMap), vec2(-uv_up.x, uv_up.y)).r) * sceneHt;
+            //float z_dw = texture(texVolume, uv_dw + offset).g;// (1 - texture((heightMap), vec2(-uv_dw.x, uv_dw.y)).r) * sceneHt;
+            //float z_rt = texture(texVolume, uv_rt + offset).g;// (1 - texture((heightMap), vec2(-uv_rt.x, uv_rt.y)).r) * sceneHt;
+            //float z_lf = texture(texVolume, uv_lf + offset).g;// (1 - texture((heightMap), vec2(-uv_lf.x, uv_lf.y)).r) * sceneHt;
+
             float z_up = (1 - textureHeight(current.y, vec2(-uv_up.x, uv_up.y)).r) * sceneHt;
             float z_dw = (1 - textureHeight(current.y, vec2(-uv_dw.x, uv_dw.y)).r) * sceneHt;
             float z_rt = (1 - textureHeight(current.y, vec2(-uv_rt.x, uv_rt.y)).r) * sceneHt;
             float z_lf = (1 - textureHeight(current.y, vec2(-uv_lf.x, uv_lf.y)).r) * sceneHt;
 
+            
             // Calculate directions with slopes
             vec3 up = normalize(vec3( world_step, (h_up + z_up) - (h + z), 0));
             vec3 dw = normalize(vec3(-world_step, (h_dw + z_dw) - (h + z), 0));
@@ -283,4 +299,5 @@ void main()
     color = mix(color, vec4(worldPos, 1), 1);
     //color = vec4(depth / zFar - zNear);
     */
+
 }

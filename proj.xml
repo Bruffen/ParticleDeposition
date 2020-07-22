@@ -8,13 +8,13 @@
         <attributes>
 			<attribute name="radius" data="FLOAT" type="RENDERER" value=100 />
 			<attribute name="gravity" data="FLOAT" type="RENDERER" value=9.8 />
-			<attribute name="speed" data="FLOAT" type="RENDERER" value=0.1 />
+			<attribute name="speed" data="FLOAT" type="RENDERER" value=3.228 />
 			<attribute name="width" data="FLOAT" type="RENDERER" value=0.01 />
 			<attribute name="height" data="FLOAT" type="RENDERER" value=0.04 />
 			<attribute name="particleSize" data="FLOAT" type="RENDERER" value=0.1 />
-			<attribute name="minHeight" data="FLOAT" type="RENDERER" value=0.02 />
+			<attribute name="minHeight" data="FLOAT" type="RENDERER" value=0.002 />
 			<attribute name="viscosity" data="FLOAT" type="RENDERER" value=0.009 />
-			<attribute name="windDir" data="VEC3" type="RENDERER" x=1 y=0 z=0/>
+			<attribute name="windDir" data="VEC3" type="RENDERER" x=15 y=15 z=-10/>
 			<attribute name="particleAlpha" data="FLOAT" type="RENDERER" value=0.75 />
 			<attribute name="particleColor" data="VEC3" type="RENDERER" x=0.3 y=0.7 z=0.9 />
 			<attribute name="marchingStep" data="FLOAT" type="RENDERER" value=0.008 />
@@ -63,6 +63,11 @@
 			</viewport>
 			<viewport name="HeightViewport">
 				<CLEAR_COLOR r="0.8" g="1.0" b="0.7" />
+			</viewport>
+			<viewport name="Right" >
+				<ORIGIN x = 0.5 y =0 />
+				<SIZE width=0.5 height=1 />
+				<CLEAR_COLOR  r="1.0" g="1.0" b="1.0" />
 			</viewport>
 		</viewports>
 		
@@ -190,6 +195,7 @@
 				<NEAR 	value=0.1 />
 				<FAR 	value=1000 /> 
 			</camera>
+			
 		</cameras>
 		
 		<lights>
@@ -209,6 +215,7 @@
 		<pipeline name="setup">
 			<testScript script="slice" file="scripts/depthSplitter.lua" TEST_MODE="RUN_WHILE" />
 			<!-- Render the scene from above for height info -->
+			<pass class="default" name="heightMapSetup">
 		    <pass class="default" name="heightMapSetup1">
 				<scenes>
 					<!--
@@ -331,6 +338,19 @@
 			<pass class="compute" name="deposition">
 				<material name="depositionHeight" fromLibrary="particleLib" dimX="TEXTURE_RESOLUTION" dimY="TEXTURE_RESOLUTION" dimZ=1 />
 			</pass>
+			<pass class="default" name="depthMapSetup">
+				<scenes>
+					<scene name="car" /> 
+					<scene name="Plane" />
+					<scene name="Sphere" />
+				</scenes>
+				<camera name="MainCamera" />
+				<materialMaps>
+					<map fromMaterial="*" toMaterial="DepthMap" toLibrary="particleLib"/>
+				</materialMaps>
+                <renderTarget name="Depth" fromLibrary="particleLib" />
+
+			</pass>
 
 			<!--pass class="compute" name="addVect">
 				<material name="depositionHeight" fromLibrary="particleLib" dimX=1024 dimY=1024 dimZ=1 />
@@ -365,6 +385,7 @@
 					<map fromMaterial="__Quad" toMaterial="matRenderVolume" toLibrary="particleLib"/>
 				</materialMaps>
 			</pass>
+
 		</pipeline>
 	</pipelines>
 
@@ -373,7 +394,7 @@
 			<var label="Radius" type="RENDERER" context="CURRENT" component="radius" 
 				def="min=1 max=150 step=0.01"/>
 			<var label="Gravity" type="RENDERER" context="CURRENT" component="gravity" 
-				def="min=0.01 max=2000 step=0.01"/>
+				def="min=0.00 max=2000 step=0.01"/>
 			<var label="Speed" type="RENDERER" context="CURRENT" component="speed" 
 				def="min=0.01 max=5 step=0.01"/>
 			<var label="Width" type="RENDERER" context="CURRENT" component="width" 
@@ -382,15 +403,17 @@
 				def="min=0.01 max=10 step=0.01"/>
 			<var label="Particle Size" type="RENDERER" context="CURRENT" component="particleSize" 
 				def="min=0.01 max=5 step=0.01"/>
-			<var label="Wind Direction" type="RENDERER" context="CURRENT" component="windDir" />
-			<var label="Transfer Min Height" type="RENDERER" context="CURRENT" component="minHeight" 
+			<var label="Wind Direction" type="RENDERER" context="CURRENT" component="windDir" />	
+			<var label="Particles Active" type="RENDERER" context="CURRENT" component="particlesActive" 
+				def="min=0 max=1 step=1"/>
+		</window>
+		<window label="Particle Simulation">
+			<var label="Rugosidade" type="RENDERER" context="CURRENT" component="minHeight" 
 				def="min=0.0 max=0.01 step=0.001"/>
 			<var label="Viscosity" type="RENDERER" context="CURRENT" component="viscosity" 
 				def="min=0.0 max=1 step=0.01"/>
-			<var label="Iterations per Sim Step" type="RENDERER" context="CURRENT" component="simulIterations" 
+			<var label="Iters per Sim step" type="RENDERER" context="CURRENT" component="simulIterations" 
 				def="min=1 max=10 step=1"/>
-			<var label="Particles Active" type="RENDERER" context="CURRENT" component="particlesActive" 
-				def="min=0 max=1 step=1"/>
 		</window>
 		<window label="Rendering">
 			<var label="Particle Color" type="RENDERER" context="CURRENT" component="particleColor" 
@@ -400,8 +423,8 @@
 			<var label="Marching Step" type="RENDERER" context="CURRENT" component="marchingStep" 
 				def="min=0.001 max=1 step=0.001"/>
 			<var label="Marching Max" type="RENDERER" context="CURRENT" component="marchingMax" />
-			<var label="OffsetX" type="RENDERER" context="CURRENT" component="offsetX" def="step=0.0001"/>
-			<var label="OffsetY" type="RENDERER" context="CURRENT" component="offsetY" def="step=0.0001"/>
+			<var label="OffsetX" type="RENDERER" context="CURRENT" component="offsetX" def="step=0.00001" min="-0.0001" max="0.0001" />
+			<var label="OffsetY" type="RENDERER" context="CURRENT" component="offsetY" def="step=0.00001" min="-0.0001" max="0.0001"/>
 		</window>
     </interface> 
 </project>

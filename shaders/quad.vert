@@ -1,5 +1,7 @@
 #version 330
 
+uniform mat4 m_pvm;
+
 in vec4 position;
 in vec2 texCoord0;
 
