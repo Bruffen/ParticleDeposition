@@ -18,15 +18,12 @@ out data{
     vec4 pos;
     uint id;
     vec4 dir;
-	//float size;
-    //vec4 pos;
 }o;
 
 void main()
 {
-    o.pos = m_model * position;//particlePos[gl_VertexID];
+    o.pos = m_model * position;
     o.uv = texCoord0;
     o.id = gl_VertexID;
     o.dir = particleDir[gl_VertexID];
-	//o.size = size;
 }

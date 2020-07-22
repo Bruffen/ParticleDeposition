@@ -1,6 +1,6 @@
 #version 440
 layout(points) in;
-layout(triangle_strip, max_vertices=200) out;
+layout(triangle_strip, max_vertices=300) out;
 
 uniform mat4 m_model;
 uniform mat4 m_pv;
@@ -11,6 +11,16 @@ uniform float radius;
 uniform vec3 windDir;
 uniform float gravity;
 uniform float speed;
+uniform vec3 spawnPos;
+uniform float maxY;
+uniform float minY;
+uniform int wholeMap;
+
+uniform float sceneHt; // max y bound
+uniform float sceneRt; // max x bound
+uniform float sceneLf; // min x bound
+uniform float sceneUp; // max z bound
+uniform float sceneDw; // min z bound
 
 in data{
     vec2 uv;
@@ -21,11 +31,14 @@ in data{
     //vec4 pos;
 }i[1];
 
+out vec2 ouv;
+out vec3 normal;
+out float type;
 
 void GenerateVertex(vec4 p)
 {
 	gl_Position = m_pv * p;
-    EmitVertex();
+  EmitVertex();
 }
 
 uint hash( uint x ) {
@@ -95,7 +108,71 @@ vec3 rotateVector( vec4 quat, vec3 vec ) {
 
 float random( float x ) { return floatConstruct(hash(floatBitsToUint(x))); }
 
-out vec2 ouv;
+
+void GenerateCircle(float circleY)
+{
+  vec4 circlepos = vec4(spawnPos,1);  //introduce a single vertex at the origin
+  circlepos.y = circleY;
+
+  float r = sqrt(radius);
+  for(float i = 2 * 3.1415; i >= -1 ; i-=2 * 3.1415/20)  //generate vertices at positions on the circumference from 0 to 2*pi
+  {
+    GenerateVertex(vec4(circlepos.x+r*cos(i),circlepos.y,circlepos.z+r*sin(i),1.0));   //circle parametric equation
+    GenerateVertex(vec4(circlepos.x,circlepos.y,circlepos.z,1.0));
+  }
+
+  //GenerateVertex(vec4(circlepos.x+r*cos(0),circlepos.y,circlepos.z+r*sin(0),1.0));
+
+  EndPrimitive();
+}
+
+void GenerateSquare(float circleY)
+{
+    vec4 center = vec4(spawnPos,1);
+    center.y = circleY;
+
+    vec4 vert1 = vec4(center.x + sceneLf,center.y, center.z + sceneDw,1);
+    vec4 vert2 = vec4(center.x + sceneRt,center.y, center.z + sceneDw,1);
+    vec4 vert3 = vec4(center.x + sceneLf,center.y, center.z + sceneUp,1);
+    vec4 vert4 = vec4(center.x + sceneRt,center.y, center.z + sceneUp,1);
+
+    //Looking Down face
+    GenerateVertex(vert4);
+    GenerateVertex(vert3);
+    GenerateVertex(vert2);
+    GenerateVertex(vert1);
+
+    EndPrimitive();
+
+    //Looking Up face
+    GenerateVertex(vert3);
+    GenerateVertex(vert4);
+    GenerateVertex(vert1);
+    GenerateVertex(vert2);
+
+    EndPrimitive();
+}
+
+vec3 gNormals[14] =
+	{
+		vec3(0.0f, 0.0f, -1.0f),
+		vec3(0.0f, 0.0f, -1.0f),
+		vec3(0.0f, 0.0f, -1.0f),
+		vec3(0.0f, 0.0f, -1.0f),
+
+		vec3(1.0f, 0.0f,  0.0f),
+		vec3(1.0f, 0.0f,  0.0f),
+		vec3(1.0f, 0.0f,  0.0f),
+
+		vec3(-1.0f, 0.0f,  0.0f),
+		vec3(-1.0f, 0.0f,  0.0f),
+		vec3(-1.0f, 0.0f,  0.0f),
+		vec3(-1.0f, 0.0f,  0.0f),
+
+		vec3(0.0f, 0.0f,  1.0f),
+		vec3(0.0f, 0.0f,  1.0f),
+		vec3(0.0f, 0.0f,  1.0f)
+	};
 
 void main()
 { 
@@ -106,21 +183,23 @@ void main()
     float w = /*random(i[0].id) */ width + 0.01;
     float h = /*random(i[0].id) */ height + 0.01;
 
+    //Real particle direction
     vec4 d = i[0].dir;// + vec4(windDir,1);
-    d.x *= (speed+windDir.x);
-    d.z *= (speed+windDir.z);
-    d.y = (gravity+windDir.y);
+    d.x *= (speed);
+    d.z *= (speed);
+    d.y = (gravity);
+    d.xyz += windDir.xyz * 0.1;
     d = normalize(d);
 
-    float x = dot(vec3(d), vec3(1,0,1));
-    //float y =  dot(vec3(0,0,d.z), vec3(0,0,1));
-
-    //mat3 directionMatrix = AngleAxis3x3(x,vec3(1,1,1));
     vec3 forward = vec3(0,-1,0);
 
-    vec4 quaternion1 = rotationTo(vec3(d), forward);
-    //directionMatrix *= AngleAxis3x3(y,vec3(d));
+    //Quaternion with rotation
+    vec4 quaternion1 = rotationTo(forward, vec3(d));
 
+    //Particle
+    type = 0;
+
+    //Generate Cube
     if (particlesActive == 1)
     {
         vec3 v[14];
@@ -159,9 +238,10 @@ void main()
 
         for(int i = 0;i<14;i++)
         {
-            vec3 offset = (m_model * vec4(v[i],1)).xyz;//rotateVector(quaternion1, (m_model * vec4(v[i],1)).xyz);
+            vec3 offset = rotateVector(quaternion1, (m_model * vec4(v[i],1)).xyz);
             vec3 point = p.xyz + offset;
             ouv = uv_array[i];
+            normal = gNormals[i];
             GenerateVertex(vec4(point,1));
         }
 
@@ -171,19 +251,29 @@ void main()
 
     if (i[0].id == 0)
     {
-        vec4 circlepos = vec4(0,50,0,1);  //introduce a single vertex at the origin
-        //circlepos = i[0].pos;  //translate it to where our model is
-                                                            //ideally do this step outside the shader
-        float r = sqrt(radius);
-        for(float i = 2 * 3.1415; i >= 0 ; i-=2 * 3.1415/20)  //generate vertices at positions on the circumference from 0 to 2*pi
-        {
-            GenerateVertex(vec4(circlepos.x+r*cos(i),circlepos.y,circlepos.z+r*sin(i),1.0));   //circle parametric equation
-            GenerateVertex(vec4(circlepos.x,circlepos.y,circlepos.z,1.0));
-        }
+      //Generate Squares
+      if (wholeMap == 1)
+      {
+        type = 1;
+        GenerateSquare(maxY);
 
-        GenerateVertex(vec4(circlepos.x+r*cos(0),circlepos.y,circlepos.z+r*sin(0),1.0));
+        type = 2;
+        GenerateSquare(minY);
+      }
+      //Generate Circle
+      else if (wholeMap == 0)
+      {
+        //Max height circle
+        type = 1;
+        GenerateCircle(maxY);
+
+        EndPrimitive();
+
+        //Min height circle
+        type = 2;
+        GenerateCircle(minY);
+
+        EndPrimitive();
+      }
     }
-    
-
-    //gl_Position = pos;
 }

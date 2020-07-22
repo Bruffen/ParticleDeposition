@@ -122,8 +122,8 @@
 					<valueof uniform="particleColor" type="RENDERER" 		context="CURRENT" 		component="particleColor" />
 					<valueof uniform="marchingStep"	type="RENDERER" 		context="CURRENT" 		component="marchingStep" />
 					<valueof uniform="marchingMax"	type="RENDERER" 		context="CURRENT" 		component="marchingMax" />
-					<valueof uniform="offsetX"	type="RENDERER" 		context="CURRENT" 		component="offsetX" />
-					<valueof uniform="offsetY"	type="RENDERER" 		context="CURRENT" 		component="offsetY" />
+					<valueof uniform="offsetX"		type="RENDERER" 		context="CURRENT" 		component="offsetX" />
+					<valueof uniform="offsetY"		type="RENDERER" 		context="CURRENT" 		component="offsetY" />
 				</values>
 			</shader>
 			<!-- <state name="frontCull" /> -->
@@ -151,23 +151,27 @@
 		<material name="matParticles">
 			<shader name="particles">
 				<values>
-                    <valueof uniform="texVolume" 	type="IMAGE_TEXTURE" 	context="CURRENT" 		component="UNIT" id=0 />
-                    <valueof uniform="heightMap" 	type="TEXTURE_BINDING" 	context="CURRENT" 		component="UNIT" id=1 />
-					<valueof uniform="sceneHt"		type="CAMERA"			context="HeightCamera"	component="FAR" />
-					<valueof uniform="sceneUp"		type="CAMERA"			context="HeightCamera"	component="TOP" />
-					<valueof uniform="sceneLf"		type="CAMERA"			context="HeightCamera"	component="LEFT" />
-					<valueof uniform="sceneRt"		type="CAMERA"			context="HeightCamera"	component="RIGHT" />
-					<valueof uniform="sceneDw"		type="CAMERA"			context="HeightCamera"	component="BOTTOM" />
-					<valueof uniform="texWidth"		type="TEXTURE"			context="texVolume"		component="WIDTH" />
-					<valueof uniform="texHeight"	type="TEXTURE"			context="texVolume"		component="HEIGHT" />
-					<valueof uniform="time" 		type="RENDERER" 		context="CURRENT" 		component="TIMER" />
-					<valueof uniform="radius" 		type="RENDERER" 		context="CURRENT" 		component="radius" />
-					<valueof uniform="speed" 		type="RENDERER" 		context="CURRENT" 		component="speed" />
-					<valueof uniform="gravity" 		type="RENDERER" 		context="CURRENT" 		component="gravity" />
-					<valueof uniform="windDir" 		type="RENDERER" 		context="CURRENT" 		component="windDir" />
-					<valueof uniform="particleSize" type="RENDERER" 		context="CURRENT" 		component="particleSize" />
-					<valueof uniform="particleColor" type="RENDERER" 		context="CURRENT" 		component="particleColor" />
-					<valueof uniform="particlesActive" type="RENDERER" 		context="CURRENT" 		component="particlesActive" />
+                    <valueof uniform="texVolume" 		type="IMAGE_TEXTURE" 	context="CURRENT" 		component="UNIT" id=0 />
+                    <valueof uniform="heightMap" 		type="TEXTURE_BINDING" 	context="CURRENT" 		component="UNIT" id=1 />
+					<valueof uniform="sceneHt"			type="CAMERA"			context="HeightCamera"	component="FAR" />
+					<valueof uniform="sceneUp"			type="CAMERA"			context="HeightCamera"	component="TOP" />
+					<valueof uniform="sceneLf"			type="CAMERA"			context="HeightCamera"	component="LEFT" />
+					<valueof uniform="sceneRt"			type="CAMERA"			context="HeightCamera"	component="RIGHT" />
+					<valueof uniform="sceneDw"			type="CAMERA"			context="HeightCamera"	component="BOTTOM" />
+					<valueof uniform="texWidth"			type="TEXTURE"			context="texVolume"		component="WIDTH" />
+					<valueof uniform="texHeight"		type="TEXTURE"			context="texVolume"		component="HEIGHT" />
+					<valueof uniform="time" 			type="RENDERER" 		context="CURRENT" 		component="TIMER" />
+					<valueof uniform="spawnRadius" 		type="RENDERER" 		context="CURRENT" 		component="spawnRadius" />
+					<valueof uniform="spawnPos" 		type="RENDERER" 		context="CURRENT" 		component="spawnPos" />
+					<valueof uniform="speed" 			type="RENDERER" 		context="CURRENT" 		component="speed" />
+					<valueof uniform="gravity" 			type="RENDERER" 		context="CURRENT" 		component="gravity" />
+					<valueof uniform="windDir" 			type="RENDERER" 		context="CURRENT" 		component="windDir" />
+					<valueof uniform="particleSize" 	type="RENDERER" 		context="CURRENT" 		component="particleSize" />
+					<valueof uniform="particleColor" 	type="RENDERER" 		context="CURRENT" 		component="particleColor" />
+					<valueof uniform="particlesActive"  type="RENDERER" 		context="CURRENT" 		component="particlesActive" />
+					<valueof uniform="wholeMap" 		type="RENDERER" 		context="CURRENT" 		component="wholeMap" />
+					<valueof uniform="maxY" 			type="RENDERER" 		context="CURRENT" 		component="maxY" />
+					<valueof uniform="minY" 			type="RENDERER" 		context="CURRENT" 		component="minY" />
 				</values>
 			</shader>
 			<textures>
@@ -204,7 +208,7 @@
 					<valueof uniform="texWidth"			type="TEXTURE"			context="texVolume"		component="WIDTH" />
 					<valueof uniform="texHeight"		type="TEXTURE"			context="texVolume"		component="HEIGHT" />
 					<valueof uniform="time" 			type="RENDERER" 		context="CURRENT" 		component="TIMER" />
-					<valueof uniform="radius" 			type="RENDERER" 		context="CURRENT" 		component="radius" />
+					<valueof uniform="radius" 			type="RENDERER" 		context="CURRENT" 		component="spawnRadius" />
 					<valueof uniform="speed" 			type="RENDERER" 		context="CURRENT" 		component="speed" />
 					<valueof uniform="gravity" 			type="RENDERER" 		context="CURRENT" 		component="gravity" />
 					<valueof uniform="windDir" 			type="RENDERER" 		context="CURRENT" 		component="windDir" />
@@ -227,18 +231,29 @@
 		<material name="ParticlesBB">
 			<shader name="billboards">
 				<values>
-					<valueof uniform="m_model" 			type="RENDERER" 		context="CURRENT" component="MODEL" />
-					<valueof uniform="m_pv" 			type="RENDERER" 		context="CURRENT" component="PROJECTION_VIEW" />
-					<valueof uniform="texVolume"		type="TEXTURE_BINDING" 	context="CURRENT" component="UNIT" id=0 />
-					<valueof uniform="width" 			type="RENDERER" 		context="CURRENT" component="width" />
-					<valueof uniform="height" 			type="RENDERER" 		context="CURRENT" component="height" />
-					<valueof uniform="particleSize" 	type="RENDERER" 		context="CURRENT" component="particleSize" />
-					<valueof uniform="particleColor" 	type="RENDERER" 		context="CURRENT" component="particleColor" />
-					<valueof uniform="particlesActive"  type="RENDERER" 		context="CURRENT" component="particlesActive" />
-					<valueof uniform="radius" 			type="RENDERER" 		context="CURRENT" component="radius" />
-					<valueof uniform="speed" 			type="RENDERER" 		context="CURRENT" component="speed" />
-					<valueof uniform="windDir" 			type="RENDERER" 		context="CURRENT" component="windDir" />
-					<valueof uniform="gravity" 			type="RENDERER" 		context="CURRENT" component="gravity" />
+					<valueof uniform="m_model" 			type="RENDERER" 		context="CURRENT" 		component="MODEL" />
+					<valueof uniform="m_pv" 			type="RENDERER" 		context="CURRENT" 		component="PROJECTION_VIEW" />
+					<valueof uniform="texVolume"		type="TEXTURE_BINDING" 	context="CURRENT" 		component="UNIT" id=0 />
+					<valueof uniform="width" 			type="RENDERER" 		context="CURRENT" 		component="width" />
+					<valueof uniform="height" 			type="RENDERER" 		context="CURRENT" 		component="height" />
+					<valueof uniform="particleSize" 	type="RENDERER" 		context="CURRENT" 		component="particleSize" />
+					<valueof uniform="particleColor" 	type="RENDERER" 		context="CURRENT" 		component="particleColor" />
+					<valueof uniform="particlesActive"  type="RENDERER" 		context="CURRENT" 		component="particlesActive" />
+					<valueof uniform="radius" 			type="RENDERER" 		context="CURRENT" 		component="spawnRadius" />
+					<valueof uniform="speed" 			type="RENDERER" 		context="CURRENT"	 	component="speed" />
+					<valueof uniform="windDir" 			type="RENDERER" 		context="CURRENT" 		component="windDir" />
+					<valueof uniform="spawnPos" 		type="RENDERER" 		context="CURRENT" 		component="spawnPos" />
+					<valueof uniform="gravity" 			type="RENDERER" 		context="CURRENT" 		component="gravity" />
+					<valueof uniform="maxY" 			type="RENDERER" 		context="CURRENT" 		component="maxY" />
+					<valueof uniform="minY" 			type="RENDERER" 		context="CURRENT" 		component="minY" />
+					<valueof uniform="wholeMap" 		type="RENDERER" 		context="CURRENT" 		component="wholeMap" />
+					<valueof uniform="sceneHt"			type="CAMERA"			context="HeightCamera"	component="FAR" />
+					<valueof uniform="sceneUp"			type="CAMERA"			context="HeightCamera"	component="TOP" />
+					<valueof uniform="sceneLf"			type="CAMERA"			context="HeightCamera"	component="LEFT" />
+					<valueof uniform="sceneRt"			type="CAMERA"			context="HeightCamera"	component="RIGHT" />
+					<valueof uniform="sceneDw"			type="CAMERA"			context="HeightCamera"	component="BOTTOM" />
+					<valueof uniform="lightDir"			type="LIGHT" 			context="Sun" 			component="DIRECTION" />
+					<valueof uniform="particleAlpha" 	type="RENDERER" 		context="CURRENT" 		component="particleAlpha" />
 				</values>
 			</shader>
 			<buffers>

@@ -6,7 +6,7 @@
 			<constant name="NUMBER_OF_PARTICLES" value="100000" />
 		</constants>
         <attributes>
-			<attribute name="radius" data="FLOAT" type="RENDERER" value=100 />
+			<attribute name="spawnRadius" data="FLOAT" type="RENDERER" value=100 />
 			<attribute name="gravity" data="FLOAT" type="RENDERER" value=9.8 />
 			<attribute name="speed" data="FLOAT" type="RENDERER" value=3.228 />
 			<attribute name="width" data="FLOAT" type="RENDERER" value=0.01 />
@@ -20,6 +20,10 @@
 			<attribute name="marchingStep" data="FLOAT" type="RENDERER" value=0.008 />
 			<attribute name="marchingMax" data="INT" type="RENDERER" value=750 />
 			<attribute name="particlesActive" data="INT" type="RENDERER" value=1 />
+			<attribute name="spawnPos" data="VEC3" type="RENDERER" x=0 y=0 z=0/>
+			<attribute name="maxY" data="FLOAT" type="RENDERER" value=50 />
+			<attribute name="minY" data="FLOAT" type="RENDERER" value=35 />
+			<attribute name="wholeMap" data="INT" type="RENDERER" value=1 />
 			<attribute name="simulIterations" data="INT" type="RENDERER" value=1 />
 			<attribute name="offsetX" data="FLOAT" type="RENDERER" value=0/>
 			<attribute name="offsetY" data="FLOAT" type="RENDERER" value=0/>
@@ -184,21 +188,28 @@
 
     <interface> 
 		<window label="Particles">
-			<var label="Radius" type="RENDERER" context="CURRENT" component="radius" 
+			<var label="Particles Active" type="RENDERER" context="CURRENT" component="particlesActive" 
+				def="min=0 max=1 step=1"/>
+			<var label="Whole Map" type="RENDERER" context="CURRENT" component="wholeMap" 
+				def="min=0 max=1 step=1"/>
+			<var label="Spawn Position" type="RENDERER" context="CURRENT" component="spawnPos" />	
+			<var label="Spawn Radius" type="RENDERER" context="CURRENT" component="spawnRadius" 
 				def="min=1 max=150 step=0.01"/>
+			<var label="Spawn Max Y" type="RENDERER" context="CURRENT" component="maxY" 
+				def="min=0 max=100 step=1"/>
+			<var label="Spawn Min Y" type="RENDERER" context="CURRENT" component="minY" 
+				def="min=0 max=100 step=1"/>
 			<var label="Gravity" type="RENDERER" context="CURRENT" component="gravity" 
 				def="min=0.00 max=2000 step=0.01"/>
-			<var label="Speed" type="RENDERER" context="CURRENT" component="speed" 
-				def="min=0.01 max=5 step=0.01"/>
-			<var label="Width" type="RENDERER" context="CURRENT" component="width" 
+			<var label="Particle Hor. Speed" type="RENDERER" context="CURRENT" component="speed" 
+				def="min=0.00 max=5 step=0.01"/>
+			<var label="Particle Width" type="RENDERER" context="CURRENT" component="width" 
 				def="min=0.01 max=10 step=0.01"/>
-			<var label="Height" type="RENDERER" context="CURRENT" component="height" 
+			<var label="Particle Height" type="RENDERER" context="CURRENT" component="height" 
 				def="min=0.01 max=10 step=0.01"/>
 			<var label="Particle Size" type="RENDERER" context="CURRENT" component="particleSize" 
 				def="min=0.01 max=5 step=0.01"/>
 			<var label="Wind Direction" type="RENDERER" context="CURRENT" component="windDir" />	
-			<var label="Particles Active" type="RENDERER" context="CURRENT" component="particlesActive" 
-				def="min=0 max=1 step=1"/>
 		</window>
 		<window label="Particle Simulation">
 			<var label="Rugosidade" type="RENDERER" context="CURRENT" component="minHeight" 

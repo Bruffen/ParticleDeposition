@@ -54,12 +54,16 @@ uniform float sceneUp; // max z bound
 uniform float sceneDw; // min z bound
 
 //Particle "stats"
-uniform float radius;
+uniform float spawnRadius;
+uniform vec3 spawnPos;
+uniform float maxY;
+uniform float minY;
 uniform float gravity;
 uniform float speed;
 uniform vec3 windDir;
 uniform float particleSize;
 uniform int particlesActive;
+uniform int wholeMap;
 
 uniform float time;
 
@@ -79,8 +83,47 @@ layout( std140, binding=2 ) buffer Directions
  * Another buffer for velocities or anything else can be added if needed
 */
 
+float lerp(float x, float y, float a)
+{
+	return x*(1-a)+y*a;
+}
+
 float gettex(uint i,uint j){
     return (vec4((1-texture(heightMap, vec2(-1,1)*(vec2(i,j)/texWidth))))*sceneHt).x ;
+}
+
+vec3 randomSquarePos(uint seed1, uint seed2, float minX, float maxX, float minZ, float maxZ)
+{
+	// minX += 1;
+	// minZ += 1;
+	// maxX -= 1;
+	// maxZ -= 1;
+	const float width  = sceneLf - sceneRt;
+	float r = random(seed1 * time);
+	float x = r * maxX + (1-r) * minX;
+	r = random(seed2 + time + 1);
+	float z = r * maxZ + (1-r) * minZ;
+
+	return vec3(x, 0, z);
+}
+
+vec3 randomCirclePos(uint seed)
+{
+	float r = sqrt(random(seed + time) * spawnRadius);
+	float theta = random(seed) * (2 * 3.1415);
+
+	float x = clamp(r * cos(theta), sceneLf, sceneRt);
+	float z = clamp(r * sin(theta), sceneDw, sceneUp);
+
+	return vec3(x, 0, z);
+}
+
+float randomHeight(uint seed, float minY, float maxY)
+{
+	float m = minY;
+	if (m > maxY)
+		m = maxY;
+	return mix(m, maxY, random(seed + 1));
 }
 
 void main()
@@ -102,11 +145,9 @@ void main()
 	{
 		if (particles.w == 0) // if particle is unused, generate new position
 		{
-			float r = sqrt(random(k + time) * radius);
-			float theta = random(k) * (2 * 3.1415);
-
-			float x = clamp(r * cos(theta), sceneLf, sceneRt);
-			float z = clamp(r * sin(theta), sceneDw, sceneUp);
+			vec3 pPosition = randomCirclePos(k);
+			if (wholeMap == 1)
+				pPosition = randomSquarePos(k,k,sceneLf, sceneRt, sceneDw, sceneUp);
 
 			vec3 velocity = vec3(
 				(random((i * width + j + random(i)) * time) *2 -1), 
@@ -115,9 +156,9 @@ void main()
 			direction = vec4(normalize(velocity),1);// * 0.04;
 
 			particles.w = 1;
-			particles.x = x;
-			particles.y = random((i + 1)) * 30 + 20;
-			particles.z = z;
+			particles.x = spawnPos.x + pPosition.x;
+			particles.y = spawnPos.y + randomHeight(i, minY, maxY);
+			particles.z = spawnPos.z + pPosition.z;
 		}
 		else
 		{
