@@ -210,10 +210,10 @@ vec4 rayMarch(vec3 rayPos, vec3 rayDir)
             vec2 uv_lf = clamp(texUVs - vec2(texel_step, 0), vec2(0), vec2(1));
 
             // Get heights from particles
-            float h_up = texture(texVolume, uv_up + offset).w;
-            float h_dw = texture(texVolume, uv_dw + offset).w;
-            float h_rt = texture(texVolume, uv_rt + offset).w;
-            float h_lf = texture(texVolume, uv_lf + offset).w;
+            float h_up = texture(texVolume, uv_up).w;
+            float h_dw = texture(texVolume, uv_dw).w;
+            float h_rt = texture(texVolume, uv_rt).w;
+            float h_lf = texture(texVolume, uv_lf).w;
 
             
             // Calculate directions with slopes

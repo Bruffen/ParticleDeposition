@@ -46,7 +46,7 @@
 			</scene>
 			<scene name="Sphere">
 				<geometry name = "sphere" type = "SPHERE" />
-				<TRANSLATE x=5 y=3 z=0 />
+				<TRANSLATE x=5 y=0 z=0 />
 				<SCALE x=1 y=1 z=1 />
 			</scene>
 			<scene name="Particles" >
