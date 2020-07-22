@@ -205,7 +205,7 @@ void main()
 
 			vec2 uvs = vec2((particles.x - sceneLf) * inv_bbWidth, (particles.z - sceneDw) * inv_bbHeight);
 			vec4 value = imageLoad(texVolume, ivec2((-particles.x / width + 0.5) * texWidth, (-particles.z / height + 0.5) * texHeight));
-			float sceneHeight = (1 - texture(heightMap, uvs).r) * sceneHt;
+			float sceneHeight = (1 - texture(heightMap, vec2(-uvs.x, uvs.y)).r) * sceneHt;
 			if (particles.y <= sceneHeight + value.r)
 			{
 				value.x += particleSize;

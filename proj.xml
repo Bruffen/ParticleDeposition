@@ -36,8 +36,9 @@
 				<SCALE x=0.02 y=0.02 z=0.02 />
 			</scene>
 			<scene name="camoes">
-				<file name="models/LargoCamoes/largoCamoes.nbo"/>
-				<SCALE x=0.2 y=0.2 z=0.2 />
+				<!--file name="models/LargoCamoes/largoCamoes.nbo"/-->
+				<!--file name="../SanMiguel/san-miguel.nbo"/-->
+				<!--SCALE x=0.2 y=0.2 z=0.2 /-->
 			</scene>
 			<scene name="Plane">
 				<geometry name = "square" type = "SQUARE" />
@@ -107,7 +108,7 @@
 	<pipelines>
 		<pipeline name="pip" >
 			<!-- Set the orthographic cameras properties -->
-			<!-- <preScript script="adapt" file="scripts/cameraAdapt.lua" /> -->
+			<!--preScript script="adapt" file="scripts/cameraAdapt.lua" /-->
 
 			<!-- Render the scene from above for height info -->
 			<pass class="default" name="heightMapSetup">
