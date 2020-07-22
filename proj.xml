@@ -25,6 +25,9 @@
 			<attribute name="offsetY" data="FLOAT" type="RENDERER" value=0/>
 			<attribute name="setupDone" data="INT" type="RENDERER" value=0/>
 			<attribute name="step" data="INT" type="RENDERER" value=0/>
+			<attribute name="height1" data="FLOAT" type="RENDERER" value=7.5/>
+			<attribute name="height2" data="FLOAT" type="RENDERER" value=5/>
+			<attribute name="height3" data="FLOAT" type="RENDERER" value=2.5/>
         </attributes>
 		<scenes>
 			<scene name="scene1">
