@@ -13,10 +13,19 @@
  */
 
 uniform sampler2D texRender;    
-uniform sampler2D heightMap;    // World height map
-uniform sampler2D texVolume;    // Particles heights
 uniform sampler2D DepthTex;    
-const float particleHighest = 3.5;
+uniform sampler2D heightMap1;    // World height map
+uniform sampler2D heightMap2;
+uniform sampler2D heightMap3;
+uniform sampler2D heightMap4;
+uniform sampler2D texVolume1;    // Particles heights
+uniform sampler2D texVolume2;
+uniform sampler2D texVolume3;
+uniform sampler2D texVolume4;
+uniform float height1;
+uniform float height2;
+uniform float height3;
+const   float particleHighest = 10;
 
 uniform vec3 lightDir;
 uniform mat4 m_pv;
@@ -30,6 +39,7 @@ uniform float sceneUp;
 uniform float sceneLf;
 uniform float sceneRt;
 uniform float sceneDw;
+uniform vec3  sceneCt;
 
 uniform sampler2D texRenderZ;
 uniform float zNear;
@@ -74,7 +84,8 @@ vec3 rayAABBIntersection(vec3 rayPos, vec3 rayDir)
 {
     float tmin, tmax, tymin, tymax, tzmin, tzmax;
     vec3 invDir = 1.0 / rayDir;
-    vec3 bounds[2] = { vec3(sceneLf, 0.0, sceneDw), vec3(sceneRt, particleHighest, sceneUp) };
+    vec3 bounds[2] = { vec3(sceneCt.x + sceneLf, 0.0, sceneCt.z + sceneDw), 
+                       vec3(sceneCt.x + sceneRt, particleHighest, sceneCt.z + sceneUp) };
     int signs[3] = { invDir.x < 0 ? 1 : 0, invDir.y < 0 ? 1 : 0, invDir.z < 0 ? 1 : 0 };
  
     tmin  = (bounds[  signs[0]].x - rayPos.x) * invDir.x;
@@ -106,8 +117,8 @@ vec3 rayAABBIntersection(vec3 rayPos, vec3 rayDir)
 bool isInsideBoundingBox(vec3 pos)
 {
     float tol = 0.01;
-    return pos.x > sceneLf && pos.x < sceneRt && 
-           pos.z > sceneDw && pos.z < sceneUp && 
+    return pos.x > sceneCt.x + sceneLf && pos.x < sceneCt.x + sceneRt && 
+           pos.z > sceneCt.z + sceneDw && pos.z < sceneCt.z + sceneUp && 
            pos.y > 0.0 && pos.y < particleHighest;
 }
 
@@ -116,11 +127,35 @@ bool isInsideBoundingBox(vec3 pos)
 bool isInsideBoundingBoxTol(vec3 pos)
 {
     float tol = 0.01;
-    return pos.x > sceneLf - tol && pos.x < sceneRt + tol && 
-           pos.z > sceneDw - tol && pos.z < sceneUp + tol && 
+    return pos.x > sceneCt.x + sceneLf - tol && pos.x < sceneCt.x + sceneRt + tol && 
+           pos.z > sceneCt.z + sceneDw - tol && pos.z < sceneCt.z + sceneUp + tol && 
            pos.y > 0.0 - tol && pos.y < particleHighest + tol;
 }
 
+// Descending order in heights for textures
+vec4 textureHeight(float height, vec2 uvs)
+{
+    if (height > height1)
+        return texture(heightMap1, uvs);
+    else if (height > height2)
+        return texture(heightMap2, uvs);
+    else if (height > height3)
+        return texture(heightMap3, uvs);
+    else
+        return texture(heightMap4, uvs);
+}
+
+vec4 textureVolume(float height, vec2 uvs)
+{
+    if (height > height1)
+        return texture(texVolume1, uvs);
+    else if (height > height2)
+        return texture(texVolume2, uvs);
+    else if (height > height3)
+        return texture(texVolume3, uvs);
+    else
+        return texture(texVolume4, uvs);
+}
 
 vec4 rayMarch(vec3 rayPos, vec3 rayDir)
 {
@@ -153,9 +188,17 @@ vec4 rayMarch(vec3 rayPos, vec3 rayDir)
                            (current.z - sceneDw) * inv_bbHeight), 0 + tol, 1 - tol);
 
         vec2 offset = vec2(offsetX, offsetY);
-        vec4 hvec = texture(texVolume, texUVs + offset);
-        float h = hvec.r;// * sceneHt;
-        float z = hvec.g;//(1 - texture(heightMap, vec2(-texUVs.x, texUVs.y)).r) * sceneHt;
+    
+      
+        //TODO
+        //vec4 hvec = texture(texVolume, texUVs + offset);
+        //float h = hvec.r;// * sceneHt;
+        //float z = hvec.g;//(1 - texture(heightMap, vec2(-texUVs.x, texUVs.y)).r) * sceneHt;
+
+        
+        float h = textureVolume(current.y, texUVs + offset).r;// * sceneHt;
+        float z = (1 - textureHeight(current.y, vec2(-texUVs.x, texUVs.y)).r) * sceneHt;
+
         // If distances are too different, then we have a vertical disconnection between particles
         if (abs(lastH - h + lastZ - z) > 0.05)
         {
@@ -174,16 +217,23 @@ vec4 rayMarch(vec3 rayPos, vec3 rayDir)
             vec2 uv_lf = clamp(texUVs - vec2(texel_step, 0), vec2(0), vec2(1));
 
             // Get heights from particles
-            float h_up = texture(texVolume, uv_up + offset).r;
-            float h_dw = texture(texVolume, uv_dw + offset).r;
-            float h_rt = texture(texVolume, uv_rt + offset).r;
-            float h_lf = texture(texVolume, uv_lf + offset).r;
+            float h_up = textureVolume(current.y, uv_up + offset).r;
+            float h_dw = textureVolume(current.y, uv_dw + offset).r;
+            float h_rt = textureVolume(current.y, uv_rt + offset).r;
+            float h_lf = textureVolume(current.y, uv_lf + offset).r;
 
             // Get heights from the scene
-            float z_up = texture(texVolume, uv_up + offset).g;// (1 - texture((heightMap), vec2(-uv_up.x, uv_up.y)).r) * sceneHt;
-            float z_dw = texture(texVolume, uv_dw + offset).g;// (1 - texture((heightMap), vec2(-uv_dw.x, uv_dw.y)).r) * sceneHt;
-            float z_rt = texture(texVolume, uv_rt + offset).g;// (1 - texture((heightMap), vec2(-uv_rt.x, uv_rt.y)).r) * sceneHt;
-            float z_lf = texture(texVolume, uv_lf + offset).g;// (1 - texture((heightMap), vec2(-uv_lf.x, uv_lf.y)).r) * sceneHt;
+
+            //TODO
+            //float z_up = texture(texVolume, uv_up + offset).g;// (1 - texture((heightMap), vec2(-uv_up.x, uv_up.y)).r) * sceneHt;
+            //float z_dw = texture(texVolume, uv_dw + offset).g;// (1 - texture((heightMap), vec2(-uv_dw.x, uv_dw.y)).r) * sceneHt;
+            //float z_rt = texture(texVolume, uv_rt + offset).g;// (1 - texture((heightMap), vec2(-uv_rt.x, uv_rt.y)).r) * sceneHt;
+            //float z_lf = texture(texVolume, uv_lf + offset).g;// (1 - texture((heightMap), vec2(-uv_lf.x, uv_lf.y)).r) * sceneHt;
+
+            float z_up = (1 - textureHeight(current.y, vec2(-uv_up.x, uv_up.y)).r) * sceneHt;
+            float z_dw = (1 - textureHeight(current.y, vec2(-uv_dw.x, uv_dw.y)).r) * sceneHt;
+            float z_rt = (1 - textureHeight(current.y, vec2(-uv_rt.x, uv_rt.y)).r) * sceneHt;
+            float z_lf = (1 - textureHeight(current.y, vec2(-uv_lf.x, uv_lf.y)).r) * sceneHt;
 
             
             // Calculate directions with slopes
@@ -220,11 +270,34 @@ void main()
     }
 
     vec4 particleColor = vec4(0.0);
+    vec4 levelColor = vec4(0.0);
+
     if (rayPos != inf)
     {
+        if (rayPos.y > height1)
+            levelColor = vec4(1, 0, 0, 0.2);
+        else if (rayPos.y > height2)
+            levelColor = vec4(1, 1, 0, 0.2);
+        else if (rayPos.y > height3)
+            levelColor = vec4(0, 1, 0, 0.2);
+        else
+            levelColor = vec4(0, 0, 1, 0.2);
+
         particleColor = rayMarch(rayPos, rayDir);
-        //particleColor = vec4(0, 0.7, 0, 0.5);
+        //particleColor = vec4(0, 0.8, 0, 0.75);
     }
 
     color = mix(color, particleColor, particleColor.a);
+    color = mix(color, levelColor, levelColor.a);
+    
+    /*
+    float depth = texture(texRenderZ, uv).r;
+    // have to linearize depth maybe
+    depth = depth * 2.0 - 1.0;
+    depth = (2.0 * zNear * zFar) / (zFar + zNear - depth * (zFar - zNear));
+    vec3 worldPos = position.xyz + rayDir * depth;
+    color = mix(color, vec4(worldPos, 1), 1);
+    //color = vec4(depth / zFar - zNear);
+    */
+
 }
