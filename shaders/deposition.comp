@@ -102,10 +102,14 @@ uniform float time;
 
 
 
-float sendRecieve(float totalheight,float particleheight, float neibtotal, float neibparticle){
+float sendRecieve(float totalheight,float particleheight, float neibtotal, float neibparticle, float maxHeight, float maxNeib){
 
     float heightdif = (neibtotal-totalheight);
-    float transfer = 0.25*min(max(heightdif,-1*particleheight),neibparticle);//clamp(heightdif, -1*particleheight,neibparticle);
+    float maxRec = max(maxHeight-particleheight,0);
+    float maxRecNeib = max(maxNeib - neibparticle,0); 
+    float transfer = 0.25 * clamp( clamp(heightdif, -1*particleheight,neibparticle),
+                                    -1*maxRecNeib, 
+                                    maxRec);
     if(abs(heightdif*0.25) < minHeight)
         return 0;//0.1*(1-viscosity)*transfer; 
     return (1-viscosity)*transfer;
@@ -118,7 +122,9 @@ float gettex(uint i,uint j){
     return (vec4((1-texture(heightMap, vec2(-1,1)*(vec2(i,j)/texWidth))))*sceneHt).x ;
 }
 
-
+float getmax(uint i, uint j){
+    return max(0,1+sin(float(i)/20) - gettex(i,j));
+}
 
 void main(){
 
@@ -146,15 +152,23 @@ void main(){
         float totalright = right + gettex(i,j+1);
         float totalleft  = left  + gettex(i,j-1);
 
+        float maxcurr    = getmax(i,j);
+        float maxtop     = getmax(i-1,j);
+        float maxbot     = getmax(i+1,j);
+        float maxright   = getmax(i,j+1);
+        float maxleft    = getmax(i,j-1);
+
+
         float aux = curr;
-        aux += sendRecieve(totalcurr,curr,totaltop,top);    
-        aux += sendRecieve(totalcurr,curr,totalbot,bot);
-        aux += sendRecieve(totalcurr,curr,totalright,right);
-        aux += sendRecieve(totalcurr,curr,totalleft,left);
+        aux += sendRecieve(totalcurr,curr,totaltop,top,maxcurr,maxtop);    
+        aux += sendRecieve(totalcurr,curr,totalbot,bot,maxcurr,maxbot);
+        aux += sendRecieve(totalcurr,curr,totalright,right,maxcurr,maxright);
+        aux += sendRecieve(totalcurr,curr,totalleft,left,maxcurr,maxleft);
+
         groupMemoryBarrier();
         imageStore(texVolume, ivec2(i, j ),
-                vec4(max(aux,0),gettex(i,j),0,0)
-                //vec4(curr*viscosity + (1-viscosity)*0.25*(top+bot+right+left))
+                vec4( clamp(aux, 0,maxcurr)
+                   ,gettex(i,j),0,0)
             );
     }
 
