@@ -254,6 +254,7 @@
 					<valueof uniform="sceneDw"			type="CAMERA"			context="HeightCamera"	component="BOTTOM" />
 					<valueof uniform="lightDir"			type="LIGHT" 			context="Sun" 			component="DIRECTION" />
 					<valueof uniform="particleAlpha" 	type="RENDERER" 		context="CURRENT" 		component="particleAlpha" />
+					<valueof uniform="normalMatrix" 	type="RENDERER" 		context="CURRENT" 		component="NORMAL" />
 				</values>
 			</shader>
 			<buffers>

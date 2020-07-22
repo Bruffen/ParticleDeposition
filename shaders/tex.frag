@@ -6,7 +6,6 @@ uniform vec4 camerapos;
 uniform mat4 m_view;
 
 in vec4 pos;
-in vec2 uv;
 
 out vec4 outColor;
 

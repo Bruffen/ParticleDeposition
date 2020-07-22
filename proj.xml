@@ -107,7 +107,7 @@
 	<pipelines>
 		<pipeline name="pip" >
 			<!-- Set the orthographic cameras properties -->
-			<preScript script="adapt" file="scripts/cameraAdapt.lua" />
+			<!-- <preScript script="adapt" file="scripts/cameraAdapt.lua" /> -->
 
 			<!-- Render the scene from above for height info -->
 			<pass class="default" name="heightMapSetup">
@@ -140,6 +140,7 @@
 					<scene name="car" /> 
 					<scene name="Plane" />
 					<scene name="Sphere" />
+					<scene name ="Particles" />
 				</scenes>
 				<camera name="MainCamera" />
 				<materialMaps>

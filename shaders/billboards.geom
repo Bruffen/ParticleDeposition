@@ -4,6 +4,7 @@ layout(triangle_strip, max_vertices=300) out;
 
 uniform mat4 m_model;
 uniform mat4 m_pv;
+uniform mat3 normalMatrix;
 uniform float width;
 uniform float height;
 uniform int particlesActive;
@@ -31,7 +32,7 @@ in data{
     //vec4 pos;
 }i[1];
 
-out vec2 ouv;
+
 out vec3 normal;
 out float type;
 
@@ -126,6 +127,7 @@ void GenerateCircle(float circleY)
   EndPrimitive();
 }
 
+
 void GenerateSquare(float circleY)
 {
     vec4 center = vec4(spawnPos,1);
@@ -174,10 +176,15 @@ vec3 gNormals[14] =
 		vec3(0.0f, 0.0f,  1.0f)
 	};
 
+
+
+
+
+
+
+
 void main()
 { 
-    ouv = i[0].uv;
-
     vec4 p = i[0].pos;
 
     float w = /*random(i[0].id) */ width + 0.01;
@@ -195,6 +202,9 @@ void main()
 
     //Quaternion with rotation
     vec4 quaternion1 = rotationTo(forward, vec3(d));
+    mat3 n = mat3(m_pv * m_model);
+    n = inverse(normalMatrix);
+    n = transpose(normalMatrix);
 
     //Particle
     type = 0;
@@ -202,47 +212,66 @@ void main()
     //Generate Cube
     if (particlesActive == 1)
     {
-        vec3 v[14];
-        vec2 uv_array[14];
-        v[0] = vec3(- (width/2), + (height/2), - (width/2));
-        uv_array[0] = vec2(0,1);
-        v[1] = vec3(+ (width/2), + (height/2), - (width/2));
-        uv_array[1] = vec2(1,1);
-        v[2] = vec3(- (width/2), - (height/2), - (width/2));
-        uv_array[2] = vec2(0,0);
-        v[3] = vec3(+ (width/2), - (height/2), - (width/2));
-        uv_array[3] = vec2(1,0);
+ 
+        vec3 v[24];
+        
+        //FRONT
+        v[0] = vec3(- (width/2), - (height/2), + (width/2));  
+        v[1] = vec3(+ (width/2), - (height/2), + (width/2));
+        v[2] = vec3(+ (width/2), + (height/2), + (width/2));
+        v[3] = vec3(- (width/2), + (height/2), + (width/2));
 
-        v[4] = vec3(+ (width/2), - (height/2), + (width/2));
-        uv_array[4] = vec2(0,0);
-        v[5] = vec3(+ (width/2), + (height/2), - (width/2));
-        uv_array[5] = vec2(0,1);
-        v[6] = vec3(+ (width/2), + (height/2), + (width/2));
-        uv_array[6] = vec2(1,1);
-        v[7] = vec3(- (width/2), + (height/2), - (width/2));
-        uv_array[7] = vec2(0,1);
+        //BACK
+        v[4] = vec3(- (width/2), - (height/2), - (width/2));
+        v[5] = vec3(- (width/2), + (height/2), - (width/2));
+        v[6] = vec3(+ (width/2), + (height/2), - (width/2));
+        v[7] = vec3(+ (width/2), - (height/2), - (width/2));
 
-        v[8] = vec3(- (width/2), + (height/2), + (width/2));
-        uv_array[8] = vec2(1,1);
-        v[9] = vec3(- (width/2), - (height/2), - (width/2));
-        uv_array[9] = vec2(0,0);
-        v[10] = vec3(- (width/2), - (height/2), + (width/2));
-        uv_array[10] = vec2(1,0);
-        v[11] = vec3(+ (width/2), - (height/2), + (width/2));
-        uv_array[11] = vec2(0,0);
+        //TOP
+        v[8] = vec3(- (width/2), + (height/2), - (width/2));
+        v[9] = vec3(- (width/2), + (height/2), + (width/2));
+        v[10] = vec3(+ (width/2), + (height/2), + (width/2));
+        v[11] = vec3(+ (width/2), + (height/2), - (width/2));
 
-        v[12] = vec3(- (width/2), + (height/2), + (width/2));
-        uv_array[12] = vec2(1,0);
-        v[13] = vec3(+ (width/2), + (height/2), + (width/2));
-        uv_array[13] = vec2(1,0);
+        //BOTTOM
+        v[12] = vec3(- (width/2), - (height/2), - (width/2));
+        v[13] = vec3(+ (width/2), - (height/2), - (width/2));
+        v[14] = vec3(+ (width/2), - (height/2), + (width/2));
+        v[15] = vec3(- (width/2), - (height/2), + (width/2));
 
-        for(int i = 0;i<14;i++)
+        //RIGHT
+        v[16] = vec3(+ (width/2), - (height/2), - (width/2));
+        v[17] = vec3(+ (width/2), + (height/2), - (width/2));
+        v[18] = vec3(+ (width/2), + (height/2), + (width/2));
+        v[19] = vec3(+ (width/2), - (height/2), + (width/2));
+ 
+        //LEFT
+        v[20] = vec3(- (width/2), - (height/2), - (width/2));
+        v[21] = vec3(- (width/2), - (height/2), + (width/2));
+        v[22] = vec3(- (width/2), + (height/2), + (width/2));
+        v[23] = vec3(- (width/2), + (height/2), - (width/2));
+
+
+        for(int i = 0;i<23;i+=4)
         {
-            vec3 offset = rotateVector(quaternion1, (m_model * vec4(v[i],1)).xyz);
-            vec3 point = p.xyz + offset;
-            ouv = uv_array[i];
-            normal = gNormals[i];
-            GenerateVertex(vec4(point,1));
+            vec3 p1 = p.xyz + rotateVector(quaternion1, (m_model * vec4(v[i],1)).xyz);
+            vec3 p2 = p.xyz + rotateVector(quaternion1, (m_model * vec4(v[i+1],1)).xyz);
+            vec3 p3 = p.xyz + rotateVector(quaternion1, (m_model * vec4(v[i+2],1)).xyz);
+            vec3 p4 = p.xyz + rotateVector(quaternion1, (m_model * vec4(v[i+3],1)).xyz);
+ 
+            //Generate normals and vertices
+            normal = normalize(cross(p2 - p1, p4 - p1));
+            GenerateVertex(vec4(p1,1));
+
+            normal = normalize(cross(p3 - p2, p1 - p2));
+            GenerateVertex(vec4(p2,1));
+
+            normal = normalize(cross(p4 - p3, p2 - p3));
+            GenerateVertex(vec4(p4,1));
+
+            normal = normalize(cross(p1 - p4, p3 - p4));
+            GenerateVertex(vec4(p3,1));
+            EndPrimitive();
         }
 
 
@@ -257,8 +286,8 @@ void main()
         type = 1;
         GenerateSquare(maxY);
 
-        type = 2;
-        GenerateSquare(minY);
+        // type = 2;
+        // GenerateSquare(minY);
       }
       //Generate Circle
       else if (wholeMap == 0)
@@ -269,11 +298,11 @@ void main()
 
         EndPrimitive();
 
-        //Min height circle
-        type = 2;
-        GenerateCircle(minY);
+        // //Min height circle
+        // type = 2;
+        // GenerateCircle(minY);
 
-        EndPrimitive();
+        // EndPrimitive();
       }
     }
 }
