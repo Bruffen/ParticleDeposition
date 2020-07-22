@@ -121,7 +121,7 @@
 	<pipelines>
 		<pipeline name="pip" >
 			<!-- Set the orthographic cameras properties -->
-			<!--preScript script="adapt" file="scripts/cameraAdapt.lua" /-->
+			<preScript script="adapt" file="scripts/cameraAdapt.lua" />
 
 			<!-- Render the scene from above for height info -->
 			<pass class="default" name="heightMapSetup">
