@@ -29,6 +29,7 @@ uniform float sceneUp;
 uniform float sceneLf;
 uniform float sceneRt;
 uniform float sceneDw;
+uniform vec3  sceneCt;
 
 uniform sampler2D texRenderZ;
 uniform float zNear;
@@ -71,7 +72,8 @@ vec3 rayAABBIntersection(vec3 rayPos, vec3 rayDir)
 {
     float tmin, tmax, tymin, tymax, tzmin, tzmax;
     vec3 invDir = 1.0 / rayDir;
-    vec3 bounds[2] = { vec3(sceneLf, 0.0, sceneDw), vec3(sceneRt, particleHighest, sceneUp) };
+    vec3 bounds[2] = { vec3(sceneCt.x + sceneLf, 0.0, sceneCt.z + sceneDw), 
+                       vec3(sceneCt.x + sceneRt, particleHighest, sceneCt.z + sceneUp) };
     int signs[3] = { invDir.x < 0 ? 1 : 0, invDir.y < 0 ? 1 : 0, invDir.z < 0 ? 1 : 0 };
  
     tmin  = (bounds[  signs[0]].x - rayPos.x) * invDir.x;
@@ -103,8 +105,8 @@ vec3 rayAABBIntersection(vec3 rayPos, vec3 rayDir)
 bool isInsideBoundingBox(vec3 pos)
 {
     float tol = 0.01;
-    return pos.x > sceneLf && pos.x < sceneRt && 
-           pos.z > sceneDw && pos.z < sceneUp && 
+    return pos.x > sceneCt.x + sceneLf && pos.x < sceneCt.x + sceneRt && 
+           pos.z > sceneCt.z + sceneDw && pos.z < sceneCt.z + sceneUp && 
            pos.y > 0.0 && pos.y < particleHighest;
 }
 
@@ -113,8 +115,8 @@ bool isInsideBoundingBox(vec3 pos)
 bool isInsideBoundingBoxTol(vec3 pos)
 {
     float tol = 0.01;
-    return pos.x > sceneLf - tol && pos.x < sceneRt + tol && 
-           pos.z > sceneDw - tol && pos.z < sceneUp + tol && 
+    return pos.x > sceneCt.x + sceneLf - tol && pos.x < sceneCt.x + sceneRt + tol && 
+           pos.z > sceneCt.z + sceneDw - tol && pos.z < sceneCt.z + sceneUp + tol && 
            pos.y > 0.0 - tol && pos.y < particleHighest + tol;
 }
 
@@ -221,7 +223,7 @@ void main()
     if (rayPos != inf)
     {
         particleColor = rayMarch(rayPos, rayDir);
-        //particleColor = vec4(0, 0.7, 0, 0.5);
+        //particleColor = vec4(0, 0.8, 0, 0.75);
     }
 
     color = mix(color, particleColor, particleColor.a);

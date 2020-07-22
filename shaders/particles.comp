@@ -52,6 +52,7 @@ uniform float sceneRt; // max x bound
 uniform float sceneLf; // min x bound
 uniform float sceneUp; // max z bound
 uniform float sceneDw; // min z bound
+uniform vec3  sceneCt; // world center
 
 //Particle "stats"
 uniform float radius;
@@ -91,8 +92,11 @@ void main()
 	const float height = sceneDw - sceneUp;
 	const float inv_bbWidth  = -1 / width;
 	const float inv_bbHeight = -1 / height;
-	const float center_x = width/2;
-	const float center_z = height/2;
+
+	const float worldLf = sceneCt.x + sceneLf;
+	const float worldRt = sceneCt.x + sceneRt;
+	const float worldUp = sceneCt.z + sceneUp;
+	const float worldDw = sceneCt.z + sceneDw;
 
 	if (particlesActive == 1)
 	{
@@ -101,8 +105,8 @@ void main()
 			float r = sqrt(random(k + time) * radius);
 			float theta = random(k) * (2 * 3.1415);
 
-			float x = clamp(r * cos(theta), sceneLf, sceneRt);
-			float z = clamp(r * sin(theta), sceneDw, sceneUp);
+			float x = clamp(r * cos(theta), worldLf, worldRt);
+			float z = clamp(r * sin(theta), worldDw, worldUp);
 
 			vec3 velocity = vec3(
 				(random((i * width + j + random(i)) * time) *2 -1), 
@@ -134,31 +138,31 @@ void main()
 
 			// if (particles.z < sceneDw || particles.z > sceneUp)
 			// 	particles.z = clamp(particles.z, sceneDw, sceneUp);
-			if (particles.x < sceneLf)
-				particles.x = sceneRt;
+			if (particles.x < worldLf)
+				particles.x = worldRt;
 
-			if (particles.x > sceneRt)
-				particles.x = sceneLf;
+			if (particles.x > worldRt)
+				particles.x = worldLf;
 
-			if (particles.x < sceneDw)
-				particles.x = sceneUp;
+			if (particles.x < worldDw)
+				particles.x = worldUp;
 
-			if (particles.x > sceneUp)
-				particles.x = sceneDw;
+			if (particles.x > worldUp)
+				particles.x = worldDw;
 
-			if (particles.z < sceneLf)
-				particles.z = sceneRt;
+			if (particles.z < worldLf)
+				particles.z = worldRt;
 
-			if (particles.z > sceneRt)
-				particles.z = sceneLf;
+			if (particles.z > worldRt)
+				particles.z = worldLf;
 
-			if (particles.z < sceneDw)
-				particles.z = sceneUp;
+			if (particles.z < worldDw)
+				particles.z = worldUp;
 
-			if (particles.z > sceneUp)
-				particles.z = sceneDw;
+			if (particles.z > worldUp)
+				particles.z = worldDw;
 
-			vec2 uvs = vec2((particles.x - sceneLf) * inv_bbWidth, (particles.z - sceneDw) * inv_bbHeight);
+			vec2 uvs = vec2((particles.x - worldLf) * inv_bbWidth, (particles.z - worldDw) * inv_bbHeight);
 			vec4 value = imageLoad(texVolume, ivec2((-particles.x / width + 0.5) * texWidth, (-particles.z / height + 0.5) * texHeight));
 			float sceneHeight = (1 - texture(heightMap, uvs).r) * sceneHt;
 			if (particles.y <= sceneHeight + value.r)

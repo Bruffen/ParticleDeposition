@@ -15,6 +15,12 @@
 				<color name="heightMap" internalFormat="R32F" />
 			</colors>
 		</renderTarget>
+		<renderTarget name ="HeightMapBot">
+			<SIZE width="TEXTURE_RESOLUTION" height="TEXTURE_RESOLUTION" />
+			<colors>
+				<color name="heightMapBot" internalFormat="R32F" />
+			</colors>
+		</renderTarget>
 		<!--renderTarget name ="VolumeHeight">
 			<SIZE width=1024 height=1024 />
 			<colors>
@@ -56,7 +62,9 @@
 			<shader name="addVect"
 				cs = "shaders/addVect.comp" 
 				/>
-			
+			<shader name="slice"
+				cs = "shaders/sliceReduction.comp"
+				/>
 	</shaders>
 <!-- 
 	gs = "shaders/billboards.geom" -->
@@ -71,6 +79,13 @@
 		</buffer>
 		<buffer name="Directions">
 			<DIM x="NUMBER_OF_PARTICLES" y=1 z=1 />
+			<structure>
+				<field value="VEC4" />
+			</structure>
+			<CLEAR value="NEVER" />
+		</buffer>
+		<buffer name="Slice">
+			<DIM x=1 y=1 z=1 />
 			<structure>
 				<field value="VEC4" />
 			</structure>
@@ -99,6 +114,7 @@
 					<valueof uniform="sceneLf"		type="CAMERA"			context="HeightCamera"	component="LEFT" />
 					<valueof uniform="sceneRt"		type="CAMERA"			context="HeightCamera"	component="RIGHT" />
 					<valueof uniform="sceneDw"		type="CAMERA"			context="HeightCamera"	component="BOTTOM" />
+					<valueof uniform="sceneCt"		type="CAMERA"			context="HeightCamera"	component="POSITION" />
 					<valueof uniform="windowSize"	type="VIEWPORT"			context="MainViewport"	component="SIZE" />
 					<valueof uniform="particleAlpha" type="RENDERER" 		context="CURRENT" 		component="particleAlpha" />
 					<valueof uniform="particleColor" type="RENDERER" 		context="CURRENT" 		component="particleColor" />
@@ -138,6 +154,7 @@
 					<valueof uniform="sceneLf"		type="CAMERA"			context="HeightCamera"	component="LEFT" />
 					<valueof uniform="sceneRt"		type="CAMERA"			context="HeightCamera"	component="RIGHT" />
 					<valueof uniform="sceneDw"		type="CAMERA"			context="HeightCamera"	component="BOTTOM" />
+					<valueof uniform="sceneCt"		type="CAMERA"			context="HeightCamera"	component="POSITION" />
 					<valueof uniform="texWidth"		type="TEXTURE"			context="texVolume"		component="WIDTH" />
 					<valueof uniform="texHeight"	type="TEXTURE"			context="texVolume"		component="HEIGHT" />
 					<valueof uniform="time" 		type="RENDERER" 		context="CURRENT" 		component="TIMER" />
@@ -245,6 +262,40 @@
 			<textures>
                 <texture name="test" UNIT = 0 />
             </textures>
+		</material>
+
+		<material name="slice">
+			<shader name="slice">
+				<values>
+                    <valueof uniform="texVolume" 		type="IMAGE_TEXTURE" 	context="CURRENT" 		component="UNIT" id=0 />
+                    <valueof uniform="texVolumeAux" 	type="IMAGE_TEXTURE" 	context="CURRENT" 		component="UNIT" id=1 />
+                    <valueof uniform="heightMap" 		type="TEXTURE_BINDING" 	context="CURRENT" 		component="UNIT" id=2 />
+                    <valueof uniform="heightMapBot" 	type="TEXTURE_BINDING" 	context="CURRENT" 		component="UNIT" id=3 />
+					<valueof uniform="sceneHt"			type="CAMERA"			context="HeightCamera"	component="FAR" />
+					<valueof uniform="texWidth"			type="TEXTURE"			context="texVolume"		component="WIDTH" />
+					<valueof uniform="texHeight"		type="TEXTURE"			context="texVolume"		component="HEIGHT" />
+				</values>
+			</shader>
+			<textures>
+                <texture name="HeightMap_depth"  	UNIT=2 />
+                <texture name="HeightMapBot_depth"  UNIT=3 />
+            </textures>
+			<imageTextures>
+				<imageTexture UNIT=0 texture="texVolume" >
+					<ACCESS value="READ_WRITE" />
+					<LEVEL value=0 />
+				</imageTexture>
+				<imageTexture UNIT=1 texture="texVolumeAux" >
+					<ACCESS value="READ_WRITE" />
+					<LEVEL value=0 />
+				</imageTexture>
+			</imageTextures>
+			<buffers>
+				<buffer name="Slice" >
+					<TYPE value="SHADER_STORAGE" />
+					<BINDING_POINT value="4" />
+				</buffer>
+			</buffers>
 		</material>
 	</materials>
 </materialLib>
