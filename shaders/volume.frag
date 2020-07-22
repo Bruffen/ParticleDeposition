@@ -16,7 +16,7 @@ uniform sampler2D texRender;
 uniform sampler2D heightMap;    // World height map
 uniform sampler2D texVolume;    // Particles heights
 uniform sampler2D DepthTex;    
-const float particleHighest = 3.5;
+uniform float particleHighest;
 
 uniform vec3 lightDir;
 uniform mat4 m_pv;
@@ -42,9 +42,6 @@ uniform float particleAlpha;
 uniform vec3  particleColor;
 uniform float marchingStep;
 uniform int   marchingMax;
-
-uniform float offsetX;
-uniform float offsetY;
 
 const vec3 inf = vec3(1e20, 1e20, 1e20);
 
@@ -152,8 +149,7 @@ vec4 rayMarch(vec3 rayPos, vec3 rayDir)
         vec2 texUVs = clamp(vec2((current.x - sceneLf) * inv_bbWidth,
                            (current.z - sceneDw) * inv_bbHeight), 0 + tol, 1 - tol);
 
-        vec2 offset = vec2(offsetX, offsetY);
-        vec4 hvec = texture(texVolume, texUVs + offset);
+        vec4 hvec = texture(texVolume, texUVs);
         float h = hvec.r;// * sceneHt;
         float z = hvec.g;//(1 - texture(heightMap, vec2(-texUVs.x, texUVs.y)).r) * sceneHt;
         // If distances are too different, then we have a vertical disconnection between particles
@@ -174,17 +170,16 @@ vec4 rayMarch(vec3 rayPos, vec3 rayDir)
             vec2 uv_lf = clamp(texUVs - vec2(texel_step, 0), vec2(0), vec2(1));
 
             // Get heights from particles
-            float h_up = texture(texVolume, uv_up + offset).r;
-            float h_dw = texture(texVolume, uv_dw + offset).r;
-            float h_rt = texture(texVolume, uv_rt + offset).r;
-            float h_lf = texture(texVolume, uv_lf + offset).r;
+            float h_up = texture(texVolume, uv_up).r;
+            float h_dw = texture(texVolume, uv_dw).r;
+            float h_rt = texture(texVolume, uv_rt).r;
+            float h_lf = texture(texVolume, uv_lf).r;
 
             // Get heights from the scene
-            float z_up = texture(texVolume, uv_up + offset).g;// (1 - texture((heightMap), vec2(-uv_up.x, uv_up.y)).r) * sceneHt;
-            float z_dw = texture(texVolume, uv_dw + offset).g;// (1 - texture((heightMap), vec2(-uv_dw.x, uv_dw.y)).r) * sceneHt;
-            float z_rt = texture(texVolume, uv_rt + offset).g;// (1 - texture((heightMap), vec2(-uv_rt.x, uv_rt.y)).r) * sceneHt;
-            float z_lf = texture(texVolume, uv_lf + offset).g;// (1 - texture((heightMap), vec2(-uv_lf.x, uv_lf.y)).r) * sceneHt;
-
+            float z_up = texture(texVolume, uv_up).g;// (1 - texture((heightMap), vec2(-uv_up.x, uv_up.y)).r) * sceneHt;
+            float z_dw = texture(texVolume, uv_dw).g;// (1 - texture((heightMap), vec2(-uv_dw.x, uv_dw.y)).r) * sceneHt;
+            float z_rt = texture(texVolume, uv_rt).g;// (1 - texture((heightMap), vec2(-uv_rt.x, uv_rt.y)).r) * sceneHt;
+            float z_lf = texture(texVolume, uv_lf).g;// (1 - texture((heightMap), vec2(-uv_lf.x, uv_lf.y)).r) * sceneHt;
             
             // Calculate directions with slopes
             vec3 up = normalize(vec3( world_step, (h_up + z_up) - (h + z), 0));

@@ -25,8 +25,7 @@
 			<attribute name="minY" data="FLOAT" type="RENDERER" value=35 />
 			<attribute name="wholeMap" data="INT" type="RENDERER" value=1 />
 			<attribute name="simulIterations" data="INT" type="RENDERER" value=1 />
-			<attribute name="offsetX" data="FLOAT" type="RENDERER" value=0/>
-			<attribute name="offsetY" data="FLOAT" type="RENDERER" value=0/>
+			<attribute name="particleHighest" data="FLOAT" type="RENDERER" value=5/>
         </attributes>
 		<scenes>
 			<scene name="scene1">
@@ -38,6 +37,7 @@
 			</scene>
 			<scene name="camoes">
 				<file name="models/LargoCamoes/largoCamoes.nbo"/>
+				<SCALE x=0.2 y=0.2 z=0.2 />
 			</scene>
 			<scene name="Plane">
 				<geometry name = "square" type = "SQUARE" />
@@ -88,7 +88,7 @@
 				<viewport name="MainViewport" />
 				<POSITION x=0.0 y=1.0 z=5.0 />
 				<NEAR 	value=0.1 />
-				<FAR 	value=100 /> 
+				<FAR 	value=1000 /> 
 			</camera>
 			
 		</cameras>
@@ -137,6 +137,10 @@
 
 			<pass class="default" name="depthMapSetup">
 				<scenes>
+					<!--
+					<scene name="scene1" /> 
+					<scene name="camoes" /> 
+					/-->
 					<scene name="car" /> 
 					<scene name="Plane" />
 					<scene name="Sphere" />
@@ -209,7 +213,7 @@
 			<var label="Particle Height" type="RENDERER" context="CURRENT" component="height" 
 				def="min=0.01 max=10 step=0.01"/>
 			<var label="Particle Size" type="RENDERER" context="CURRENT" component="particleSize" 
-				def="min=0.01 max=5 step=0.01"/>
+				def="min=0.000001 max=5 step=0.01"/>
 			<var label="Wind Direction" type="RENDERER" context="CURRENT" component="windDir" />	
 		</window>
 		<window label="Particle Simulation">
@@ -228,8 +232,6 @@
 			<var label="Marching Step" type="RENDERER" context="CURRENT" component="marchingStep" 
 				def="min=0.001 max=1 step=0.001"/>
 			<var label="Marching Max" type="RENDERER" context="CURRENT" component="marchingMax" />
-			<var label="OffsetX" type="RENDERER" context="CURRENT" component="offsetX" def="step=0.00001" min="-0.0001" max="0.0001" />
-			<var label="OffsetY" type="RENDERER" context="CURRENT" component="offsetY" def="step=0.00001" min="-0.0001" max="0.0001"/>
 		</window>
     </interface> 
 </project>

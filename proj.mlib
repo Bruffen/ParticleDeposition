@@ -118,12 +118,11 @@
 					<valueof uniform="sceneRt"		type="CAMERA"			context="HeightCamera"	component="RIGHT" />
 					<valueof uniform="sceneDw"		type="CAMERA"			context="HeightCamera"	component="BOTTOM" />
 					<valueof uniform="windowSize"	type="VIEWPORT"			context="MainViewport"	component="SIZE" />
+					<valueof uniform="particleHighest" type="RENDERER" 		context="CURRENT" 		component="particleHighest" />
 					<valueof uniform="particleAlpha" type="RENDERER" 		context="CURRENT" 		component="particleAlpha" />
 					<valueof uniform="particleColor" type="RENDERER" 		context="CURRENT" 		component="particleColor" />
 					<valueof uniform="marchingStep"	type="RENDERER" 		context="CURRENT" 		component="marchingStep" />
 					<valueof uniform="marchingMax"	type="RENDERER" 		context="CURRENT" 		component="marchingMax" />
-					<valueof uniform="offsetX"		type="RENDERER" 		context="CURRENT" 		component="offsetX" />
-					<valueof uniform="offsetY"		type="RENDERER" 		context="CURRENT" 		component="offsetY" />
 				</values>
 			</shader>
 			<!-- <state name="frontCull" /> -->
