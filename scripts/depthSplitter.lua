@@ -32,7 +32,7 @@ slice = function()
         
         setAttr("CAMERA", "HeightCamera3", "NEAR", 0, { sceneHeight * sliceResult }) -- 0.5-1
         setAttr("CAMERA", "HeightCameraBot3", "FAR", 0, { sceneHeight * sliceResult })
-        setAttr("RENDERER", "CURRENT", "height2", 0, { sceneHeight * sliceResult })
+        --setAttr("RENDERER", "CURRENT", "height2", 0, { sceneHeight * sliceResult })
     elseif step[1] == 2 then
         sliceResult = 0.25
         setAttr("CAMERA", "HeightCamera1", "FAR", 0, { sceneHeight * sliceResult }) -- 0-0.25
@@ -42,7 +42,7 @@ slice = function()
         setAttr("CAMERA", "HeightCamera2", "FAR", 0, { sceneHeight * 0.5 })
         setAttr("CAMERA", "HeightCameraBot2", "FAR", 0, { sceneHeight * (1 - sliceResult) })
         setAttr("CAMERA", "HeightCameraBot2", "NEAR", 0, { sceneHeight * 0.5 })
-        setAttr("RENDERER", "CURRENT", "height3", 0, { sceneHeight * sliceResult })
+        --setAttr("RENDERER", "CURRENT", "height3", 0, { sceneHeight * sliceResult })
     elseif step[1] == 3 then
         sliceResult = 0.75
         setAttr("CAMERA", "HeightCamera3", "NEAR", 0, { sceneHeight * 0.5 }) -- 0.5-0.75
@@ -54,7 +54,7 @@ slice = function()
         setAttr("CAMERA", "HeightCameraBot4", "FAR", 0, { sceneHeight * (1 - sliceResult) })
         setAttr("RENDERER", "CURRENT", "setupDone", 0, { 1 })
 
-        setAttr("RENDERER", "CURRENT", "height1", 0, { sceneHeight * sliceResult })
+        --setAttr("RENDERER", "CURRENT", "height1", 0, { sceneHeight * sliceResult })
         return false
     end
 

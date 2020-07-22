@@ -181,6 +181,12 @@
 					<valueof uniform="height1" 		type="RENDERER" 		context="CURRENT" 		component="height1" />
 					<valueof uniform="height2" 		type="RENDERER" 		context="CURRENT" 		component="height2" />
 					<valueof uniform="height3" 		type="RENDERER" 		context="CURRENT" 		component="height3" />
+
+					valueof uniform="width4" 		type="RENDERER" 		context="CURRENT" 		component="width4" />
+					<valueof uniform="width1" 		type="RENDERER" 		context="CURRENT" 		component="width1" />
+					<valueof uniform="width2" 		type="RENDERER" 		context="CURRENT" 		component="width2" />
+					<valueof uniform="width3" 		type="RENDERER" 		context="CURRENT" 		component="width3" />
+					
 					<valueof uniform="lightDir"		type="LIGHT" 			context="Sun" 			component="DIRECTION" />
 					<valueof uniform="view"			type="CAMERA"			context="MainCamera"	component="VIEW" />
 					<valueof uniform="right"		type="CAMERA"			context="MainCamera"	component="NORMALIZED_RIGHT" />
@@ -236,8 +242,20 @@
 		<material name="matParticles">
 			<shader name="particles">
 				<values>
-                    <valueof uniform="texVolume" 	type="IMAGE_TEXTURE" 	context="CURRENT" 		component="UNIT" id=0 />
-                    <valueof uniform="heightMap" 	type="TEXTURE_BINDING" 	context="CURRENT" 		component="UNIT" id=1 />
+                    <valueof uniform="texVolume1"	type="IMAGE_TEXTURE" 	context="CURRENT" 		component="UNIT" id=1 />
+                    <valueof uniform="texVolume2"	type="IMAGE_TEXTURE" 	context="CURRENT" 		component="UNIT" id=2 />
+                    <valueof uniform="texVolume3"	type="IMAGE_TEXTURE" 	context="CURRENT" 		component="UNIT" id=3 />
+                    <valueof uniform="texVolume4"	type="IMAGE_TEXTURE" 	context="CURRENT" 		component="UNIT" id=4 />
+
+                    <valueof uniform="heightMap1"	type="TEXTURE_BINDING" 	context="CURRENT" 		component="UNIT" id=5 />
+                    <valueof uniform="heightMap2"	type="TEXTURE_BINDING" 	context="CURRENT" 		component="UNIT" id=6 />
+                    <valueof uniform="heightMap3"	type="TEXTURE_BINDING" 	context="CURRENT" 		component="UNIT" id=7 />
+                    <valueof uniform="heightMap4"	type="TEXTURE_BINDING" 	context="CURRENT" 		component="UNIT" id=8 />
+					<valueof uniform="heightBot1"	type="TEXTURE_BINDING" 	context="CURRENT" 		component="UNIT" id=9 />
+                    <valueof uniform="heightBot2"	type="TEXTURE_BINDING" 	context="CURRENT" 		component="UNIT" id=10 />
+                    <valueof uniform="heightBot3"	type="TEXTURE_BINDING" 	context="CURRENT" 		component="UNIT" id=11 />
+                    <valueof uniform="heightBot4"	type="TEXTURE_BINDING" 	context="CURRENT" 		component="UNIT" id=12 />
+
 					<valueof uniform="sceneHt"		type="CAMERA"			context="HeightCamera"	component="FAR" />
 					<valueof uniform="sceneUp"		type="CAMERA"			context="HeightCamera"	component="TOP" />
 					<valueof uniform="sceneLf"		type="CAMERA"			context="HeightCamera"	component="LEFT" />
@@ -257,10 +275,29 @@
 				</values>
 			</shader>
 			<textures>
-                <texture name="HeightMap_depth" 	UNIT=1 />
+                <texture name="HeightMap_depth" 		UNIT=5 />
+                <texture name="HeightMap2_depth" 		UNIT=6 />
+                <texture name="HeightMap3_depth" 		UNIT=7 />
+                <texture name="HeightMap4_depth" 		UNIT=8 />
+				<texture name="HeightMapBot_depth" 		UNIT=9 />
+                <texture name="HeightMapBot2_depth" 	UNIT=10 />
+                <texture name="HeightMapBot3_depth" 	UNIT=11 />
+                <texture name="HeightMapBot4_depth" 	UNIT=12 />
             </textures>
 			<imageTextures>
-				<imageTexture UNIT=0 texture="texVolume" >
+				<imageTexture UNIT=1 texture="texVolume" >
+					<ACCESS value="WRITE_ONLY" />
+					<LEVEL value=0 />
+				</imageTexture>
+				<imageTexture UNIT=2 texture="texVolume2" >
+					<ACCESS value="WRITE_ONLY" />
+					<LEVEL value=0 />
+				</imageTexture>
+				<imageTexture UNIT=3 texture="texVolume3" >
+					<ACCESS value="WRITE_ONLY" />
+					<LEVEL value=0 />
+				</imageTexture>
+				<imageTexture UNIT=4 texture="texVolume4" >
 					<ACCESS value="WRITE_ONLY" />
 					<LEVEL value=0 />
 				</imageTexture>
@@ -280,8 +317,28 @@
 		<material name="depositionHeight">
 			<shader name="deposition">
 				<values>
-                    <valueof uniform="texVolume" 		type="IMAGE_TEXTURE" 	context="CURRENT" 		component="UNIT" id=0 />
-                    <valueof uniform="heightMap" 		type="TEXTURE_BINDING" 	context="CURRENT" 		component="UNIT" id=1 />
+                    <valueof uniform="texVolume1"	type="IMAGE_TEXTURE" 	context="CURRENT" 		component="UNIT" id=1 />
+                    <valueof uniform="texVolume2"	type="IMAGE_TEXTURE" 	context="CURRENT" 		component="UNIT" id=2 />
+                    <valueof uniform="texVolume3"	type="IMAGE_TEXTURE" 	context="CURRENT" 		component="UNIT" id=3 />
+                    <valueof uniform="texVolume4"	type="IMAGE_TEXTURE" 	context="CURRENT" 		component="UNIT" id=4 />
+
+                    <valueof uniform="heightMap1"	type="TEXTURE_BINDING" 	context="CURRENT" 		component="UNIT" id=5 />
+                    <valueof uniform="heightMap2"	type="TEXTURE_BINDING" 	context="CURRENT" 		component="UNIT" id=6 />
+                    <valueof uniform="heightMap3"	type="TEXTURE_BINDING" 	context="CURRENT" 		component="UNIT" id=7 />
+                    <valueof uniform="heightMap4"	type="TEXTURE_BINDING" 	context="CURRENT" 		component="UNIT" id=8 />
+					<valueof uniform="heightBot1"	type="TEXTURE_BINDING" 	context="CURRENT" 		component="UNIT" id=9 />
+                    <valueof uniform="heightBot2"	type="TEXTURE_BINDING" 	context="CURRENT" 		component="UNIT" id=10 />
+                    <valueof uniform="heightBot3"	type="TEXTURE_BINDING" 	context="CURRENT" 		component="UNIT" id=11 />
+                    <valueof uniform="heightBot4"	type="TEXTURE_BINDING" 	context="CURRENT" 		component="UNIT" id=12 />
+					
+					<valueof uniform="height1" 		type="RENDERER" 		context="CURRENT" 		component="height1" />
+					<valueof uniform="height2" 		type="RENDERER" 		context="CURRENT" 		component="height2" />
+					<valueof uniform="height3" 		type="RENDERER" 		context="CURRENT" 		component="height3" />
+					<valueof uniform="width4" 		type="RENDERER" 		context="CURRENT" 		component="width4" />
+					<valueof uniform="width1" 		type="RENDERER" 		context="CURRENT" 		component="width1" />
+					<valueof uniform="width2" 		type="RENDERER" 		context="CURRENT" 		component="width2" />
+					<valueof uniform="width3" 		type="RENDERER" 		context="CURRENT" 		component="width3" />
+					
 					<valueof uniform="sceneHt"			type="CAMERA"			context="HeightCamera"	component="FAR" />
 					<valueof uniform="sceneUp"			type="CAMERA"			context="HeightCamera"	component="TOP" />
 					<valueof uniform="sceneLf"			type="CAMERA"			context="HeightCamera"	component="LEFT" />
@@ -300,11 +357,30 @@
 				</values>
 			</shader>
 			<textures>
-                <texture name="HeightMap_depth"  	UNIT=1 />
+                <texture name="HeightMap_depth" 		UNIT=5 />
+                <texture name="HeightMap2_depth" 		UNIT=6 />
+                <texture name="HeightMap3_depth" 		UNIT=7 />
+                <texture name="HeightMap4_depth" 		UNIT=8 />
+				<texture name="HeightMapBot_depth" 		UNIT=9 />
+                <texture name="HeightMapBot2_depth" 	UNIT=10 />
+                <texture name="HeightMapBot3_depth" 	UNIT=11 />
+                <texture name="HeightMapBot4_depth" 	UNIT=12 />
             </textures>
 			<imageTextures>
-				<imageTexture UNIT=0 texture="texVolume" >
-					<ACCESS value="READ_WRITE" />
+				<imageTexture UNIT=1 texture="texVolume" >
+					<ACCESS value="WRITE_ONLY" />
+					<LEVEL value=0 />
+				</imageTexture>
+				<imageTexture UNIT=2 texture="texVolume2" >
+					<ACCESS value="WRITE_ONLY" />
+					<LEVEL value=0 />
+				</imageTexture>
+				<imageTexture UNIT=3 texture="texVolume3" >
+					<ACCESS value="WRITE_ONLY" />
+					<LEVEL value=0 />
+				</imageTexture>
+				<imageTexture UNIT=4 texture="texVolume4" >
+					<ACCESS value="WRITE_ONLY" />
 					<LEVEL value=0 />
 				</imageTexture>
 			</imageTextures>

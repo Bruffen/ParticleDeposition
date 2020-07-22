@@ -191,13 +191,13 @@ vec4 rayMarch(vec3 rayPos, vec3 rayDir)
     
       
         //TODO
-        //vec4 hvec = texture(texVolume, texUVs + offset);
-        //float h = hvec.r;// * sceneHt;
-        //float z = hvec.g;//(1 - texture(heightMap, vec2(-texUVs.x, texUVs.y)).r) * sceneHt;
+        vec4 hvec = textureVolume(current.y, texUVs + offset);
+        float h = hvec.r;// * sceneHt;
+        float z = hvec.g;//(1 - texture(heightMap, vec2(-texUVs.x, texUVs.y)).r) * sceneHt;
 
-        
-        float h = textureVolume(current.y, texUVs + offset).r;// * sceneHt;
-        float z = (1 - textureHeight(current.y, vec2(-texUVs.x, texUVs.y)).r) * sceneHt;
+        //
+        //float h = .r;// * sceneHt;
+        //float z = (1 - textureHeight(current.y, vec2(-texUVs.x, texUVs.y)).r) * sceneHt;
 
         // If distances are too different, then we have a vertical disconnection between particles
         if (abs(lastH - h + lastZ - z) > 0.05)
@@ -230,10 +230,10 @@ vec4 rayMarch(vec3 rayPos, vec3 rayDir)
             //float z_rt = texture(texVolume, uv_rt + offset).g;// (1 - texture((heightMap), vec2(-uv_rt.x, uv_rt.y)).r) * sceneHt;
             //float z_lf = texture(texVolume, uv_lf + offset).g;// (1 - texture((heightMap), vec2(-uv_lf.x, uv_lf.y)).r) * sceneHt;
 
-            float z_up = (1 - textureHeight(current.y, vec2(-uv_up.x, uv_up.y)).r) * sceneHt;
-            float z_dw = (1 - textureHeight(current.y, vec2(-uv_dw.x, uv_dw.y)).r) * sceneHt;
-            float z_rt = (1 - textureHeight(current.y, vec2(-uv_rt.x, uv_rt.y)).r) * sceneHt;
-            float z_lf = (1 - textureHeight(current.y, vec2(-uv_lf.x, uv_lf.y)).r) * sceneHt;
+            float z_up = (1 - textureVolume(current.y, vec2(-uv_up.x, uv_up.y)).g) * sceneHt;
+            float z_dw = (1 - textureVolume(current.y, vec2(-uv_dw.x, uv_dw.y)).g) * sceneHt;
+            float z_rt = (1 - textureVolume(current.y, vec2(-uv_rt.x, uv_rt.y)).g) * sceneHt;
+            float z_lf = (1 - textureVolume(current.y, vec2(-uv_lf.x, uv_lf.y)).g) * sceneHt;
 
             
             // Calculate directions with slopes
@@ -288,7 +288,7 @@ void main()
     }
 
     color = mix(color, particleColor, particleColor.a);
-    color = mix(color, levelColor, levelColor.a);
+    //color = mix(color, levelColor, levelColor.a);
     
     /*
     float depth = texture(texRenderZ, uv).r;

@@ -25,9 +25,13 @@
 			<attribute name="offsetY" data="FLOAT" type="RENDERER" value=0/>
 			<attribute name="setupDone" data="INT" type="RENDERER" value=0/>
 			<attribute name="step" data="INT" type="RENDERER" value=0/>
-			<attribute name="height1" data="FLOAT" type="RENDERER" value=7.5/>
-			<attribute name="height2" data="FLOAT" type="RENDERER" value=5/>
-			<attribute name="height3" data="FLOAT" type="RENDERER" value=2.5/>
+			<attribute name="height1" data="FLOAT" type="RENDERER" value=2.1/>
+			<attribute name="height2" data="FLOAT" type="RENDERER" value=1.75/>
+			<attribute name="height3" data="FLOAT" type="RENDERER" value=0.3/>
+			<attribute name="width1" data="FLOAT" type="RENDERER" value=3.9/>
+			<attribute name="width2" data="FLOAT" type="RENDERER" value=0.35/>
+			<attribute name="width3" data="FLOAT" type="RENDERER" value=1.45/>
+			<attribute name="width4" data="FLOAT" type="RENDERER" value=0.3/>
         </attributes>
 		<scenes>
 			<scene name="scene1">
@@ -85,16 +89,17 @@
 				<VIEW 	x=0.0 y=-1.0 z=0.0 />
 				<UP 	x=0.0 y=0.0 z=1.0 />
 			</camera>
-			<camera name="HeightCamera1" >
+		<camera name="HeightCamera1" >
 				<TYPE 	value="ORTHO" />
 				<RIGHT 	value=10 />
 				<LEFT 	value=-10 />
 				<TOP 	value=10 />
 				<BOTTOM value=-10 />
-				<NEAR	value=0.0001/>
-				<FAR	value=10 />
+				
+                <FAR	value=3.9/>
+				<NEAR	value=0.001/>
 				<viewport name="MainViewport" />
-				<POSITION x=0.0 y=10.0 z=0.0 />
+				<POSITION x=0.0 y=6.0 z=0.0 />
 				<VIEW 	x=0.0 y=-1.0 z=0.0 />
 				<UP 	x=0.0 y=0.0 z=1.0 />
 			</camera>
@@ -104,10 +109,10 @@
 				<LEFT 	value=-10 />
 				<TOP 	value=10 />
 				<BOTTOM value=-10 />
-				<NEAR	value=0.0001/>
-				<FAR	value=10 />
+                <FAR	value=4.25/>
+				<NEAR	value=3.9 />
 				<viewport name="MainViewport" />
-				<POSITION x=0.0 y=10.0 z=0.0 />
+				<POSITION x=0.0 y=6.0 z=0.0 />
 				<VIEW 	x=0.0 y=-1.0 z=0.0 />
 				<UP 	x=0.0 y=0.0 z=1.0 />
 			</camera>
@@ -117,10 +122,10 @@
 				<LEFT 	value=-10 />
 				<TOP 	value=10 />
 				<BOTTOM value=-10 />
-				<NEAR	value=0.0001/>
-				<FAR	value=10 />
+				<FAR	value=5.7/>
+				<NEAR	value=4.25 />
 				<viewport name="MainViewport" />
-				<POSITION x=0.0 y=10.0 z=0.0 />
+				<POSITION x=0.0 y=6.0 z=0.0 />
 				<VIEW 	x=0.0 y=-1.0 z=0.0 />
 				<UP 	x=0.0 y=0.0 z=1.0 />
 			</camera>
@@ -130,21 +135,22 @@
 				<LEFT 	value=-10 />
 				<TOP 	value=10 />
 				<BOTTOM value=-10 />
-				<NEAR	value=0.0001/>
-				<FAR	value=10 />
+				<FAR	value=6/>
+				<NEAR	value=5.7 />
 				<viewport name="MainViewport" />
-				<POSITION x=0.0 y=10.0 z=0.0 />
+				<POSITION x=0.0 y=6.0 z=0.0 />
 				<VIEW 	x=0.0 y=-1.0 z=0.0 />
 				<UP 	x=0.0 y=0.0 z=1.0 />
 			</camera>
-			<camera name="HeightCameraBot" >
+
+            <camera name="HeightCameraBot" >
 				<TYPE 	value="ORTHO" />
 				<RIGHT 	value=10 />
 				<LEFT 	value=-10 />
 				<TOP 	value=10 />
 				<BOTTOM value=-10 />
-				<NEAR	value=0.0001/>
-				<FAR	value=10 />
+				<FAR	value=6/>
+				<NEAR	value=5.7 />
 				<viewport name="MainViewport" />
 				<POSITION x=0.0 y=0.0 z=0.0 />
 				<VIEW 	x=0.0 y=1.0 z=0.0 />
@@ -156,8 +162,8 @@
 				<LEFT 	value=-10 />
 				<TOP 	value=10 />
 				<BOTTOM value=-10 />
-				<NEAR	value=0.0001/>
-				<FAR	value=10 />
+				<FAR	value=5.7/>
+				<NEAR	value=4.25 />
 				<viewport name="MainViewport" />
 				<POSITION x=0.0 y=0.0 z=0.0 />
 				<VIEW 	x=0.0 y=1.0 z=0.0 />
@@ -169,8 +175,8 @@
 				<LEFT 	value=-10 />
 				<TOP 	value=10 />
 				<BOTTOM value=-10 />
-				<NEAR	value=0.0001/>
-				<FAR	value=10 />
+                <FAR	value=4.25/>
+				<NEAR	value=3.9 />
 				<viewport name="MainViewport" />
 				<POSITION x=0.0 y=0.0 z=0.0 />
 				<VIEW 	x=0.0 y=1.0 z=0.0 />
@@ -182,8 +188,8 @@
 				<LEFT 	value=-10 />
 				<TOP 	value=10 />
 				<BOTTOM value=-10 />
-				<NEAR	value=0.0001/>
-				<FAR	value=10 />
+                <FAR	value=3.9/>
+				<NEAR	value=0.001/>
 				<viewport name="MainViewport" />
 				<POSITION x=0.0 y=0.0 z=0.0 />
 				<VIEW 	x=0.0 y=1.0 z=0.0 />
@@ -215,7 +221,6 @@
 		<pipeline name="setup">
 			<testScript script="slice" file="scripts/depthSplitter.lua" TEST_MODE="RUN_WHILE" />
 			<!-- Render the scene from above for height info -->
-			<pass class="default" name="heightMapSetup">
 		    <pass class="default" name="heightMapSetup1">
 				<scenes>
 					<!--

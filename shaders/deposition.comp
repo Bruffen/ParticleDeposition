@@ -1,73 +1,4 @@
 #version 430
-// A single iteration of Bob Jenkins' One-At-A-Time hashing algorithm.
-uint hash( uint x ) {
-    x += ( x << 10u );
-    x ^= ( x >>  6u );
-    x += ( x <<  3u );
-    x ^= ( x >> 11u );
-    x += ( x << 15u );
-    return x;
-}
-
-// Compound versions of the hashing algorithm I whipped together.
-uint hash( uvec2 v ) { return hash( v.x ^ hash(v.y)                         ); }
-uint hash( uvec3 v ) { return hash( v.x ^ hash(v.y) ^ hash(v.z)             ); }
-uint hash( uvec4 v ) { return hash( v.x ^ hash(v.y) ^ hash(v.z) ^ hash(v.w) ); }
-
-// Construct a float with half-open range [0:1] using low 23 bits.
-// All zeroes yields 0.0, all ones yields the next smallest representable value below 1.0.
-float floatConstruct( uint m ) {
-    const uint ieeeMantissa = 0x007FFFFFu; // binary32 mantissa bitmask
-    const uint ieeeOne      = 0x3F800000u; // 1.0 in IEEE binary32
-
-    m &= ieeeMantissa;                     // Keep only mantissa bits (fractional part)
-    m |= ieeeOne;                          // Add fractional part to 1.0
-
-    float  f = uintBitsToFloat( m );       // Range [1:2]
-    return f - 1.0;                        // Range [0:1]
-}
-
-// Pseudo-random value in half-open range [0:1].
-float random( float x ) { return floatConstruct(hash(floatBitsToUint(x))); }
-float random( vec2  v ) { return floatConstruct(hash(floatBitsToUint(v))); }
-float random( vec3  v ) { return floatConstruct(hash(floatBitsToUint(v))); }
-float random( vec4  v ) { return floatConstruct(hash(floatBitsToUint(v))); }
-
-float rand(vec2 co){
-    return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
-}
-
-
-// Simplex 2D noise
-//
-vec3 permute(vec3 x) { return mod(((x*34.0)+1.0)*x, 289.0); }
-
-float snoise(vec2 v){
-  const vec4 C = vec4(0.211324865405187, 0.366025403784439,
-           -0.577350269189626, 0.024390243902439);
-  vec2 i  = floor(v + dot(v, C.yy) );
-  vec2 x0 = v -   i + dot(i, C.xx);
-  vec2 i1;
-  i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
-  vec4 x12 = x0.xyxy + C.xxzz;
-  x12.xy -= i1;
-  i = mod(i, 289.0);
-  vec3 p = permute( permute( i.y + vec3(0.0, i1.y, 1.0 ))
-  + i.x + vec3(0.0, i1.x, 1.0 ));
-  vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy),
-    dot(x12.zw,x12.zw)), 0.0);
-  m = m*m ;
-  m = m*m ;
-  vec3 x = 2.0 * fract(p * C.www) - 1.0;
-  vec3 h = abs(x) - 0.5;
-  vec3 ox = floor(x + 0.5);
-  vec3 a0 = x - ox;
-  m *= 1.79284291400159 - 0.85373472095314 * ( a0*a0 + h*h );
-  vec3 g;
-  g.x  = a0.x  * x0.x  + h.x  * x0.y;
-  g.yz = a0.yz * x12.xz + h.yz * x12.yw;
-  return 130.0 * dot(m, g);
-}
 
 layout (local_size_x = 1, local_size_y = 1, local_size_z = 1) in; // optimize
 
@@ -75,6 +6,21 @@ uniform sampler2D heightMap;
 //uniform restrict image2D texVolume;
 
 layout(binding=2, rgba32f) uniform image2D  texVolume;
+
+uniform sampler2D heightMap1;
+uniform sampler2D heightMap2;
+uniform sampler2D heightMap3;
+uniform sampler2D heightMap4;
+uniform sampler2D heightBot1;
+uniform sampler2D heightBot2;
+uniform sampler2D heightBot3;
+uniform sampler2D heightBot4;
+
+layout(binding=1, rgba32f) uniform image2D  texVolume1;
+layout(binding=2, rgba32f) uniform image2D  texVolume2;
+layout(binding=3, rgba32f) uniform image2D  texVolume3;
+layout(binding=4, rgba32f) uniform image2D  texVolume4;
+
 uniform int texWidth;
 uniform int texHeight;
 
@@ -95,11 +41,13 @@ uniform float viscosity;
 uniform int simulIterations;
 uniform float time;
 
-
-
-
-
-
+uniform float height1;
+uniform float height2;
+uniform float height3;
+uniform float width1;
+uniform float width2;
+uniform float width3;
+uniform float width4;
 
 
 float sendRecieve(float totalheight,float particleheight, float neibtotal, float neibparticle, float maxHeight, float maxNeib){
@@ -116,18 +64,62 @@ float sendRecieve(float totalheight,float particleheight, float neibtotal, float
 
 }
 
-float gettex(uint i,uint j){
-    if(i <= 0 || j <= 0 || i == texWidth || j == texWidth)
+float getheight1(uint i,uint j){
+    if(i < 0 || j < 0 || i == texWidth || j == texWidth)
         return 9999.0;
-    return (vec4((1-texture(heightMap, vec2(-1,1)*(vec2(i,j)/texWidth))))*sceneHt).x ;
+    return (vec4((1-texture(heightMap1, vec2(-1,1)*(vec2(i,j)/texWidth))))).x*width1+height1;
 }
 
-float getmax(uint i, uint j){
-    return max(0,1+sin(float(i)/20) - gettex(i,j));
+float getmax1(uint i, uint j){
+
+    float topmap = texture(heightBot1, vec2(-1,-1)*(vec2(i,j)/texWidth)).x*width1+height1;
+    float botmap = getheight1(i,j);
+    return max(0,topmap-botmap);
 }
+
+float getheight2(uint i,uint j){
+    if(i < 0 || j < 0 || i == texWidth || j == texWidth)
+        return 9999.0;
+    return (vec4((1-texture(heightMap2, vec2(-1,1)*vec2(-1,1)*(vec2(i,j)/texWidth))))).x*width2+height2 ;
+}
+
+float getmax2(uint i, uint j){
+
+    float topmap = texture(heightBot2, vec2(-1,-1)*(vec2(i,j)/texWidth)).x*width2+height2;
+    float botmap = getheight2(i,j);
+    return max(0,topmap-botmap);
+}
+
+float getheight3(uint i,uint j){
+    if(i < 0 || j < 0 || i == texWidth || j == texWidth)
+        return 9999.0;
+    return (vec4((1-texture(heightMap3, vec2(-1,1)*(vec2(i,j)/texWidth))))).x*width3+height3 ;
+}
+
+float getmax3(uint i, uint j){
+
+    float topmap = texture(heightBot3, vec2(-1,-1)*(vec2(i,j)/texWidth)).x*width3+height3;
+    float botmap = getheight3(i,j);
+    return max(0,topmap-botmap);
+}
+
+
+float getheight4(uint i,uint j){
+    if(i < 0 || j < 0 || i == texWidth || j == texWidth)
+        return 9999.0;
+    return (vec4((1-texture(heightMap4, vec2(-1,1)*(vec2(i,j)/texWidth))))).x*width4 ;
+}
+
+float getmax4(uint i, uint j){
+
+    float topmap = texture(heightBot4, vec2(-1,-1)*(vec2(i,j)/texWidth)).x*width4;
+    float botmap = getheight4(i,j);
+    return max(0,topmap-botmap);
+}
+
+
 
 void main(){
-
     uint i = gl_GlobalInvocationID.x;
 	uint j = gl_GlobalInvocationID.y;
 	uint k = gl_GlobalInvocationID.x + gl_WorkGroupSize.x * gl_GlobalInvocationID.y;
@@ -137,91 +129,160 @@ void main(){
 	const float center_x = width/2;
 	const float center_z = height/2;
     int auxtime = int(time);
-    for(int iter=0; iter < simulIterations;iter ++)
     {
-        groupMemoryBarrier();
 
-        float curr  = imageLoad(texVolume,ivec2(i,j)).x;
-        float top   = imageLoad(texVolume,ivec2(i-1,j)).x;
-        float bot   = imageLoad(texVolume,ivec2(i+1,j)).x;
-        float right = imageLoad(texVolume,ivec2(i,j+1)).x;
-        float left  = imageLoad(texVolume,ivec2(i,j-1)).x;
-        float totalcurr  = curr  + gettex(i,j);
-        float totaltop   = top   + gettex(i-1,j);
-        float totalbot   = bot   + gettex(i+1,j);
-        float totalright = right + gettex(i,j+1);
-        float totalleft  = left  + gettex(i,j-1);
-
-        float maxcurr    = getmax(i,j);
-        float maxtop     = getmax(i-1,j);
-        float maxbot     = getmax(i+1,j);
-        float maxright   = getmax(i,j+1);
-        float maxleft    = getmax(i,j-1);
-
-
-        float aux = curr;
-        aux += sendRecieve(totalcurr,curr,totaltop,top,maxcurr,maxtop);    
-        aux += sendRecieve(totalcurr,curr,totalbot,bot,maxcurr,maxbot);
-        aux += sendRecieve(totalcurr,curr,totalright,right,maxcurr,maxright);
-        aux += sendRecieve(totalcurr,curr,totalleft,left,maxcurr,maxleft);
-
-        groupMemoryBarrier();
-        imageStore(texVolume, ivec2(i, j ),
-                vec4( clamp(aux, 0,maxcurr)
-                   ,gettex(i,j),0,0)
-            );
+        for(int iter=0; iter < simulIterations;iter ++)
+        {
+            groupMemoryBarrier();
+    
+            float curr  = imageLoad(texVolume1,ivec2(i,j)).x;
+            float top   = imageLoad(texVolume1,ivec2(i-1,j)).x;
+            float bot   = imageLoad(texVolume1,ivec2(i+1,j)).x;
+            float right = imageLoad(texVolume1,ivec2(i,j+1)).x;
+            float left  = imageLoad(texVolume1,ivec2(i,j-1)).x;
+            float totalcurr  = curr  + getheight1(i,j);
+            float totaltop   = top   + getheight1(i-1,j);
+            float totalbot   = bot   + getheight1(i+1,j);
+            float totalright = right + getheight1(i,j+1);
+            float totalleft  = left  + getheight1(i,j-1);
+    
+            float maxcurr    = getmax1(i,j);
+            float maxtop     = getmax1(i-1,j);
+            float maxbot     = getmax1(i+1,j);
+            float maxright   = getmax1(i,j+1);
+            float maxleft    = getmax1(i,j-1);
+    
+    
+            float aux = curr;
+            aux += sendRecieve(totalcurr,curr,totaltop,top,maxcurr,maxtop);    
+            aux += sendRecieve(totalcurr,curr,totalbot,bot,maxcurr,maxbot);
+            aux += sendRecieve(totalcurr,curr,totalright,right,maxcurr,maxright);
+            aux += sendRecieve(totalcurr,curr,totalleft,left,maxcurr,maxleft);
+    
+            groupMemoryBarrier();
+            imageStore(texVolume1, ivec2(i, j ),
+                    vec4( clamp(0, 0,maxcurr)
+                       ,getheight1(i,j),0,0)
+                );
+        }
+        
     }
 
-    //imageStore(texVolume, ivec2(i, j ), vec4(gettex(i,j)) );
+    {
+
+        for(int iter=0; iter < simulIterations;iter ++)
+        {
+            groupMemoryBarrier();
+    
+            float curr  = imageLoad(texVolume2,ivec2(i,j)).x;
+            float top   = imageLoad(texVolume2,ivec2(i-1,j)).x;
+            float bot   = imageLoad(texVolume2,ivec2(i+1,j)).x;
+            float right = imageLoad(texVolume2,ivec2(i,j+1)).x;
+            float left  = imageLoad(texVolume2,ivec2(i,j-1)).x;
+            float totalcurr  = curr  + getheight2(i,j);
+            float totaltop   = top   + getheight2(i-1,j);
+            float totalbot   = bot   + getheight2(i+1,j);
+            float totalright = right + getheight2(i,j+1);
+            float totalleft  = left  + getheight2(i,j-1);
+    
+            float maxcurr    = getmax2(i,j);
+            float maxtop     = getmax2(i-1,j);
+            float maxbot     = getmax2(i+1,j);
+            float maxright   = getmax2(i,j+1);
+            float maxleft    = getmax2(i,j-1);
+    
+    
+            float aux = curr;
+            aux += sendRecieve(totalcurr,curr,totaltop,top,maxcurr,maxtop);    
+            aux += sendRecieve(totalcurr,curr,totalbot,bot,maxcurr,maxbot);
+            aux += sendRecieve(totalcurr,curr,totalright,right,maxcurr,maxright);
+            aux += sendRecieve(totalcurr,curr,totalleft,left,maxcurr,maxleft);
+    
+            groupMemoryBarrier();
+            imageStore(texVolume2, ivec2(i, j ),
+                    vec4( clamp(0, 0,maxcurr)
+                       ,getheight2(i,j),0,0)
+                );
+        }
+        
+    }
+
+    {
+
+        for(int iter=0; iter < simulIterations;iter ++)
+        {
+            groupMemoryBarrier();
+    
+            float curr  = imageLoad(texVolume3,ivec2(i,j)).x;
+            float top   = imageLoad(texVolume3,ivec2(i-1,j)).x;
+            float bot   = imageLoad(texVolume3,ivec2(i+1,j)).x;
+            float right = imageLoad(texVolume3,ivec2(i,j+1)).x;
+            float left  = imageLoad(texVolume3,ivec2(i,j-1)).x;
+            float totalcurr  = curr  + getheight3(i,j);
+            float totaltop   = top   + getheight3(i-1,j);
+            float totalbot   = bot   + getheight3(i+1,j);
+            float totalright = right + getheight3(i,j+1);
+            float totalleft  = left  + getheight3(i,j-1);
+    
+            float maxcurr    = getmax3(i,j);
+            float maxtop     = getmax3(i-1,j);
+            float maxbot     = getmax3(i+1,j);
+            float maxright   = getmax3(i,j+1);
+            float maxleft    = getmax3(i,j-1);
+    
+    
+            float aux = curr;
+            aux += sendRecieve(totalcurr,curr,totaltop,top,maxcurr,maxtop);    
+            aux += sendRecieve(totalcurr,curr,totalbot,bot,maxcurr,maxbot);
+            aux += sendRecieve(totalcurr,curr,totalright,right,maxcurr,maxright);
+            aux += sendRecieve(totalcurr,curr,totalleft,left,maxcurr,maxleft);
+    
+            groupMemoryBarrier();
+            imageStore(texVolume3, ivec2(i, j ),
+                    vec4( clamp(0.2, 0.0,maxcurr)
+                       ,getheight3(i,j),0,0)
+                );
+        }
+        
+    }
+
+    {
+
+        for(int iter=0; iter < simulIterations;iter ++)
+        {
+            groupMemoryBarrier();
+    
+            float curr  = imageLoad(texVolume4,ivec2(i,j)).x;
+            float top   = imageLoad(texVolume4,ivec2(i-1,j)).x;
+            float bot   = imageLoad(texVolume4,ivec2(i+1,j)).x;
+            float right = imageLoad(texVolume4,ivec2(i,j+1)).x;
+            float left  = imageLoad(texVolume4,ivec2(i,j-1)).x;
+            float totalcurr  = curr  + getheight4(i,j);
+            float totaltop   = top   + getheight4(i-1,j);
+            float totalbot   = bot   + getheight4(i+1,j);
+            float totalright = right + getheight4(i,j+1);
+            float totalleft  = left  + getheight4(i,j-1);
+    
+            float maxcurr    = getmax4(i,j);
+            float maxtop     = getmax4(i-1,j);
+            float maxbot     = getmax4(i+1,j);
+            float maxright   = getmax4(i,j+1);
+            float maxleft    = getmax4(i,j-1);
+    
+    
+            float aux = curr;
+            aux += sendRecieve(totalcurr,curr,totaltop,top,maxcurr,maxtop);    
+            aux += sendRecieve(totalcurr,curr,totalbot,bot,maxcurr,maxbot);
+            aux += sendRecieve(totalcurr,curr,totalright,right,maxcurr,maxright);
+            aux += sendRecieve(totalcurr,curr,totalleft,left,maxcurr,maxleft);
+    
+            groupMemoryBarrier();
+            imageStore(texVolume4, ivec2(i, j ),
+                    vec4( clamp(1, 0,maxcurr)
+                       ,getheight4(i,j),0,0)
+                );
+        }
+        
+    }
 }
 
-//void main()
-//{
-//    uint i = gl_GlobalInvocationID.x;
-//	uint j = gl_GlobalInvocationID.y;
-//	uint k = gl_GlobalInvocationID.x + gl_WorkGroupSize.x * gl_GlobalInvocationID.y;
-//
-//    const float width  = sceneLf - sceneRt;
-//	const float height = sceneDw - sceneUp;
-//	const float center_x = width/2;
-//	const float center_z = height/2;
-//    int auxtime = int(time);
-//    
-//    barrier();
-//
-//  //  if (auxtime<1000)
-////
-//    //imageStore(texVolume, ivec2(i, j ), texture(heightMap,ivec2(i,j))+vec4(1.0));
-//    //    if((i==j) || ((i-j)%10 == 0) || (((1024-i)-j)%10 == 0) )
-//    //        imageStore(texVolume, ivec2(i, j ), vec4(1.0));
-//    //        else 
-//    //        imageStore(texVolume, ivec2(i, j ), vec4(0));
-//    //    return;
-//    //}
-//
-//    float viscosidade = minHeight;
-//    
-//    //Delta time
-//
-//    float dt = 1;
-//    
-//    float a = viscosidade * dt / ((width-2) * (height-2));
-//    float c = 1 +4*a;
-//    //if(i!=0 && j !=0 && i < width && j < height){
-//
-//        vec4 curr = imageLoad(texVolumeAux, ivec2(i, j ));
-//
-//        vec4 aux =  imageLoad(texVolume, ivec2(i+1, j))+
-//                    imageLoad(texVolume, ivec2(i-1, j))+
-//                    imageLoad(texVolume, ivec2(i, j+1))+
-//                    imageLoad(texVolume, ivec2(i, j-1));
-//
-//        //aux = aux/4;
-//        curr = (curr+a*aux)/c;
-//        imageStore(texVolume, ivec2(i, j ),
-//                    vec4(curr)
-//                );
-//        
-//    //}    
-//
-//}
