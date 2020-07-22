@@ -24,7 +24,7 @@ uniform sampler2D texVolume4;
 uniform float height1;
 uniform float height2;
 uniform float height3;
-const   float particleHighest = 3.5;
+const   float particleHighest = 10;
 
 uniform vec3 lightDir;
 
@@ -254,13 +254,25 @@ void main()
     }
 
     vec4 particleColor = vec4(0.0);
+    vec4 levelColor = vec4(0.0);
+
     if (rayPos != inf)
     {
+        if (rayPos.y > height1)
+            levelColor = vec4(1, 0, 0, 0.2);
+        else if (rayPos.y > height2)
+            levelColor = vec4(1, 1, 0, 0.2);
+        else if (rayPos.y > height3)
+            levelColor = vec4(0, 1, 0, 0.2);
+        else
+            levelColor = vec4(0, 0, 1, 0.2);
+
         particleColor = rayMarch(rayPos, rayDir);
         //particleColor = vec4(0, 0.8, 0, 0.75);
     }
 
     color = mix(color, particleColor, particleColor.a);
+    color = mix(color, levelColor, levelColor.a);
     
     /*
     float depth = texture(texRenderZ, uv).r;
