@@ -15,10 +15,46 @@
 				<color name="heightMap" internalFormat="R32F" />
 			</colors>
 		</renderTarget>
+		<renderTarget name ="HeightMap2">
+			<SIZE width="TEXTURE_RESOLUTION" height="TEXTURE_RESOLUTION" />
+			<colors>
+				<color name="heightMap" internalFormat="R32F" />
+			</colors>
+		</renderTarget>
+		<renderTarget name ="HeightMap3">
+			<SIZE width="TEXTURE_RESOLUTION" height="TEXTURE_RESOLUTION" />
+			<colors>
+				<color name="heightMap" internalFormat="R32F" />
+			</colors>
+		</renderTarget>
+		<renderTarget name ="HeightMap4">
+			<SIZE width="TEXTURE_RESOLUTION" height="TEXTURE_RESOLUTION" />
+			<colors>
+				<color name="heightMap" internalFormat="R32F" />
+			</colors>
+		</renderTarget>
 		<renderTarget name ="HeightMapBot">
 			<SIZE width="TEXTURE_RESOLUTION" height="TEXTURE_RESOLUTION" />
 			<colors>
-				<color name="heightMapBot" internalFormat="R32F" />
+				<color name="heightMap" internalFormat="R32F" />
+			</colors>
+		</renderTarget>
+		<renderTarget name ="HeightMapBot2">
+			<SIZE width="TEXTURE_RESOLUTION" height="TEXTURE_RESOLUTION" />
+			<colors>
+				<color name="heightMap" internalFormat="R32F" />
+			</colors>
+		</renderTarget>
+		<renderTarget name ="HeightMapBot3">
+			<SIZE width="TEXTURE_RESOLUTION" height="TEXTURE_RESOLUTION" />
+			<colors>
+				<color name="heightMap" internalFormat="R32F" />
+			</colors>
+		</renderTarget>
+		<renderTarget name ="HeightMapBot4">
+			<SIZE width="TEXTURE_RESOLUTION" height="TEXTURE_RESOLUTION" />
+			<colors>
+				<color name="heightMap" internalFormat="R32F" />
 			</colors>
 		</renderTarget>
 		<!--renderTarget name ="VolumeHeight">

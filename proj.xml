@@ -23,7 +23,7 @@
 			<attribute name="simulIterations" data="INT" type="RENDERER" value=1 />
 			<attribute name="offsetX" data="FLOAT" type="RENDERER" value=0/>
 			<attribute name="offsetY" data="FLOAT" type="RENDERER" value=0/>
-			<attribute name="setupDone" data="BOOL" type="RENDERER" value="FALSE"/>
+			<attribute name="setupDone" data="INT" type="RENDERER" value=0/>
 			<attribute name="step" data="INT" type="RENDERER" value=0/>
         </attributes>
 		<scenes>
@@ -77,7 +77,98 @@
 				<VIEW 	x=0.0 y=-1.0 z=0.0 />
 				<UP 	x=0.0 y=0.0 z=1.0 />
 			</camera>
+			<camera name="HeightCamera1" >
+				<TYPE 	value="ORTHO" />
+				<RIGHT 	value=10 />
+				<LEFT 	value=-10 />
+				<TOP 	value=10 />
+				<BOTTOM value=-10 />
+				<NEAR	value=0.0001/>
+				<FAR	value=10 />
+				<viewport name="MainViewport" />
+				<POSITION x=0.0 y=10.0 z=0.0 />
+				<VIEW 	x=0.0 y=-1.0 z=0.0 />
+				<UP 	x=0.0 y=0.0 z=1.0 />
+			</camera>
+			<camera name="HeightCamera2" >
+				<TYPE 	value="ORTHO" />
+				<RIGHT 	value=10 />
+				<LEFT 	value=-10 />
+				<TOP 	value=10 />
+				<BOTTOM value=-10 />
+				<NEAR	value=0.0001/>
+				<FAR	value=10 />
+				<viewport name="MainViewport" />
+				<POSITION x=0.0 y=10.0 z=0.0 />
+				<VIEW 	x=0.0 y=-1.0 z=0.0 />
+				<UP 	x=0.0 y=0.0 z=1.0 />
+			</camera>
+			<camera name="HeightCamera3" >
+				<TYPE 	value="ORTHO" />
+				<RIGHT 	value=10 />
+				<LEFT 	value=-10 />
+				<TOP 	value=10 />
+				<BOTTOM value=-10 />
+				<NEAR	value=0.0001/>
+				<FAR	value=10 />
+				<viewport name="MainViewport" />
+				<POSITION x=0.0 y=10.0 z=0.0 />
+				<VIEW 	x=0.0 y=-1.0 z=0.0 />
+				<UP 	x=0.0 y=0.0 z=1.0 />
+			</camera>
+			<camera name="HeightCamera4" >
+				<TYPE 	value="ORTHO" />
+				<RIGHT 	value=10 />
+				<LEFT 	value=-10 />
+				<TOP 	value=10 />
+				<BOTTOM value=-10 />
+				<NEAR	value=0.0001/>
+				<FAR	value=10 />
+				<viewport name="MainViewport" />
+				<POSITION x=0.0 y=10.0 z=0.0 />
+				<VIEW 	x=0.0 y=-1.0 z=0.0 />
+				<UP 	x=0.0 y=0.0 z=1.0 />
+			</camera>
 			<camera name="HeightCameraBot" >
+				<TYPE 	value="ORTHO" />
+				<RIGHT 	value=10 />
+				<LEFT 	value=-10 />
+				<TOP 	value=10 />
+				<BOTTOM value=-10 />
+				<NEAR	value=0.0001/>
+				<FAR	value=10 />
+				<viewport name="MainViewport" />
+				<POSITION x=0.0 y=0.0 z=0.0 />
+				<VIEW 	x=0.0 y=1.0 z=0.0 />
+				<UP 	x=0.0 y=0.0 z=1.0 />
+			</camera>
+			<camera name="HeightCameraBot2" >
+				<TYPE 	value="ORTHO" />
+				<RIGHT 	value=10 />
+				<LEFT 	value=-10 />
+				<TOP 	value=10 />
+				<BOTTOM value=-10 />
+				<NEAR	value=0.0001/>
+				<FAR	value=10 />
+				<viewport name="MainViewport" />
+				<POSITION x=0.0 y=0.0 z=0.0 />
+				<VIEW 	x=0.0 y=1.0 z=0.0 />
+				<UP 	x=0.0 y=0.0 z=1.0 />
+			</camera>
+			<camera name="HeightCameraBot3" >
+				<TYPE 	value="ORTHO" />
+				<RIGHT 	value=10 />
+				<LEFT 	value=-10 />
+				<TOP 	value=10 />
+				<BOTTOM value=-10 />
+				<NEAR	value=0.0001/>
+				<FAR	value=10 />
+				<viewport name="MainViewport" />
+				<POSITION x=0.0 y=0.0 z=0.0 />
+				<VIEW 	x=0.0 y=1.0 z=0.0 />
+				<UP 	x=0.0 y=0.0 z=1.0 />
+			</camera>
+			<camera name="HeightCameraBot4" >
 				<TYPE 	value="ORTHO" />
 				<RIGHT 	value=10 />
 				<LEFT 	value=-10 />
@@ -113,9 +204,9 @@
 			<!-- Set the orthographic cameras properties -->
 			<!--preScript script="adapt" file="scripts/cameraAdapt.lua" /-->
 		<pipeline name="setup">
-			<!--testScript script="slice" file="scripts/depthSplitter.lua" TEST_MODE="RUN_WHILE" /-->
+			<testScript script="slice" file="scripts/depthSplitter.lua" TEST_MODE="RUN_WHILE" />
 			<!-- Render the scene from above for height info -->
-		    <pass class="default" name="heightMapSetup">
+		    <pass class="default" name="heightMapSetup1">
 				<scenes>
 					<!--
 					<scene name="scene1" /> 
@@ -125,8 +216,47 @@
 					<scene name="Plane" />
 					<scene name="Sphere" />
 				</scenes>
-				<camera name="HeightCamera" />
+				<camera name="HeightCamera1" />
                 <renderTarget name="HeightMap" fromLibrary="particleLib" />
+			</pass>
+		    <pass class="default" name="heightMapSetup2">
+				<scenes>
+					<!--
+					<scene name="scene1" /> 
+					<scene name="camoes" /> 
+					/-->
+					<scene name="car" /> 
+					<scene name="Plane" />
+					<scene name="Sphere" />
+				</scenes>
+				<camera name="HeightCamera2" />
+                <renderTarget name="HeightMap2" fromLibrary="particleLib" />
+			</pass>
+		    <pass class="default" name="heightMapSetup3">
+				<scenes>
+					<!--
+					<scene name="scene1" /> 
+					<scene name="camoes" /> 
+					/-->
+					<scene name="car" /> 
+					<scene name="Plane" />
+					<scene name="Sphere" />
+				</scenes>
+				<camera name="HeightCamera3" />
+                <renderTarget name="HeightMap3" fromLibrary="particleLib" />
+			</pass>
+		    <pass class="default" name="heightMapSetup4">
+				<scenes>
+					<!--
+					<scene name="scene1" /> 
+					<scene name="camoes" /> 
+					/-->
+					<scene name="car" /> 
+					<scene name="Plane" />
+					<scene name="Sphere" />
+				</scenes>
+				<camera name="HeightCamera4" />
+                <renderTarget name="HeightMap4" fromLibrary="particleLib" />
 			</pass>
 		    <pass class="default" name="heightMapBotSetup">
 				<scenes>
@@ -141,8 +271,47 @@
 				<camera name="HeightCameraBot" />
                 <renderTarget name="HeightMapBot" fromLibrary="particleLib" />
 			</pass>
+		    <pass class="default" name="heightMapBotSetup2">
+				<scenes>
+					<!--
+					<scene name="scene1" /> 
+					<scene name="camoes" /> 
+					/-->
+					<scene name="car" /> 
+					<scene name="Plane" />
+					<scene name="Sphere" />
+				</scenes>
+				<camera name="HeightCameraBot2" />
+                <renderTarget name="HeightMapBot2" fromLibrary="particleLib" />
+			</pass>
+		    <pass class="default" name="heightMapBotSetup3">
+				<scenes>
+					<!--
+					<scene name="scene1" /> 
+					<scene name="camoes" /> 
+					/-->
+					<scene name="car" /> 
+					<scene name="Plane" />
+					<scene name="Sphere" />
+				</scenes>
+				<camera name="HeightCameraBot3" />
+                <renderTarget name="HeightMapBot3" fromLibrary="particleLib" />
+			</pass>
+		    <pass class="default" name="heightMapBotSetup4">
+				<scenes>
+					<!--
+					<scene name="scene1" /> 
+					<scene name="camoes" /> 
+					/-->
+					<scene name="car" /> 
+					<scene name="Plane" />
+					<scene name="Sphere" />
+				</scenes>
+				<camera name="HeightCameraBot4" />
+                <renderTarget name="HeightMapBot4" fromLibrary="particleLib" />
+			</pass>
 			<pass class="compute" name="slice">
-				<material name="slice" fromLibrary="particleLib" dimX=1 dimY=1 dimZ=1 />
+				<material name="slice" fromLibrary="particleLib" dimX="TEXTURE_RESOLUTION" dimY="TEXTURE_RESOLUTION" dimZ=1 />
 			</pass>
 		</pipeline>
 		<pipeline name="pip" >
