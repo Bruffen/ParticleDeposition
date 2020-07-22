@@ -105,10 +105,11 @@ uniform float time;
 float sendRecieve(float totalheight,float particleheight, float neibtotal, float neibparticle, float maxHeight, float maxNeib){
 
     float heightdif = (neibtotal-totalheight);
-    float maxRec = max(maxHeight-totalheight,0);
-    float maxRecNeib = max(maxNeib - neibtotal,0); 
+    float maxRec = max(maxHeight-particleheight,0);
+    float maxRecNeib = max(maxNeib - neibparticle,0); 
     float transfer = 0.25 * clamp( clamp(heightdif, -1*particleheight,neibparticle),
-                                    -1*maxRec,maxRecNeib);
+                                    -1*maxRecNeib, 
+                                    maxRec);
     if(abs(heightdif*0.25) < minHeight)
         return 0;//0.1*(1-viscosity)*transfer; 
     return (1-viscosity)*transfer;
@@ -122,7 +123,7 @@ float gettex(uint i,uint j){
 }
 
 float getmax(uint i, uint j){
-    return sin(float(i)/10)+cos(float(j)/10)+1 + gettex(i,j);
+    return max(0,1+sin(float(i)/20) - gettex(i,j));
 }
 
 void main(){
@@ -166,8 +167,8 @@ void main(){
 
         groupMemoryBarrier();
         imageStore(texVolume, ivec2(i, j ),
-                vec4(min((max(aux, 0)),maxcurr),gettex(i,j),0,0)
-                //vec4(curr*viscosity + (1-viscosity)*0.25*(top+bot+right+left))
+                vec4( clamp(aux, 0,maxcurr)
+                   ,gettex(i,j),0,0)
             );
     }
 
