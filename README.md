@@ -1,16 +1,22 @@
 # ParticleDeposition
 
-
 ## Screenshots
 
-
 - Before
-![Before](https://github.com/Bruffen/ParticleDeposition/blob/master/screenshots/NOSNOW.png)
+![Before](screenshots/NOSNOW.png)
 - After
-![After](https://github.com/Bruffen/ParticleDeposition/blob/master/screenshots/SNOW.png)
+![After](screenshots/SNOW.png)
 
+- Sand
+![](screenshots/sand2.jpg)
 
-## Videos 
+- Dirt
+![](screenshots/dirt.png)
+
+- Water
+![](screenshots/viscosityLowLiquid.jpg)
+
+## Videos
 
 Click the image to watch the video:
 

@@ -26,8 +26,8 @@ adapt = function()
     local right =  a / 2
     local bottom= -c / 2
     local top   =  c / 2
-    local far = b
-    local position = { 0, bb_max[2] * scale[2], 0 }
+    local far = b + 2
+    local position = { 0, bb_max[2] * scale[2] + 2, 0 }
 
     setAttr("CAMERA", "HeightCamera", "LEFT"    , 0, { left })
     setAttr("CAMERA", "HeightCamera", "RIGHT"   , 0, { right })
